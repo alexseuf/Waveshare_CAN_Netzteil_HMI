@@ -13,6 +13,8 @@
 
 PowerSupplyState state;
 static TouchSample lastTouch;
+static bool networkStarted = false;
+static uint32_t networkStartDueMs = 0;
 
 static void lvTouchRead(lv_indev_t *, lv_indev_data_t *d) {
   TouchSample s;
@@ -53,12 +55,13 @@ void setup() {
   state.canStarted = CanDriver::begin();
   state.linkState = state.canStarted ? CanLinkState::Recovering : CanLinkState::Offline;
 
-  DebugLog::println("[BOOT] WiFi/NTP");
-  HmiWifi::begin();
-
+  DebugLog::println("[BOOT] UI");
   Ui::begin(state);
   CanDriver::sendCommand(state);
-  DebugLog::println("[APP] Bereit");
+  DebugLog::println("[APP] Basisfunktionen bereit");
+
+  networkStartDueMs = millis() + 3000UL;
+  DebugLog::println("[BOOT] WiFi/NTP wird verzögert gestartet");
 }
 
 void loop() {
@@ -66,9 +69,16 @@ void loop() {
 
   CanDriver::poll(state);
   Settings::task(state);
-  HmiWifi::task();
 
   const uint32_t now = millis();
+  if (!networkStarted && static_cast<int32_t>(now - networkStartDueMs) >= 0) {
+    DebugLog::println("[BOOT] WiFi/NTP jetzt starten");
+    HmiWifi::begin();
+    networkStarted = true;
+    DebugLog::println("[BOOT] WiFi/NTP gestartet");
+  }
+  if (networkStarted) HmiWifi::task();
+
   state.updateEnergy(now);
   if (now - state.lastTxMs >= AppConfig::TX_PERIOD_MS) CanDriver::sendCommand(state);
 
@@ -82,11 +92,12 @@ void loop() {
   static uint32_t healthMs = 0;
   if (now - healthMs >= 5000) {
     healthMs = now;
+    const char *wifiState = networkStarted ? HmiWifi::statusText().c_str() : "noch nicht gestartet";
     DebugLog::printf("[HEALTH] heap=%u psram=%u touch=%s CAN=%s RX=%s age=%lu ms status=0x%02X WiFi=%s\n",
                      ESP.getFreeHeap(), ESP.getFreePsram(), Touch::online()?"OK":"FEHLER",
                      state.canStarted?"OK":"FEHLER", state.online(now)?"OK":"TIMEOUT",
                      state.lastRxMs ? static_cast<unsigned long>(now-state.lastRxMs) : 0UL,
-                     state.status, HmiWifi::statusText().c_str());
+                     state.status, wifiState);
   }
 
   Display::task();
