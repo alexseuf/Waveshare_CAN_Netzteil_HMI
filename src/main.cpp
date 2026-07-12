@@ -8,6 +8,7 @@
 #include "power_supply.h"
 #include "settings.h"
 #include "can_driver.h"
+#include "network_manager.h"
 #include "ui.h"
 
 PowerSupplyState state;
@@ -51,6 +52,10 @@ void setup() {
   DebugLog::println("[BOOT] CAN");
   state.canStarted = CanDriver::begin();
   state.linkState = state.canStarted ? CanLinkState::Recovering : CanLinkState::Offline;
+
+  DebugLog::println("[BOOT] WiFi/NTP");
+  NetworkManager::begin();
+
   Ui::begin(state);
   CanDriver::sendCommand(state);
   DebugLog::println("[APP] Bereit");
@@ -61,6 +66,8 @@ void loop() {
 
   CanDriver::poll(state);
   Settings::task(state);
+  NetworkManager::task();
+
   const uint32_t now = millis();
   state.updateEnergy(now);
   if (now - state.lastTxMs >= AppConfig::TX_PERIOD_MS) CanDriver::sendCommand(state);
@@ -75,11 +82,11 @@ void loop() {
   static uint32_t healthMs = 0;
   if (now - healthMs >= 5000) {
     healthMs = now;
-    DebugLog::printf("[HEALTH] heap=%u psram=%u touch=%s CAN=%s RX=%s age=%lu ms status=0x%02X\n",
+    DebugLog::printf("[HEALTH] heap=%u psram=%u touch=%s CAN=%s RX=%s age=%lu ms status=0x%02X WiFi=%s\n",
                      ESP.getFreeHeap(), ESP.getFreePsram(), Touch::online()?"OK":"FEHLER",
                      state.canStarted?"OK":"FEHLER", state.online(now)?"OK":"TIMEOUT",
                      state.lastRxMs ? static_cast<unsigned long>(now-state.lastRxMs) : 0UL,
-                     state.status);
+                     state.status, NetworkManager::statusText().c_str());
   }
 
   Display::task();
