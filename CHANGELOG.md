@@ -53,3 +53,5 @@
 - Alle bereits in V9.3 umgesetzten Zeitstempel bleiben einheitlich im Format HH:MM:SS.
 
 - Redundante Seitenüberschrift „SCOPE / TREND“ entfernt und die Beschriftung „Zeit“ innerhalb des Achsenbereichs neu positioniert.
+
+- Scope-Zeitdarstellung korrigiert: Messpunkte werden jetzt anhand ihres tatsächlichen Zeitstempels statt anhand der Anzahl ausgewählter Punkte positioniert.
