@@ -91,8 +91,9 @@ void loop() {
   const uint32_t performanceNowUs = micros();
   const uint32_t elapsedUs = performanceNowUs - performanceWindowUs;
   if (elapsedUs >= 1000000UL) {
-    const uint8_t load = static_cast<uint8_t>(min<uint64_t>(100ULL, (accumulatedBusyUs * 100ULL) / elapsedUs));
-    Ui::setPerformance(load, busyUs);
+    uint64_t loadValue = (accumulatedBusyUs * 100ULL) / elapsedUs;
+    if (loadValue > 100ULL) loadValue = 100ULL;
+    Ui::setPerformance(static_cast<uint8_t>(loadValue), busyUs);
     accumulatedBusyUs = 0;
     performanceWindowUs = performanceNowUs;
   }
