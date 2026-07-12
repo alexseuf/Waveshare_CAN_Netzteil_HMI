@@ -1,4 +1,4 @@
-# Waveshare CAN-Netzteil-HMI V9.4
+# Waveshare CAN-Netzteil-HMI V9.4.2
 
 PlatformIO-Projekt für das Waveshare ESP32-S3-Touch-LCD-4.3.
 
@@ -25,8 +25,8 @@ Schaltplan, CAN-Protokoll, UI-Richtlinien und Änderungsanforderungen liegen im 
 - U7 (SP3485EN) ist auf dem Originalboard mit 5 V versorgt und kann einen zu hohen RO-Pegel zum ESP32 liefern. Der bestätigte 3,3-V-Umbau ist in `docs/Board_Bugs_and_Fixes.md` beschrieben.
 
 
-## Navigation V9.4
+## Navigation V9.4.2
 
 `HAUPT | SCOPE | LOG | INFO | ⚙`
 
-Der CAN-Logger befindet sich unter INFO. Die Scope-Seite unterstützt Zwei-Finger-Zoom für Zeit- und Y-Achsen sowie eine verschiebbare, farbcodierte Legende.
+Der CAN-Logger befindet sich unter INFO. Die Scope-Seite unterstützt Einfinger-Wischbedienung direkt auf den Zeit- und Y-Achsen sowie eine verschiebbare, farbcodierte Legende. Der Ringpuffer zeichnet 1800 Messpunkte im 1-s-Raster und damit bis zu 30 Minuten auf.
