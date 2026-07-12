@@ -9,7 +9,7 @@ Die bisherige Zwei-Finger-Pinch-Geste wird durch eine unsichtbare Einfinger-Wisc
 - Grüne Y-Achsenspalte: vertikales Wischen verändert die Spannungsskala.
 - Blaue Y-Achsenspalte: vertikales Wischen verändert die Stromskala.
 - Orange Y-Achsenspalte: vertikales Wischen verändert die Leistungsskala.
-- Nach oben wischen vergrößert den jeweiligen Maximalwert.
-- Nach unten wischen verkleinert den jeweiligen Maximalwert.
+- Nach oben wischen verkleinert den dargestellten Wertebereich und zoomt hinein.
+- Nach unten wischen vergrößert den dargestellten Wertebereich und zoomt heraus.
 - Die Achsenbeschriftungen und Kurven werden während der Bedienung aktualisiert.
 - Die Taste STANDARD stellt Zeit- und Y-Skalierungen auf die Ausgangswerte zurück.
