@@ -42,9 +42,6 @@ bool initPanel() {
   DebugLog::println("[DISPLAY] RGB-Panel stabil konfigurieren");
   esp_lcd_rgb_panel_config_t cfg = {};
   cfg.clk_src = LCD_CLK_SRC_DEFAULT;
-
-  // 12 MHz reduziert die Speicherbandbreite deutlich und verhindert
-  // RGB-Unterläufe bei gleichzeitigem WiFi-/PSRAM-Zugriff.
   cfg.timings.pclk_hz = 12000000;
   cfg.timings.h_res = AppConfig::LCD_WIDTH;
   cfg.timings.v_res = AppConfig::LCD_HEIGHT;
@@ -55,12 +52,8 @@ bool initPanel() {
   cfg.timings.vsync_back_porch = 8;
   cfg.timings.vsync_front_porch = 8;
   cfg.timings.flags.pclk_active_neg = true;
-
   cfg.data_width = 16;
   cfg.num_fbs = 1;
-
-  // Der Framebuffer bleibt im PSRAM. Ein ausreichend großer interner
-  // Bounce-Buffer entkoppelt den RGB-DMA von kurzzeitigen PSRAM-Latenzen.
   cfg.bounce_buffer_size_px = AppConfig::LCD_WIDTH * 16;
   cfg.hsync_gpio_num = PIN_LCD_HSYNC;
   cfg.vsync_gpio_num = PIN_LCD_VSYNC;
@@ -91,19 +84,20 @@ bool Display::begin() {
   lv_init();
   lv_tick_set_cb(tickMs);
 
-  // Kritischer LVGL-Zeichenpuffer bewusst im internen DMA-RAM.
-  // Nur ein kleiner 8-Zeilen-Puffer wird verwendet, damit genügend
-  // interner Heap für WiFi, CAN und LVGL verfügbar bleibt.
+  // Der interne SRAM war nach WiFi, LVGL und dem großen Bounce-Buffer zu knapp.
+  // Das führte während Ui::begin zu einem Software-Reset. Deshalb liegt der
+  // kleine LVGL-Zeichenpuffer wieder im PSRAM. Der vergrößerte interne
+  // Bounce-Buffer und der reduzierte Pixeltakt bleiben zur Displaystabilisierung.
   constexpr size_t lines = 8;
   constexpr size_t bufferBytes =
       AppConfig::LCD_WIDTH * lines * sizeof(lv_color_t);
   drawBuffer = static_cast<uint8_t *>(
-      heap_caps_malloc(bufferBytes, MALLOC_CAP_INTERNAL | MALLOC_CAP_DMA | MALLOC_CAP_8BIT));
+      heap_caps_malloc(bufferBytes, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
 
-  DebugLog::printf("[DISPLAY] Interner LVGL-Puffer=%p, %u Byte\n",
+  DebugLog::printf("[DISPLAY] PSRAM-LVGL-Puffer=%p, %u Byte\n",
                    drawBuffer, static_cast<unsigned>(bufferBytes));
   if (!drawBuffer) {
-    DebugLog::println("[DISPLAY] Interner LVGL-Puffer konnte nicht reserviert werden");
+    DebugLog::println("[DISPLAY] PSRAM-LVGL-Puffer konnte nicht reserviert werden");
     return false;
   }
 
@@ -115,7 +109,7 @@ bool Display::begin() {
                          LV_DISPLAY_RENDER_MODE_PARTIAL);
 
   fpsWindowMs = millis();
-  DebugLog::println("[DISPLAY] READY - stabiler Einzelpufferbetrieb");
+  DebugLog::println("[DISPLAY] READY - PSRAM-Einzelpuffer mit internem Bounce-Buffer");
   return true;
 }
 
