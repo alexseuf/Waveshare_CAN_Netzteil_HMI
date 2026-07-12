@@ -1,0 +1,120 @@
+#include "ui.h"
+#include "ui_internal.h"
+#include "settings.h"
+#include "can_driver.h"
+#include "app_config.h"
+
+namespace UiInternal {
+PowerSupplyState *state = nullptr;
+lv_obj_t *pages[5]{};
+lv_obj_t *nav[5]{};
+int currentPage = 0;
+bool canPaused = false;
+bool logPaused = false;
+lv_obj_t *clockLabel = nullptr;
+
+lv_color_t bg()        { return lv_color_hex(0x020304); }
+lv_color_t panelColor(){ return lv_color_hex(0x080A0D); }
+lv_color_t border()    { return lv_color_hex(0x4B5057); }
+lv_color_t green()     { return lv_color_hex(0x22D12F); }
+lv_color_t greenDark() { return lv_color_hex(0x149B20); }
+lv_color_t red()       { return lv_color_hex(0xF02020); }
+lv_color_t redDark()   { return lv_color_hex(0xD00000); }
+lv_color_t blue()      { return lv_color_hex(0x0754C9); }
+lv_color_t blueDark()  { return lv_color_hex(0x063A93); }
+lv_color_t orange()    { return lv_color_hex(0xF6A000); }
+lv_color_t cyan()      { return lv_color_hex(0x00CDEB); }
+lv_color_t grey()      { return lv_color_hex(0x8D9298); }
+lv_color_t lightGrey() { return lv_color_hex(0xC3C6CA); }
+lv_color_t darkGrey()  { return lv_color_hex(0x202328); }
+
+void stylePanel(lv_obj_t *obj, int radius) {
+  lv_obj_set_style_bg_color(obj, panelColor(), 0);
+  lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, 0);
+  lv_obj_set_style_border_color(obj, border(), 0);
+  lv_obj_set_style_border_width(obj, 2, 0);
+  lv_obj_set_style_radius(obj, radius, 0);
+  lv_obj_set_style_pad_all(obj, 8, 0);
+  lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
+}
+
+lv_obj_t *makeLabel(lv_obj_t *parent, const char *text, const lv_font_t *font, lv_color_t color) {
+  lv_obj_t *obj = lv_label_create(parent);
+  lv_label_set_text(obj, text);
+  lv_obj_set_style_text_color(obj, color, 0);
+  lv_obj_set_style_text_font(obj, font, 0);
+  return obj;
+}
+
+lv_obj_t *makeButton(lv_obj_t *parent, const char *text, int x, int y, int w, int h,
+                     lv_color_t color, const lv_font_t *font) {
+  lv_obj_t *btn = lv_button_create(parent);
+  lv_obj_remove_style_all(btn);
+  lv_obj_set_pos(btn, x, y); lv_obj_set_size(btn, w, h);
+  lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_style_bg_opa(btn, LV_OPA_COVER, 0);
+  lv_obj_set_style_bg_color(btn, color, LV_STATE_DEFAULT);
+  lv_obj_set_style_bg_color(btn, lv_color_darken(color, 30), LV_STATE_PRESSED);
+  lv_obj_set_style_border_color(btn, lv_color_lighten(color, 35), LV_STATE_DEFAULT);
+  lv_obj_set_style_border_width(btn, 2, 0);
+  lv_obj_set_style_radius(btn, 9, 0);
+  lv_obj_set_style_pad_all(btn, 0, 0);
+  lv_obj_t *txt = makeLabel(btn, text, font, lv_color_white());
+  lv_obj_center(txt);
+  return btn;
+}
+
+lv_obj_t *makeLed(lv_obj_t *parent, int x, int y, int size) {
+  lv_obj_t *obj=lv_obj_create(parent); lv_obj_remove_style_all(obj);
+  lv_obj_set_pos(obj,x,y); lv_obj_set_size(obj,size,size);
+  lv_obj_set_style_radius(obj,LV_RADIUS_CIRCLE,0);
+  lv_obj_set_style_bg_opa(obj,LV_OPA_COVER,0);
+  lv_obj_set_style_bg_color(obj,grey(),0);
+  return obj;
+}
+void setLed(lv_obj_t *obj, bool active, bool faultStyle) {
+  lv_obj_set_style_bg_color(obj, active ? (faultStyle ? red() : green()) : grey(), 0);
+}
+void setFloat(lv_obj_t *obj, float value, uint8_t decimals, const char *unit) {
+  char number[24], text[32]; dtostrf(value,1,decimals,number);
+  snprintf(text,sizeof(text),"%s %s",number,unit); lv_label_set_text(obj,text);
+}
+void formatClock(uint32_t ms, char *dest, size_t size) {
+  const uint32_t total=ms/1000UL;
+  snprintf(dest,size,"%02lu:%02lu:%02lu",
+           static_cast<unsigned long>(total/3600UL),
+           static_cast<unsigned long>((total/60UL)%60UL),
+           static_cast<unsigned long>(total%60UL));
+}
+void showPage(int index) {
+  currentPage=index;
+  for(int i=0;i<5;++i){
+    if(i==index)lv_obj_clear_flag(pages[i],LV_OBJ_FLAG_HIDDEN);else lv_obj_add_flag(pages[i],LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_style_bg_color(nav[i],i==index?orange():darkGrey(),0);
+  }
+  DebugLog::log(DebugLog::UI,"[UI] Seite %d\n",index);
+}
+void navEvent(lv_event_t *e){showPage(static_cast<int>(reinterpret_cast<intptr_t>(lv_event_get_user_data(e))));}
+static void adjust(float dv,float da,const char *name){state->voltageSet+=dv;state->currentSet+=da;state->clampSetpoints();Settings::markDirty();DebugLog::log(DebugLog::UI,"[UI] %s -> %.1f V / %.1f A\n",name,state->voltageSet,state->currentSet);}
+void actionEvent(lv_event_t *e){
+  const int id=static_cast<int>(reinterpret_cast<intptr_t>(lv_event_get_user_data(e)));
+  switch(id){case 1:adjust(.1f,0,"Spannung+");break;case 2:adjust(-.1f,0,"Spannung-");break;case 3:adjust(0,.1f,"Strom+");break;case 4:adjust(0,-.1f,"Strom-");break;case 5:state->chargingEnabled=true;CanDriver::sendCommand(*state);break;case 6:state->chargingEnabled=false;CanDriver::sendCommand(*state);break;case 20:Settings::resetDefaults(*state);break;case 21:state->resetEnergy();break;}
+}
+void presetEvent(lv_event_t *e){const int i=static_cast<int>(reinterpret_cast<intptr_t>(lv_event_get_user_data(e)));if(lv_event_get_code(e)==LV_EVENT_LONG_PRESSED)Settings::savePreset(*state,i);else if(lv_event_get_code(e)==LV_EVENT_CLICKED)Settings::loadPreset(*state,i);}
+}
+
+void Ui::begin(PowerSupplyState &s){
+  using namespace UiInternal; state=&s; lv_obj_t *screen=lv_screen_active(); lv_obj_set_style_bg_color(screen,bg(),0);
+  for(int i=0;i<5;++i){pages[i]=lv_obj_create(screen);lv_obj_set_pos(pages[i],10,48);lv_obj_set_size(pages[i],780,422);lv_obj_set_style_bg_opa(pages[i],LV_OPA_TRANSP,0);lv_obj_set_style_border_width(pages[i],0,0);lv_obj_set_style_pad_all(pages[i],0,0);lv_obj_clear_flag(pages[i],LV_OBJ_FLAG_SCROLLABLE);}
+  const char *names[]={"HAUPT","SCOPE","LOG","INFO",LV_SYMBOL_SETTINGS};
+  const int xs[]={10,151,292,433,718}; const int ws[]={133,133,133,133,72};
+  for(int i=0;i<5;++i){nav[i]=makeButton(screen,names[i],xs[i],5,ws[i],36,darkGrey(),i==4?&lv_font_montserrat_24:&lv_font_montserrat_18);lv_obj_add_event_cb(nav[i],navEvent,LV_EVENT_CLICKED,reinterpret_cast<void*>(static_cast<intptr_t>(i)));}
+  clockLabel=makeLabel(screen,"",&ui_font_de_14,lightGrey());lv_obj_set_pos(clockLabel,580,15);
+  makeMain(pages[0]);makeScope(pages[1]);makeLog(pages[2]);makeInfo(pages[3]);makeSettings(pages[4]);showPage(0);
+}
+void Ui::update(const PowerSupplyState &s){
+  using namespace UiInternal;const uint32_t now=millis();char clock[32];formatClock(now,clock,sizeof(clock));char uptime[40];snprintf(uptime,sizeof(uptime),"Uptime %s",clock);lv_label_set_text(clockLabel,uptime);
+  updateMain(s,now);updateScope(s,now);if(currentPage==2&&!logPaused)updateLog();if(currentPage==3){updateInfo(s,now);if(infoCanVisible()&&!canPaused)updateCan();}
+}
+void Ui::updateTouchDiag(const TouchSample &sample){UiInternal::updateTouchSettings(sample);}
+void Ui::handleTouch(const TouchSample &sample){if(UiInternal::currentPage==1)UiInternal::handleScopeTouch(sample);}
