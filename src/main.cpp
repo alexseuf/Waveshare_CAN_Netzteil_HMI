@@ -22,7 +22,7 @@ static TaskHandle_t networkTaskHandle = nullptr;
 namespace {
 constexpr BaseType_t NETWORK_CORE = 0;
 constexpr UBaseType_t NETWORK_PRIORITY = 1;
-constexpr uint32_t NETWORK_STACK_WORDS = 4096;
+constexpr uint32_t NETWORK_STACK_BYTES = 8192;
 
 void networkTask(void *) {
   DebugLog::printf("[NET-TASK] gestartet auf Core %d, Startverzögerung 3000 ms\n",
@@ -90,14 +90,15 @@ void setup() {
   const BaseType_t created = xTaskCreatePinnedToCore(
       networkTask,
       "network",
-      NETWORK_STACK_WORDS,
+      NETWORK_STACK_BYTES,
       nullptr,
       NETWORK_PRIORITY,
       &networkTaskHandle,
       NETWORK_CORE);
 
   if (created == pdPASS) {
-    DebugLog::printf("[BOOT] Netzwerk-Task auf Core %d angelegt\n", NETWORK_CORE);
+    DebugLog::printf("[BOOT] Netzwerk-Task auf Core %d angelegt, Stack=%lu Byte\n",
+                     NETWORK_CORE, static_cast<unsigned long>(NETWORK_STACK_BYTES));
   } else {
     networkTaskHandle = nullptr;
     DebugLog::println("[BOOT] FEHLER: Netzwerk-Task konnte nicht angelegt werden");
@@ -107,10 +108,12 @@ void setup() {
 void loop() {
   const uint32_t loopStartUs = micros();
 
-  // Echtzeitnaher Kern: CAN, Zustandsautomat, Touch, LVGL und Scope.
-  // Netzwerkfunktionen laufen ausschließlich im separaten Netzwerk-Task.
   CanDriver::poll(state);
   Settings::task(state);
+
+  // Nur der Start des WiFi-Scans läuft auf dem Arduino-/UI-Core.
+  // Der restliche Netzwerkbetrieb bleibt auf Core 0.
+  if (networkStarted) HmiWifi::serviceScanOnUiCore();
 
   const uint32_t now = millis();
   state.updateEnergy(now);
