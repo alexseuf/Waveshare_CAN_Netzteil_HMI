@@ -51,3 +51,5 @@
 - Legende auf den Plotbereich begrenzt, sodass sie sich nicht mehr mit Achsenbeschriftungen überschneidet.
 - Kurze farbige Linien in der Legende ergänzen die Zuordnung von Spannung, Strom und Leistung.
 - Alle bereits in V9.3 umgesetzten Zeitstempel bleiben einheitlich im Format HH:MM:SS.
+
+- Redundante Seitenüberschrift „SCOPE / TREND“ entfernt und die Beschriftung „Zeit“ innerhalb des Achsenbereichs neu positioniert.
