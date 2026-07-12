@@ -9,7 +9,7 @@
 namespace UiInternal {
 namespace {
 lv_obj_t *overview=nullptr,*debugPage=nullptr,*wifiPage=nullptr,*mqttPage=nullptr;
-lv_obj_t *metrics=nullptr,*debugMetrics=nullptr,*wifiStatus=nullptr;
+lv_obj_t *metrics=nullptr,*debugMetrics=nullptr,*wifiStatus=nullptr,*wifiScanState=nullptr;
 lv_obj_t *wifiDropdown=nullptr,*wifiPassword=nullptr,*wifiCount=nullptr,*wifiEye=nullptr,*wifiKeyboard=nullptr;
 bool wifiOptionsDirty=true;
 bool passwordVisible=false;
@@ -73,10 +73,7 @@ void keyboardEvent(lv_event_t *e){
 }
 
 void passwordFocus(lv_event_t *){
-  if(!wifiKeyboard){
-    DebugLog::println("[WIFI-UI] Standardtastatur nicht verfügbar");
-    return;
-  }
+  if(!wifiKeyboard){DebugLog::println("[WIFI-UI] Standardtastatur nicht verfügbar");return;}
   logMemory("Standardtastatur vor Einblenden");
   lv_keyboard_set_textarea(wifiKeyboard,wifiPassword);
   lv_keyboard_set_mode(wifiKeyboard,LV_KEYBOARD_MODE_TEXT_LOWER);
@@ -91,7 +88,11 @@ void passwordEye(lv_event_t *){
   lv_textarea_set_password_mode(wifiPassword,!passwordVisible);
   lv_obj_set_style_bg_color(wifiEye,passwordVisible?greenDark():darkGrey(),0);
 }
-void scanEvent(lv_event_t *){HmiWifi::requestScan();wifiOptionsDirty=true;DebugLog::println("[WIFI-UI] Netzwerksuche angefordert");}
+void scanEvent(lv_event_t *){
+  HmiWifi::requestScan();wifiOptionsDirty=true;
+  if(wifiScanState)lv_label_set_text(wifiScanState,"Suche läuft ...");
+  DebugLog::println("[WIFI-UI] Netzwerksuche angefordert");
+}
 void disconnectEvent(lv_event_t *){HmiWifi::disconnect();}
 void connectEvent(lv_event_t *){
   char selected[96]={0};
@@ -121,6 +122,7 @@ void rebuildWifiOptions(){
   if(options.isEmpty())options="Keine Netzwerke gefunden";
   lv_dropdown_set_options(wifiDropdown,options.c_str());
   wifiOptionsDirty=false;
+  if(wifiScanState){char text[40];snprintf(text,sizeof(text),"%d Netzwerk(e) gefunden",count);lv_label_set_text(wifiScanState,text);}
   DebugLog::printf("[WIFI-UI] %d Netzwerke in Liste übernommen\n",count);
 }
 }
@@ -140,25 +142,26 @@ void makeSettings(lv_obj_t *parent){
   debugMetrics=makeLabel(dp,"",&ui_font_de_16,lv_color_hex(0xE8EEF4));lv_obj_set_pos(debugMetrics,15,15);
 
   wifiPage=lv_obj_create(box);lv_obj_remove_style_all(wifiPage);lv_obj_set_size(wifiPage,760,402);back(wifiPage);
-  lv_obj_t *wh=makeLabel(wifiPage,"WIFI",&ui_font_de_24,green());lv_obj_align(wh,LV_ALIGN_TOP_MID,0,8);
+  lv_obj_t *wh=makeLabel(wifiPage,"WIFI",&ui_font_de_24,green());lv_obj_set_pos(wh,150,8);
 
-  lv_obj_t *statusPanel=lv_obj_create(wifiPage);lv_obj_set_pos(statusPanel,8,55);lv_obj_set_size(statusPanel,300,300);stylePanel(statusPanel,10);
-  wifiStatus=makeLabel(statusPanel,"",&ui_font_de_14,lv_color_hex(0xE8EEF4));lv_obj_set_pos(wifiStatus,12,12);lv_obj_set_width(wifiStatus,270);
-  lv_obj_t *disconnect=makeButton(statusPanel,"TRENNEN",12,246,128,40,redDark(),&ui_font_de_14);
+  lv_obj_t *statusPanel=lv_obj_create(wifiPage);lv_obj_set_pos(statusPanel,8,45);lv_obj_set_size(statusPanel,220,168);stylePanel(statusPanel,10);
+  wifiStatus=makeLabel(statusPanel,"",&ui_font_de_14,lv_color_hex(0xE8EEF4));lv_obj_set_pos(wifiStatus,8,8);lv_obj_set_width(wifiStatus,195);
+  lv_obj_t *disconnect=makeButton(statusPanel,"TRENNEN",8,118,92,36,redDark(),&ui_font_de_14);
   lv_obj_add_event_cb(disconnect,disconnectEvent,LV_EVENT_CLICKED,nullptr);
 
-  lv_obj_t *config=lv_obj_create(wifiPage);lv_obj_set_pos(config,324,55);lv_obj_set_size(config,428,300);stylePanel(config,10);
+  lv_obj_t *config=lv_obj_create(wifiPage);lv_obj_set_pos(config,238,45);lv_obj_set_size(config,514,168);stylePanel(config,10);
   makeLabel(config,"WLAN-Konfiguration",&ui_font_de_18,lv_color_white());
-  lv_obj_t *networkLabel=makeLabel(config,"Netzwerk",&ui_font_de_14,lightGrey());lv_obj_set_pos(networkLabel,10,38);
-  wifiDropdown=lv_dropdown_create(config);lv_obj_set_pos(wifiDropdown,10,62);lv_obj_set_size(wifiDropdown,300,42);lv_dropdown_set_options(wifiDropdown,"Netzwerke suchen");lv_obj_set_style_text_font(wifiDropdown,&ui_font_de_14,0);
-  lv_obj_t *scan=makeButton(config,LV_SYMBOL_REFRESH,322,62,80,42,blue(),&lv_font_montserrat_18);lv_obj_add_event_cb(scan,scanEvent,LV_EVENT_CLICKED,nullptr);
+  lv_obj_t *networkLabel=makeLabel(config,"Netzwerk",&ui_font_de_14,lightGrey());lv_obj_set_pos(networkLabel,10,30);
+  wifiDropdown=lv_dropdown_create(config);lv_obj_set_pos(wifiDropdown,10,50);lv_obj_set_size(wifiDropdown,390,38);lv_dropdown_set_options(wifiDropdown,"Netzwerke suchen");lv_obj_set_style_text_font(wifiDropdown,&ui_font_de_14,0);
+  lv_obj_t *scan=makeButton(config,LV_SYMBOL_REFRESH,410,50,78,38,blue(),&lv_font_montserrat_18);lv_obj_add_event_cb(scan,scanEvent,LV_EVENT_CLICKED,nullptr);
+  wifiScanState=makeLabel(config,"Noch keine Suche",&ui_font_de_14,lightGrey());lv_obj_set_pos(wifiScanState,300,30);
 
-  lv_obj_t *passwordLabel=makeLabel(config,"Passwort",&ui_font_de_14,lightGrey());lv_obj_set_pos(passwordLabel,10,116);
-  wifiPassword=lv_textarea_create(config);lv_obj_set_pos(wifiPassword,10,140);lv_obj_set_size(wifiPassword,318,44);lv_textarea_set_one_line(wifiPassword,true);lv_textarea_set_password_mode(wifiPassword,true);lv_textarea_set_placeholder_text(wifiPassword,"WLAN-Passwort");lv_obj_set_style_text_font(wifiPassword,&ui_font_de_14,0);
+  lv_obj_t *passwordLabel=makeLabel(config,"Passwort",&ui_font_de_14,lightGrey());lv_obj_set_pos(passwordLabel,10,92);
+  wifiPassword=lv_textarea_create(config);lv_obj_set_pos(wifiPassword,10,112);lv_obj_set_size(wifiPassword,288,42);lv_textarea_set_one_line(wifiPassword,true);lv_textarea_set_password_mode(wifiPassword,true);lv_textarea_set_placeholder_text(wifiPassword,"WLAN-Passwort");lv_obj_set_style_text_font(wifiPassword,&ui_font_de_14,0);
   lv_obj_add_event_cb(wifiPassword,passwordFocus,LV_EVENT_CLICKED,nullptr);lv_obj_add_event_cb(wifiPassword,passwordChanged,LV_EVENT_VALUE_CHANGED,nullptr);
-  wifiEye=makeButton(config,LV_SYMBOL_EYE_OPEN,338,140,64,44,darkGrey(),&lv_font_montserrat_18);lv_obj_add_event_cb(wifiEye,passwordEye,LV_EVENT_CLICKED,nullptr);
-  wifiCount=makeLabel(config,"0 Zeichen",&ui_font_de_14,lightGrey());lv_obj_set_pos(wifiCount,12,188);
-  lv_obj_t *connect=makeButton(config,"SPEICHERN & VERBINDEN",10,224,392,48,blue(),&ui_font_de_14);lv_obj_add_event_cb(connect,connectEvent,LV_EVENT_CLICKED,nullptr);
+  wifiEye=makeButton(config,LV_SYMBOL_EYE_OPEN,306,112,54,42,darkGrey(),&lv_font_montserrat_18);lv_obj_add_event_cb(wifiEye,passwordEye,LV_EVENT_CLICKED,nullptr);
+  lv_obj_t *connect=makeButton(config,"VERBINDEN",370,112,118,42,blue(),&ui_font_de_14);lv_obj_add_event_cb(connect,connectEvent,LV_EVENT_CLICKED,nullptr);
+  wifiCount=makeLabel(config,"0 Zeichen",&ui_font_de_14,lightGrey());lv_obj_set_pos(wifiCount,120,92);
 
   logMemory("Standardtastatur vor einmaligem Erzeugen");
   wifiKeyboard=lv_keyboard_create(box);
@@ -171,9 +174,7 @@ void makeSettings(lv_obj_t *parent){
     lv_obj_add_event_cb(wifiKeyboard,keyboardEvent,LV_EVENT_CANCEL,nullptr);
     lv_obj_add_flag(wifiKeyboard,LV_OBJ_FLAG_HIDDEN);
     logMemory("Standardtastatur einmalig erzeugt und versteckt");
-  }else{
-    DebugLog::println("[WIFI-UI] Standardtastatur konnte beim Boot nicht erzeugt werden");
-  }
+  }else DebugLog::println("[WIFI-UI] Standardtastatur konnte beim Boot nicht erzeugt werden");
 
   mqttPage=lv_obj_create(box);lv_obj_remove_style_all(mqttPage);lv_obj_set_size(mqttPage,760,402);back(mqttPage);
   lv_obj_t *mh=makeLabel(mqttPage,"MQTT / HOME ASSISTANT",&ui_font_de_24,lv_color_hex(0xA060FF));lv_obj_align(mh,LV_ALIGN_TOP_MID,0,8);
@@ -193,7 +194,8 @@ void updateSettings(uint32_t now){
   if(metrics){char t[220];snprintf(t,sizeof(t),"RAM frei %u kB   PSRAM frei %u kB   CPU %u %%   FPS %u   Uptime %s",(unsigned)(intFree/1024),(unsigned)(psFree/1024),cpuLoadPercent,Display::fps(),uptime);lv_label_set_text(metrics,t);}
   if(debugMetrics){char t[520];snprintf(t,sizeof(t),"Interner RAM gesamt: %u kB\nInterner RAM frei: %u kB\nGrößter interner Block: %u kB\n\nPSRAM gesamt: %u kB\nPSRAM frei: %u kB\nGrößter PSRAM-Block: %u kB\n\nArduino Heap frei: %u Byte\nCPU-Last: %u %%\nFPS: %u",(unsigned)(intTotal/1024),(unsigned)(intFree/1024),(unsigned)(intLargest/1024),(unsigned)(psTotal/1024),(unsigned)(psFree/1024),(unsigned)(psLargest/1024),ESP.getFreeHeap(),cpuLoadPercent,Display::fps());lv_label_set_text(debugMetrics,t);}
   if(wifiOptionsDirty&&HmiWifi::scanReady())rebuildWifiOptions();
-  if(wifiStatus){char t[420];snprintf(t,sizeof(t),"Status: %s\nSSID: %s\nSignal: %ld dBm (%u %%)\nIP: %s\nGateway: %s\nMAC: %s\nNTP: %s\nZeit: %s",HmiWifi::statusText().c_str(),HmiWifi::ssid().c_str(),(long)HmiWifi::rssi(),HmiWifi::signalPercent(),HmiWifi::ipText().c_str(),HmiWifi::gatewayText().c_str(),HmiWifi::macText().c_str(),HmiWifi::timeValid()?"synchronisiert":"nicht verfügbar",HmiWifi::localTimeText().c_str());lv_label_set_text(wifiStatus,t);}
+  if(wifiScanState&&HmiWifi::scanRunning())lv_label_set_text(wifiScanState,"Suche läuft ...");
+  if(wifiStatus){char t[300];snprintf(t,sizeof(t),"Status: %s\nSSID: %s\nSignal: %ld dBm\nIP: %s\nNTP: %s",HmiWifi::statusText().c_str(),HmiWifi::ssid().c_str(),(long)HmiWifi::rssi(),HmiWifi::ipText().c_str(),HmiWifi::timeValid()?"synchronisiert":"nicht verfügbar");lv_label_set_text(wifiStatus,t);}
 }
 void updateTouchSettings(const TouchSample &s){(void)s;}
 }
