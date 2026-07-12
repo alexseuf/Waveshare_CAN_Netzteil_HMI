@@ -18,6 +18,8 @@ extern int currentPage;
 extern bool canPaused;
 extern bool logPaused;
 extern lv_obj_t *clockLabel;
+extern uint8_t cpuLoadPercent;
+extern uint32_t loopTimeUs;
 
 lv_color_t bg(); lv_color_t panelColor(); lv_color_t border();
 lv_color_t green(); lv_color_t greenDark(); lv_color_t red(); lv_color_t redDark();
@@ -52,5 +54,6 @@ void makeInfo(lv_obj_t *parent);
 void updateInfo(const PowerSupplyState &s, uint32_t now);
 bool infoCanVisible();
 void makeSettings(lv_obj_t *parent);
+void updateSettings(uint32_t now);
 void updateTouchSettings(const TouchSample &sample);
 }
