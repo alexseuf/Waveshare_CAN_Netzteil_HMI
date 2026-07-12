@@ -13,8 +13,7 @@ static lv_obj_t *controlButton(lv_obj_t *parent,bool start,int x,int y,int w,int
   lv_obj_clear_flag(group,LV_OBJ_FLAG_CLICKABLE);lv_obj_clear_flag(group,LV_OBJ_FLAG_SCROLLABLE);
   lv_obj_set_flex_flow(group,LV_FLEX_FLOW_ROW);lv_obj_set_flex_align(group,LV_FLEX_ALIGN_CENTER,LV_FLEX_ALIGN_CENTER,LV_FLEX_ALIGN_CENTER);lv_obj_set_style_pad_column(group,18,0);
   lv_obj_t *icon=lv_label_create(group);lv_label_set_text(icon,start?LV_SYMBOL_PLAY:LV_SYMBOL_STOP);lv_obj_set_style_text_color(icon,lv_color_white(),0);lv_obj_set_style_text_font(icon,&lv_font_montserrat_32,0);lv_obj_clear_flag(icon,LV_OBJ_FLAG_CLICKABLE);
-  lv_obj_t *txt=makeLabel(group,start?"START":"STOP",&ui_font_de_24,lv_color_white());lv_obj_clear_flag(txt,LV_OBJ_FLAG_CLICKABLE);
-  return btn;
+  lv_obj_t *txt=makeLabel(group,start?"START":"STOP",&ui_font_de_24,lv_color_white());lv_obj_clear_flag(txt,LV_OBJ_FLAG_CLICKABLE);return btn;
 }
 static void setPreset(lv_obj_t *obj,int index,float voltage,float current){char v[12],a[12],t[48];dtostrf(voltage,1,1,v);dtostrf(current,1,1,a);snprintf(t,sizeof(t),"P%d\n%s V\n%s A",index+1,v,a);lv_label_set_text(obj,t);lv_obj_set_style_text_align(obj,LV_TEXT_ALIGN_CENTER,0);}
 static void makeSetpoint(lv_obj_t *parent,int x,int w,const char *title,const char *range,lv_obj_t **value,bool voltage){
@@ -47,16 +46,16 @@ void makeMain(lv_obj_t *parent){
   title=makeLabel(status,"FEHLER",&lv_font_montserrat_18,blue());lv_obj_set_pos(title,62,170);const char *faults[]={"Hardwarefehler","Übertemperatur","Netzspannungsfehler","Kommunikationsfehler"};for(int i=0;i<4;++i){int y=209+i*31;faultLed[i]=makeLed(status,7,y,15);lv_obj_t *t=makeLabel(status,faults[i],&ui_font_de_14);lv_obj_set_pos(t,31,y-2);}
   lv_obj_t *summary=lv_obj_create(parent);lv_obj_set_pos(summary,574,354);lv_obj_set_size(summary,206,68);stylePanel(summary);canSummary=makeLabel(summary,"CAN OFFLINE\n250 kbit/s",&ui_font_de_14,lightGrey());lv_obj_center(canSummary);lv_obj_set_style_text_align(canSummary,LV_TEXT_ALIGN_CENTER,0);
 }
+
 void updateMain(const PowerSupplyState &s,uint32_t now){
   setFloat(vSet,s.voltageSet,1,"V");setFloat(aSet,s.currentSet,1,"A");
-  const bool recentRx=s.canStarted&&s.lastRxMs!=0&&(now-s.lastRxMs)<AppConfig::RX_TIMEOUT_MS;
-  const bool linkOnline=recentRx&&s.linkState==CanLinkState::Online;
-  if(recentRx){setFloat(vOut,s.voltageOut,2,"V");setFloat(aOut,s.currentOut,2,"A");setFloat(power,s.outputPowerW(),1,"W");}else{lv_label_set_text(vOut,"-");lv_label_set_text(aOut,"-");lv_label_set_text(power,"-");}
-  setLed(onlineLed,linkOnline);setLed(batLed,recentRx&&!s.batteryFault());setLed(chargeLed,s.measuredCharging(now));setLed(faultLed[0],s.hardwareFault(),true);setLed(faultLed[1],s.temperatureFault(),true);setLed(faultLed[2],s.mainsFault(),true);setLed(faultLed[3],!recentRx||s.communicationFault(),true);
+  const bool online=s.online(now);
+  if(online){setFloat(vOut,s.voltageOut,2,"V");setFloat(aOut,s.currentOut,2,"A");setFloat(power,s.outputPowerW(),1,"W");}else{lv_label_set_text(vOut,"-");lv_label_set_text(aOut,"-");lv_label_set_text(power,"-");}
+  setLed(onlineLed,online);setLed(batLed,online&&!s.batteryFault());setLed(chargeLed,s.measuredCharging(now));setLed(faultLed[0],s.hardwareFault(),true);setLed(faultLed[1],s.temperatureFault(),true);setLed(faultLed[2],s.mainsFault(),true);setLed(faultLed[3],!online||s.communicationFault(),true);
   for(int i=0;i<3;++i)setPreset(presetLbl[i],i,s.presets[i].voltage,s.presets[i].current);
   ChargeMode m=s.chargeMode(now);const char *text="AUS";lv_color_t color=grey();if(m==ChargeMode::CC){text="CC";color=orange();}else if(m==ChargeMode::CV){text="CV";color=green();}lv_label_set_text(modeLabel,text);lv_obj_set_style_text_color(modeLabel,color,0);
   char val[24],out[32];dtostrf(static_cast<float>(s.energyKWh),1,s.energyKWh<10.0?3:2,val);snprintf(out,sizeof(out),"%s\nkWh",val);lv_label_set_text(energyLabel,out);
-  const char *linkText=linkOnline?"ONLINE":(s.linkState==CanLinkState::Recovering?"RECOVERING":(s.linkState==CanLinkState::BusOff?"BUS-OFF":"OFFLINE"));
-  char summary[64];snprintf(summary,sizeof(summary),"CAN %s\n250 kbit/s",linkText);lv_label_set_text(canSummary,summary);lv_obj_set_style_text_color(canSummary,linkOnline?green():(s.linkState==CanLinkState::Recovering?orange():red()),0);
+  const char *linkText=online?"ONLINE":(s.linkState==CanLinkState::BusOff?"BUS-OFF":(s.linkState==CanLinkState::Recovering?"RECOVERING":"OFFLINE"));
+  char summary[64];snprintf(summary,sizeof(summary),"CAN %s\n250 kbit/s",linkText);lv_label_set_text(canSummary,summary);lv_obj_set_style_text_color(canSummary,online?green():(s.linkState==CanLinkState::Recovering?orange():red()),0);
 }
 }
