@@ -22,3 +22,10 @@
 
 - Die redundante Überschrift „SCOPE / TREND“ innerhalb der Seite wurde entfernt; der aktive Navigationsknopf „SCOPE“ kennzeichnet die Seite bereits eindeutig.
 - Die Beschriftung „Zeit“ wurde nach oben und rechts verschoben, damit sie sauber innerhalb des unteren Achsenbereichs steht.
+
+## Korrektur der Zeitdarstellung
+
+- Messpunkte werden anhand ihres tatsächlichen Alters auf feste Positionen der X-Achse abgebildet.
+- Der aktuelle Messwert liegt immer bei 0 s.
+- Derselbe Signalverlauf erscheint im 10-Minuten-Fenster doppelt so breit wie im 20-Minuten-Fenster.
+- Wenn noch nicht genügend historische Daten vorhanden sind, bleibt der ältere linke Teil des Diagramms leer.
