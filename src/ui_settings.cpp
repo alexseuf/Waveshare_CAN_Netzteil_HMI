@@ -2,7 +2,7 @@
 #include "app_config.h"
 #include "can_driver.h"
 #include "display.h"
-#include "network_manager.h"
+#include "hmi_wifi.h"
 #include <ESP.h>
 #include <esp_system.h>
 
@@ -41,17 +41,17 @@ static lv_obj_t *card(lv_obj_t *parent,const char *icon,const char *title,const 
 static lv_obj_t *backButton(lv_obj_t *parent){lv_obj_t *b=lv_button_create(parent);lv_obj_remove_style_all(b);lv_obj_set_pos(b,8,5);lv_obj_set_size(b,132,36);lv_obj_add_flag(b,LV_OBJ_FLAG_CLICKABLE);lv_obj_set_style_bg_color(b,darkGrey(),LV_STATE_DEFAULT);lv_obj_set_style_bg_color(b,lv_color_darken(darkGrey(),25),LV_STATE_PRESSED);lv_obj_set_style_bg_opa(b,LV_OPA_COVER,0);lv_obj_set_style_border_color(b,border(),0);lv_obj_set_style_border_width(b,2,0);lv_obj_set_style_radius(b,9,0);lv_obj_t *icon=makeLabel(b,LV_SYMBOL_LEFT,&lv_font_montserrat_16,lv_color_white());lv_obj_set_pos(icon,14,9);lv_obj_t *text=makeLabel(b,"ZURÜCK",&ui_font_de_14,lv_color_white());lv_obj_set_pos(text,40,8);lv_obj_add_event_cb(b,settingsNav,LV_EVENT_CLICKED,reinterpret_cast<void*>(static_cast<intptr_t>(SettingsPage::Overview)));return b;}
 static const char *resetReasonText(){switch(esp_reset_reason()){case ESP_RST_POWERON:return "Power On";case ESP_RST_SW:return "Software";case ESP_RST_PANIC:return "Panic";case ESP_RST_INT_WDT:return "Interrupt WDT";case ESP_RST_TASK_WDT:return "Task WDT";case ESP_RST_WDT:return "Watchdog";case ESP_RST_DEEPSLEEP:return "Deep Sleep";case ESP_RST_BROWNOUT:return "Brownout";default:return "Unbekannt";}}
 
-static void wifiScanEvent(lv_event_t *){NetworkManager::requestScan();wifiOptionsDirty=true;}
-static void wifiConnectEvent(lv_event_t *){char selected[64]={0};lv_dropdown_get_selected_str(wifiDropdown,selected,sizeof(selected));String ssid=selected;const int marker=ssid.lastIndexOf("  (");if(marker>0)ssid=ssid.substring(0,marker);NetworkManager::connectTo(ssid,String(lv_textarea_get_text(wifiPassword)));hideKeyboard();}
-static void wifiDisconnectEvent(lv_event_t *){NetworkManager::disconnect();}
-static void wifiApEvent(lv_event_t *){if(NetworkManager::accessPointActive())NetworkManager::stopAccessPoint();else NetworkManager::startAccessPoint();}
+static void wifiScanEvent(lv_event_t *){HmiWifi::requestScan();wifiOptionsDirty=true;}
+static void wifiConnectEvent(lv_event_t *){char selected[64]={0};lv_dropdown_get_selected_str(wifiDropdown,selected,sizeof(selected));String ssid=selected;const int marker=ssid.lastIndexOf("  (");if(marker>0)ssid=ssid.substring(0,marker);HmiWifi::connectTo(ssid,String(lv_textarea_get_text(wifiPassword)));hideKeyboard();}
+static void wifiDisconnectEvent(lv_event_t *){HmiWifi::disconnect();}
+static void wifiApEvent(lv_event_t *){if(HmiWifi::accessPointActive())HmiWifi::stopAccessPoint();else HmiWifi::startAccessPoint();}
 static void passwordFocusEvent(lv_event_t *){if(wifiKeyboard){lv_keyboard_set_textarea(wifiKeyboard,wifiPassword);lv_obj_clear_flag(wifiKeyboard,LV_OBJ_FLAG_HIDDEN);lv_obj_move_foreground(wifiKeyboard);}}
 static void keyboardEvent(lv_event_t *e){const lv_event_code_t code=lv_event_get_code(e);if(code==LV_EVENT_READY||code==LV_EVENT_CANCEL){hideKeyboard();}}
 
 static void rebuildWifiOptions(){
-  if(!wifiDropdown||!NetworkManager::scanReady())return;
-  String options;const int count=NetworkManager::scanCount();
-  for(int i=0;i<count&&i<20;i++){String name=NetworkManager::scanSsid(i);if(name.isEmpty())continue;if(options.length())options+='\n';options+=name;options+="  (";options+=String(NetworkManager::scanRssi(i));options+=" dBm";if(NetworkManager::scanEncrypted(i))options+=", gesichert";options+=")";}
+  if(!wifiDropdown||!HmiWifi::scanReady())return;
+  String options;const int count=HmiWifi::scanCount();
+  for(int i=0;i<count&&i<20;i++){String name=HmiWifi::scanSsid(i);if(name.isEmpty())continue;if(options.length())options+='\n';options+=name;options+="  (";options+=String(HmiWifi::scanRssi(i));options+=" dBm";if(HmiWifi::scanEncrypted(i))options+=", gesichert";options+=")";}
   if(options.isEmpty())options="Keine Netzwerke gefunden";
   lv_dropdown_set_options(wifiDropdown,options.c_str());wifiOptionsDirty=false;
 }
@@ -79,7 +79,7 @@ void updateSettings(uint32_t now){
   char uptime[32];formatClock(now,uptime,sizeof(uptime));const uint32_t freeHeap=ESP.getFreeHeap();const uint32_t minHeap=ESP.getMinFreeHeap();const uint32_t freePsram=ESP.getFreePsram();const uint32_t totalPsram=ESP.getPsramSize();
   if(overviewMetrics){char text[300];snprintf(text,sizeof(text),"RAM frei  %u kB     PSRAM frei  %.2f MB     CPU  %u %%     FPS  %u     Uptime  %s",freeHeap/1024U,freePsram/1048576.0f,cpuLoadPercent,Display::fps(),uptime);lv_label_set_text(overviewMetrics,text);}
   if(debugMetrics){char text[520];snprintf(text,sizeof(text),"Freier RAM:        %u kB\nMinimum RAM:       %u kB\nFreier PSRAM:      %.2f MB\nPSRAM gesamt:      %.2f MB\nCPU-Last:          %u %%\nLVGL Flush-FPS:    %u fps\nLoop-Zeit:         %.2f ms\nUptime:            %s\nReset-Grund:       %s",freeHeap/1024U,minHeap/1024U,freePsram/1048576.0f,totalPsram/1048576.0f,cpuLoadPercent,Display::fps(),loopTimeUs/1000.0f,uptime,resetReasonText());lv_label_set_text(debugMetrics,text);}
-  if(settingsPage==SettingsPage::Wifi&&wifiStatus){if(wifiOptionsDirty&&NetworkManager::scanReady())rebuildWifiOptions();char text[520];snprintf(text,sizeof(text),"WLAN: %s\nSSID: %s\nSignal: %ld dBm (%u %%)\nIP: %s\nGateway: %s\nMAC: %s\nNTP: %s\nZeit: %s\nAP: %s",NetworkManager::statusText().c_str(),NetworkManager::ssid().c_str(),static_cast<long>(NetworkManager::rssi()),NetworkManager::signalPercent(),NetworkManager::ipText().c_str(),NetworkManager::gatewayText().c_str(),NetworkManager::macText().c_str(),NetworkManager::timeValid()?"synchronisiert":"nicht verfügbar",NetworkManager::localTimeText().c_str(),NetworkManager::accessPointActive()?"aktiv":"aus");lv_label_set_text(wifiStatus,text);if(NetworkManager::scanRunning())lv_label_set_text(lv_obj_get_child(wifiScanButton,0),LV_SYMBOL_REFRESH);}
+  if(settingsPage==SettingsPage::Wifi&&wifiStatus){if(wifiOptionsDirty&&HmiWifi::scanReady())rebuildWifiOptions();char text[520];snprintf(text,sizeof(text),"WLAN: %s\nSSID: %s\nSignal: %ld dBm (%u %%)\nIP: %s\nGateway: %s\nMAC: %s\nNTP: %s\nZeit: %s\nAP: %s",HmiWifi::statusText().c_str(),HmiWifi::ssid().c_str(),static_cast<long>(HmiWifi::rssi()),HmiWifi::signalPercent(),HmiWifi::ipText().c_str(),HmiWifi::gatewayText().c_str(),HmiWifi::macText().c_str(),HmiWifi::timeValid()?"synchronisiert":"nicht verfügbar",HmiWifi::localTimeText().c_str(),HmiWifi::accessPointActive()?"aktiv":"aus");lv_label_set_text(wifiStatus,text);if(HmiWifi::scanRunning())lv_label_set_text(lv_obj_get_child(wifiScanButton,0),LV_SYMBOL_REFRESH);}
 }
 void updateTouchSettings(const TouchSample &s){(void)s;}
 }
