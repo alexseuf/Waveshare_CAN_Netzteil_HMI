@@ -17,3 +17,8 @@
   - Grün: Spannung U
   - Blau: Strom I
   - Orange: Leistung P
+
+## Layoutkorrektur Scope
+
+- Die redundante Überschrift „SCOPE / TREND“ innerhalb der Seite wurde entfernt; der aktive Navigationsknopf „SCOPE“ kennzeichnet die Seite bereits eindeutig.
+- Die Beschriftung „Zeit“ wurde nach oben und rechts verschoben, damit sie sauber innerhalb des unteren Achsenbereichs steht.
