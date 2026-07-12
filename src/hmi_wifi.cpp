@@ -3,6 +3,7 @@
 #include <WiFi.h>
 #include <Preferences.h>
 #include <time.h>
+#include <cstring>
 
 namespace {
 Preferences prefs;
@@ -10,8 +11,6 @@ bool prefsReady=false;
 bool wifiEnabled=true;
 bool wantConnect=false;
 bool apActive=false;
-bool scanRequested=false;
-bool scanDone=false;
 bool ntpConfigured=false;
 String savedSsid;
 String savedPassword;
@@ -28,6 +27,20 @@ constexpr uint32_t AP_RETRY_INTERVAL_MS=60000;
 constexpr uint8_t AP_MAX_ATTEMPTS=3;
 constexpr const char *AP_SSID="Charger-HMI-Setup";
 constexpr const char *TZ_RULE="CET-1CEST,M3.5.0/2,M10.5.0/3";
+constexpr int MAX_SCAN_RESULTS=20;
+
+struct ScanEntry {
+  char ssid[33];
+  int32_t rssi;
+  bool encrypted;
+};
+
+portMUX_TYPE scanMux=portMUX_INITIALIZER_UNLOCKED;
+volatile bool scanRequested=false;
+volatile bool scanRunningFlag=false;
+volatile bool scanReadyFlag=false;
+int cachedScanCount=0;
+ScanEntry cachedScan[MAX_SCAN_RESULTS]{};
 
 void loadConfig(){
   if(!prefsReady)return;
@@ -74,6 +87,30 @@ void updateNtpState(){
     }
   }
 }
+
+void cacheScanResults(int count){
+  ScanEntry temporary[MAX_SCAN_RESULTS]{};
+  const int limited=count<MAX_SCAN_RESULTS?count:MAX_SCAN_RESULTS;
+  int valid=0;
+  for(int i=0;i<limited;++i){
+    const String name=WiFi.SSID(i);
+    if(name.isEmpty())continue;
+    strlcpy(temporary[valid].ssid,name.c_str(),sizeof(temporary[valid].ssid));
+    temporary[valid].rssi=WiFi.RSSI(i);
+    temporary[valid].encrypted=WiFi.encryptionType(i)!=WIFI_AUTH_OPEN;
+    ++valid;
+  }
+
+  portENTER_CRITICAL(&scanMux);
+  cachedScanCount=valid;
+  memcpy(cachedScan,temporary,sizeof(cachedScan));
+  scanRunningFlag=false;
+  scanReadyFlag=true;
+  portEXIT_CRITICAL(&scanMux);
+
+  WiFi.scanDelete();
+  DebugLog::printf("[WIFI] Netzwerksuche fertig: %d Netze, %d gespeichert\n",count,valid);
+}
 }
 
 void HmiWifi::begin(){
@@ -92,24 +129,50 @@ void HmiWifi::begin(){
 
 void HmiWifi::task(){
   const uint32_t now=millis();
+  bool startScan=false;
+  portENTER_CRITICAL(&scanMux);
+  if(scanRequested&&!scanRunningFlag){
+    scanRequested=false;
+    scanRunningFlag=true;
+    scanReadyFlag=false;
+    startScan=true;
+  }
+  portEXIT_CRITICAL(&scanMux);
 
-  if(scanRequested&&WiFi.scanComplete()!=WIFI_SCAN_RUNNING){
+  if(startScan){
     WiFi.mode(apActive?WIFI_AP_STA:WIFI_STA);
     WiFi.scanDelete();
-    WiFi.scanNetworks(true,true,false,300);
-    scanRequested=false;
-    scanDone=false;
-    DebugLog::println("[WIFI] Netzwerksuche gestartet");
+    const int result=WiFi.scanNetworks(true,true,false,300);
+    if(result==WIFI_SCAN_FAILED){
+      portENTER_CRITICAL(&scanMux);
+      scanRunningFlag=false;
+      scanReadyFlag=true;
+      cachedScanCount=0;
+      portEXIT_CRITICAL(&scanMux);
+      DebugLog::println("[WIFI] Netzwerksuche konnte nicht gestartet werden");
+    }else{
+      DebugLog::println("[WIFI] Netzwerksuche gestartet");
+    }
   }
 
-  const int scanState=WiFi.scanComplete();
-  if(scanState>=0&&!scanDone){
-    scanDone=true;
-    DebugLog::printf("[WIFI] Netzwerksuche fertig: %d Netze\n",scanState);
+  bool running=false;
+  portENTER_CRITICAL(&scanMux);
+  running=scanRunningFlag;
+  portEXIT_CRITICAL(&scanMux);
+  if(running){
+    const int scanState=WiFi.scanComplete();
+    if(scanState>=0)cacheScanResults(scanState);
+    else if(scanState==WIFI_SCAN_FAILED){
+      portENTER_CRITICAL(&scanMux);
+      scanRunningFlag=false;
+      scanReadyFlag=true;
+      cachedScanCount=0;
+      portEXIT_CRITICAL(&scanMux);
+      DebugLog::println("[WIFI] Netzwerksuche fehlgeschlagen");
+    }
   }
 
   if(!wifiEnabled)return;
-
   if(WiFi.status()==WL_CONNECTED){
     wantConnect=false;
     disconnectedSinceMs=0;
@@ -119,28 +182,21 @@ void HmiWifi::task(){
     updateNtpState();
     return;
   }
-
   if(disconnectedSinceMs==0)disconnectedSinceMs=now;
-
   if(wantConnect&&now-connectStartedMs>=CONNECT_TIMEOUT_MS){
     wantConnect=false;
     WiFi.disconnect(false,false);
     DebugLog::println("[WIFI] Verbindungsversuch ohne Erfolg beendet");
   }
-
-  if(!wantConnect&&!savedSsid.isEmpty()&&now-lastReconnectMs>=RECONNECT_INTERVAL_MS){
-    startStationConnect();
-  }
-
-  if(!apActive && now-disconnectedSinceMs>=AP_FALLBACK_DELAY_MS &&
-     apAttemptCount<AP_MAX_ATTEMPTS &&
-     (lastApAttemptMs==0 || now-lastApAttemptMs>=AP_RETRY_INTERVAL_MS)){
+  if(!wantConnect&&!savedSsid.isEmpty()&&now-lastReconnectMs>=RECONNECT_INTERVAL_MS)startStationConnect();
+  if(!apActive&&now-disconnectedSinceMs>=AP_FALLBACK_DELAY_MS&&
+     apAttemptCount<AP_MAX_ATTEMPTS&&
+     (lastApAttemptMs==0||now-lastApAttemptMs>=AP_RETRY_INTERVAL_MS)){
     lastApAttemptMs=now;
     ++apAttemptCount;
     startAccessPoint();
-    if(!apActive && apAttemptCount>=AP_MAX_ATTEMPTS){
+    if(!apActive&&apAttemptCount>=AP_MAX_ATTEMPTS)
       DebugLog::println("[WIFI] Access-Point-Fallback nach 3 Fehlversuchen gestoppt");
-    }
   }
 }
 
@@ -148,27 +204,16 @@ bool HmiWifi::enabled(){return wifiEnabled;}
 void HmiWifi::setEnabled(bool enabled){
   wifiEnabled=enabled;saveConfig();
   if(enabled){
-    disconnectedSinceMs=millis();
-    apAttemptCount=0;
-    lastApAttemptMs=0;
+    disconnectedSinceMs=millis();apAttemptCount=0;lastApAttemptMs=0;
     if(!savedSsid.isEmpty())startStationConnect();
-  } else {
-    wantConnect=false;
-    stopAccessPoint();
-    WiFi.disconnect(true,false);
-    WiFi.mode(WIFI_OFF);
+  }else{
+    wantConnect=false;stopAccessPoint();WiFi.disconnect(true,false);WiFi.mode(WIFI_OFF);
   }
 }
-
 bool HmiWifi::connected(){return WiFi.status()==WL_CONNECTED;}
 bool HmiWifi::connecting(){return wantConnect;}
 bool HmiWifi::accessPointActive(){return apActive;}
-
-bool HmiWifi::timeValid(){
-  const time_t now=time(nullptr);
-  return now>1700000000;
-}
-
+bool HmiWifi::timeValid(){return time(nullptr)>1700000000;}
 String HmiWifi::ssid(){return connected()?WiFi.SSID():savedSsid;}
 String HmiWifi::statusText(){
   if(connected())return "Verbunden";
@@ -181,70 +226,34 @@ String HmiWifi::ipText(){return connected()?WiFi.localIP().toString():(apActive?
 String HmiWifi::gatewayText(){return connected()?WiFi.gatewayIP().toString():String("-");}
 String HmiWifi::macText(){return WiFi.macAddress();}
 int32_t HmiWifi::rssi(){return connected()?WiFi.RSSI():-127;}
-uint8_t HmiWifi::signalPercent(){
-  const int32_t value=rssi();
-  if(value<=-100)return 0;
-  if(value>=-50)return 100;
-  return static_cast<uint8_t>(2*(value+100));
-}
-String HmiWifi::localTimeText(){
-  struct tm info;
-  if(!getLocalTime(&info,0))return "-";
-  char b[32];
-  strftime(b,sizeof(b),"%d.%m.%Y %H:%M:%S",&info);
-  return String(b);
-}
-String HmiWifi::lastSyncText(){
-  if(!timeValid())return "-";
-  struct tm info;
-  time_t now=time(nullptr);
-  localtime_r(&now,&info);
-  char b[24];
-  strftime(b,sizeof(b),"%d.%m.%Y %H:%M",&info);
-  return String(b);
-}
+uint8_t HmiWifi::signalPercent(){const int32_t value=rssi();if(value<=-100)return 0;if(value>=-50)return 100;return static_cast<uint8_t>(2*(value+100));}
+String HmiWifi::localTimeText(){struct tm info;if(!getLocalTime(&info,0))return "-";char b[32];strftime(b,sizeof(b),"%d.%m.%Y %H:%M:%S",&info);return String(b);}
+String HmiWifi::lastSyncText(){if(!timeValid())return "-";struct tm info;time_t now=time(nullptr);localtime_r(&now,&info);char b[24];strftime(b,sizeof(b),"%d.%m.%Y %H:%M",&info);return String(b);}
 
-void HmiWifi::requestScan(){scanRequested=true;scanDone=false;}
-bool HmiWifi::scanRunning(){return WiFi.scanComplete()==WIFI_SCAN_RUNNING||scanRequested;}
-bool HmiWifi::scanReady(){return scanDone&&WiFi.scanComplete()>=0;}
-int HmiWifi::scanCount(){const int n=WiFi.scanComplete();return n<0?0:n;}
-String HmiWifi::scanSsid(int index){const int n=scanCount();return index>=0&&index<n?WiFi.SSID(index):String();}
-int32_t HmiWifi::scanRssi(int index){const int n=scanCount();return index>=0&&index<n?WiFi.RSSI(index):-127;}
-bool HmiWifi::scanEncrypted(int index){const int n=scanCount();return index>=0&&index<n&&WiFi.encryptionType(index)!=WIFI_AUTH_OPEN;}
+void HmiWifi::requestScan(){
+  portENTER_CRITICAL(&scanMux);
+  scanRequested=true;
+  scanReadyFlag=false;
+  portEXIT_CRITICAL(&scanMux);
+}
+bool HmiWifi::scanRunning(){portENTER_CRITICAL(&scanMux);const bool value=scanRequested||scanRunningFlag;portEXIT_CRITICAL(&scanMux);return value;}
+bool HmiWifi::scanReady(){portENTER_CRITICAL(&scanMux);const bool value=scanReadyFlag;portEXIT_CRITICAL(&scanMux);return value;}
+int HmiWifi::scanCount(){portENTER_CRITICAL(&scanMux);const int value=cachedScanCount;portEXIT_CRITICAL(&scanMux);return value;}
+String HmiWifi::scanSsid(int index){char name[33]={0};portENTER_CRITICAL(&scanMux);if(index>=0&&index<cachedScanCount)strlcpy(name,cachedScan[index].ssid,sizeof(name));portEXIT_CRITICAL(&scanMux);return String(name);}
+int32_t HmiWifi::scanRssi(int index){int32_t value=-127;portENTER_CRITICAL(&scanMux);if(index>=0&&index<cachedScanCount)value=cachedScan[index].rssi;portEXIT_CRITICAL(&scanMux);return value;}
+bool HmiWifi::scanEncrypted(int index){bool value=false;portENTER_CRITICAL(&scanMux);if(index>=0&&index<cachedScanCount)value=cachedScan[index].encrypted;portEXIT_CRITICAL(&scanMux);return value;}
 
 bool HmiWifi::connectTo(const String &newSsid,const String &password){
   if(newSsid.isEmpty())return false;
-  savedSsid=newSsid;
-  savedPassword=password;
-  wifiEnabled=true;
-  saveConfig();
-  stopAccessPoint();
-  WiFi.disconnect(false,false);
-  apAttemptCount=0;
-  lastApAttemptMs=0;
-  disconnectedSinceMs=millis();
-  startStationConnect();
-  return true;
+  savedSsid=newSsid;savedPassword=password;wifiEnabled=true;saveConfig();stopAccessPoint();WiFi.disconnect(false,false);
+  apAttemptCount=0;lastApAttemptMs=0;disconnectedSinceMs=millis();startStationConnect();return true;
 }
-void HmiWifi::disconnect(){
-  wantConnect=false;
-  WiFi.disconnect(false,false);
-  disconnectedSinceMs=millis();
-  apAttemptCount=0;
-  lastApAttemptMs=0;
-}
+void HmiWifi::disconnect(){wantConnect=false;WiFi.disconnect(false,false);disconnectedSinceMs=millis();apAttemptCount=0;lastApAttemptMs=0;}
 void HmiWifi::startAccessPoint(){
   if(apActive)return;
   WiFi.mode(WIFI_AP_STA);
   const bool started=WiFi.softAP(AP_SSID);
   apActive=started;
-  DebugLog::printf("[WIFI] Access Point %s: %s (Versuch %u/%u)\n",
-                   AP_SSID,started?"aktiv":"Fehler",
-                   static_cast<unsigned>(apAttemptCount),
-                   static_cast<unsigned>(AP_MAX_ATTEMPTS));
+  DebugLog::printf("[WIFI] Access Point %s: %s (Versuch %u/%u)\n",AP_SSID,started?"aktiv":"Fehler",static_cast<unsigned>(apAttemptCount),static_cast<unsigned>(AP_MAX_ATTEMPTS));
 }
-void HmiWifi::stopAccessPoint(){
-  if(!apActive)return;
-  WiFi.softAPdisconnect(true);
-  apActive=false;
-}
+void HmiWifi::stopAccessPoint(){if(!apActive)return;WiFi.softAPdisconnect(true);apActive=false;}
