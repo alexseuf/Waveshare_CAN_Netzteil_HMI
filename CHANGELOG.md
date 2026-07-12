@@ -41,3 +41,13 @@
 - Scope maximiert, untere Statuszeile entfernt, Achsenbeschriftungen und verschiebbare Legende ergänzt.
 - Zeitbasisbedienung neben der Anzeige sowie Standardansicht-Taste ergänzt.
 - Zwei-Finger-Zoom: jeweilige Achse über Achsenbereich, alle Achsen im Plotbereich.
+
+
+## 9.4.0
+
+- Zwei-Finger-Zoom der Scope-Zeitachse und aller drei Y-Achsen zuverlässiger umgesetzt.
+- Achsenwerte werden beim Zoomen unmittelbar auf die neue Skalierung aktualisiert.
+- Koordinatenerkennung des Pinch-Zooms an die tatsächliche Position der Scope-Seite angepasst.
+- Legende auf den Plotbereich begrenzt, sodass sie sich nicht mehr mit Achsenbeschriftungen überschneidet.
+- Kurze farbige Linien in der Legende ergänzen die Zuordnung von Spannung, Strom und Leistung.
+- Alle bereits in V9.3 umgesetzten Zeitstempel bleiben einheitlich im Format HH:MM:SS.
