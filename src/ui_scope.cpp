@@ -83,7 +83,7 @@ void handleScopeTouch(const TouchSample&s){
   visibleWindowMs=constrain((uint32_t)lroundf(visibleWindowMs*factor),5000UL,1800000UL);
   dragLastX=x;changed=true;
  }else if(dragMode>=2&&dragMode<=4&&fabsf(dy)>=6.0f){
-  const float factor=powf(2.0f,-dy/120.0f);
+  const float factor=powf(2.0f,dy/120.0f);
   if(dragMode==2)vmax=constrain(vmax*factor,5.0f,100.0f);
   else if(dragMode==3)imax=constrain(imax*factor,1.0f,40.0f);
   else pmax=constrain(pmax*factor,100.0f,2000.0f);
