@@ -47,3 +47,16 @@
 - CC/CV-Erkennung auf prozentuale Soll-/Ist-Abweichungen mit Hysterese umgestellt.
 - Scope-/Trend-Entwurf und CAN-Logger als INFO-Unterseite ergänzt.
 - Log-Zeitstempel auf HH:MM:SS umgestellt.
+
+
+## V9.3
+
+- Scope maximiert und mit relativer Zeitachse, drei Y-Skalierungen, verschiebbarer Legende und Standardansicht ergänzt.
+- Einheitliche Zeitstempel im Format HH:MM:SS sind funktionsfähig umgesetzt.
+
+## V9.4
+
+- Pinch-Zoom der Zeitachse, einzelner Y-Achsen und aller Achsen im Plotbereich korrigiert.
+- Dynamische Achsenbeschriftungen zeigen nach jeder Zoomgeste die tatsächlich verwendeten Maximalwerte.
+- Legende kann nur noch innerhalb des Plotbereichs verschoben werden und überdeckt keine Achsenbeschriftungen.
+- Spannung, Strom und Leistung erhalten in der Legende jeweils einen kurzen Strich in Signalfarbe.
