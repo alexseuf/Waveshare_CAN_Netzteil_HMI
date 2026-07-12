@@ -1,23 +1,31 @@
-# Scope-/Trend-Funktion V9.2
+# Scope-/Trend-Funktion V9.4
 
-V9.2 enthält einen ersten funktionsfähigen Scope-Entwurf.
+Die Scope-Seite zeichnet die CAN-Istwerte von Spannung, Strom und Leistung auf und stellt sie als Live-Trend dar.
 
-## Aktueller Funktionsumfang
+## Funktionsumfang
 
 - Abtastung der CAN-Istwerte im 1-s-Raster.
 - Ringpuffer für bis zu 1800 Messpunkte im RAM.
 - Kurven für Spannung, Strom und Leistung.
-- Kommunikationsunterbrechungen werden als ungültige Punkte bzw. Lücken gespeichert.
-- Zeitfenster: 30 s, 2 min, 10 min und 30 min.
-- Pause/Fortsetzen und Löschen.
+- Kommunikationsunterbrechungen werden als Lücken gespeichert.
+- Einstellbares Zeitfenster von 5 s bis 30 min.
+- Pause/Fortsetzen, Löschen und Standardansicht.
 - Zeitfensteränderung über Plus-/Minus-Schaltflächen.
+- Zwei-Finger-Zoom über der X-Achse verändert ausschließlich das Zeitfenster.
+- Zwei-Finger-Zoom über einer farbigen Y-Achsenspalte verändert ausschließlich deren Skala.
+- Zwei-Finger-Zoom im Plotbereich verändert Zeit-, Spannungs-, Strom- und Leistungsskala gemeinsam.
+- Achsenwerte werden nach jeder Zoomgeste dynamisch aktualisiert.
+- Verschiebbare Legende mit farbigen Signalstrichen; ihre Bewegung ist auf den Plotbereich begrenzt.
 
-Die drei Größen werden für eine gemeinsame Diagrammachse auf ihren jeweiligen Maximalbereich normiert. Die aktuellen Absolutwerte stehen unter dem Diagramm.
+## Signalzuordnung
+
+- Grün: Spannung U
+- Blau: Strom I
+- Orange: Leistung P
 
 ## Geplante Erweiterungen
 
 - Einfinger-Pan im pausierten Zustand.
-- Pinch-Zoom mit zwei Touchpunkten des GT911.
 - Messcursor mit Zeitpunkt und Absolutwerten.
-- Umschaltbare Kanäle und separate Achsenskalierung.
+- Umschaltbare Kanäle.
 - Speicherung längerer Aufzeichnungen auf SD-Karte.
