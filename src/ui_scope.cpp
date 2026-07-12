@@ -20,7 +20,25 @@ void updateWindowLabel(){char t[24];if(visibleWindowMs<60000)snprintf(t,sizeof(t
 void updateXAxis(){for(int i=0;i<5;i++){float frac=(4-i)/4.0f;uint32_t ms=(uint32_t)(visibleWindowMs*frac);char t[24];if(i==4)snprintf(t,sizeof(t),"0 s");else if(ms<60000)snprintf(t,sizeof(t),"-%lu s",(unsigned long)(ms/1000));else snprintf(t,sizeof(t),"-%.1f min",ms/60000.0f);lv_label_set_text(xLabels[i],t);}}
 void updateYAxis(){for(int i=0;i<5;i++){const float frac=(4-i)/4.0f;char t[16];snprintf(t,sizeof(t),"%.1f",vmax*frac);lv_label_set_text(vLabels[i],t);snprintf(t,sizeof(t),"%.1f",imax*frac);lv_label_set_text(iLabels[i],t);snprintf(t,sizeof(t),"%.0f",pmax*frac);lv_label_set_text(pLabels[i],t);}}
 void clearSamples(){scopeHead=scopeCount=0;lastSampleMs=0;if(chart){lv_chart_set_all_values(chart,seriesV,LV_CHART_POINT_NONE);lv_chart_set_all_values(chart,seriesI,LV_CHART_POINT_NONE);lv_chart_set_all_values(chart,seriesP,LV_CHART_POINT_NONE);lv_chart_refresh(chart);}}
-void rebuild(){if(!chart)return;lv_chart_set_all_values(chart,seriesV,LV_CHART_POINT_NONE);lv_chart_set_all_values(chart,seriesI,LV_CHART_POINT_NONE);lv_chart_set_all_values(chart,seriesP,LV_CHART_POINT_NONE);if(!scopeCount){lv_chart_refresh(chart);return;}uint32_t now=samples[(scopeHead-1+SCOPE_CAPACITY)%SCOPE_CAPACITY].ms,start=now>visibleWindowMs?now-visibleWindowMs:0;int eligible=0;for(int i=0;i<scopeCount;i++){auto&s=samples[(scopeHead-scopeCount+i+SCOPE_CAPACITY)%SCOPE_CAPACITY];if(s.ms>=start)eligible++;}int stride=max(1,(eligible+SCOPE_POINTS-1)/SCOPE_POINTS),k=0;for(int i=0;i<scopeCount;i++){auto&s=samples[(scopeHead-scopeCount+i+SCOPE_CAPACITY)%SCOPE_CAPACITY];if(s.ms<start)continue;if((k++%stride)!=0)continue;lv_chart_set_next_value(chart,seriesV,scaled(s.voltage,vmax));lv_chart_set_next_value(chart,seriesI,scaled(s.current,imax));lv_chart_set_next_value(chart,seriesP,scaled(s.power,pmax));}lv_chart_refresh(chart);}
+void rebuild(){
+ if(!chart)return;
+ lv_chart_set_all_values(chart,seriesV,LV_CHART_POINT_NONE);
+ lv_chart_set_all_values(chart,seriesI,LV_CHART_POINT_NONE);
+ lv_chart_set_all_values(chart,seriesP,LV_CHART_POINT_NONE);
+ if(!scopeCount){lv_chart_refresh(chart);return;}
+ const uint32_t now=samples[(scopeHead-1+SCOPE_CAPACITY)%SCOPE_CAPACITY].ms;
+ for(int i=0;i<scopeCount;i++){
+  auto&s=samples[(scopeHead-scopeCount+i+SCOPE_CAPACITY)%SCOPE_CAPACITY];
+  const uint32_t age=now-s.ms;
+  if(age>visibleWindowMs)continue;
+  const uint32_t elapsed=visibleWindowMs-age;
+  const int point=(int)(((uint64_t)elapsed*(SCOPE_POINTS-1))/visibleWindowMs);
+  lv_chart_set_value_by_id(chart,seriesV,point,scaled(s.voltage,vmax));
+  lv_chart_set_value_by_id(chart,seriesI,point,scaled(s.current,imax));
+  lv_chart_set_value_by_id(chart,seriesP,point,scaled(s.power,pmax));
+ }
+ lv_chart_refresh(chart);
+}
 void resetView(){visibleWindowMs=600000UL;vmax=60;imax=20;pmax=1000;lv_obj_set_pos(legend,510,80);updateWindowLabel();updateXAxis();updateYAxis();rebuild();}
 void control(lv_event_t*e){int id=(int)(intptr_t)lv_event_get_user_data(e);if(id==1){scopePaused=!scopePaused;lv_label_set_text(pauseText,scopePaused?"FORTSETZEN":"PAUSE");}else if(id==2)clearSamples();else if(id==3){visibleWindowMs=max<uint32_t>(5000,visibleWindowMs/2);updateWindowLabel();updateXAxis();rebuild();}else if(id==4){visibleWindowMs=min<uint32_t>(1800000,visibleWindowMs*2);updateWindowLabel();updateXAxis();rebuild();}else if(id==5)resetView();}
 void dragLegend(lv_event_t*){lv_indev_t*ind=lv_indev_active();if(!ind)return;lv_point_t v;lv_indev_get_vect(ind,&v);lv_coord_t x=lv_obj_get_x(legend)+v.x,y=lv_obj_get_y(legend)+v.y;x=constrain(x,PLOT_X,PLOT_X+PLOT_W-LEGEND_W);y=constrain(y,PLOT_Y,PLOT_Y+PLOT_H-LEGEND_H);lv_obj_set_pos(legend,x,y);}
