@@ -1,6 +1,8 @@
-# Waveshare CAN-Netzteil-HMI V9.4.2
+# Waveshare CAN-Netzteil-HMI V9.5.0-dev
 
 PlatformIO-Projekt für das Waveshare ESP32-S3-Touch-LCD-4.3.
+
+> Aktiver Entwicklungsstand für Version 9.5 auf dem Branch `feature/v9.5`. Die stabile Version bleibt V9.4.2 auf `main`.
 
 ## Kernfunktionen
 - RGB-LCD und GT911-Touch
@@ -9,6 +11,21 @@ PlatformIO-Projekt für das Waveshare ESP32-S3-Touch-LCD-4.3.
 - Status-/Istwerttelegramm `0x18FF50E5`
 - START/STOP, Presets, CC/CV, Energiezähler
 - CAN-Monitor, Debug-Log und Einstellungen
+
+## Entwicklung V9.5
+
+V9.5 ergänzt schrittweise:
+- RAM-, PSRAM-, CPU- und FPS-Diagnose
+- größeren Diagramm-Ringpuffer im PSRAM
+- NTP-Zeitstempel und absolute Diagramm-Zeitachse
+- Settings-Unterseiten für Debug, WiFi und MQTT/Home Assistant
+- nicht blockierende WLAN- und MQTT-Dienste
+- lokalen Webserver mit Dashboard, Diagrammen und Konfiguration
+- Passwortschutz für Steuerung und Konfiguration
+- Beschränkung des Webzugriffs auf das lokale Netzwerk
+- Vorrang der lokalen Touchbedienung
+
+Der vollständige Entwicklungsplan steht in [`docs/V9.5_PLAN.md`](docs/V9.5_PLAN.md).
 
 ## Toolchain
 Die Plattform ist reproduzierbar auf PioArduino `55.03.39` festgeschrieben. Details: `docs/Toolchain.md`.
@@ -24,12 +41,11 @@ Schaltplan, CAN-Protokoll, UI-Richtlinien und Änderungsanforderungen liegen im 
 - Bei aktiviertem CAN wird die native USB-Datenverbindung über den FSUSB42 getrennt. Zum Debuggen ist der UART-Stecker auf GPIO43/GPIO44 zu verwenden.
 - U7 (SP3485EN) ist auf dem Originalboard mit 5 V versorgt und kann einen zu hohen RO-Pegel zum ESP32 liefern. Der bestätigte 3,3-V-Umbau ist in `docs/Board_Bugs_and_Fixes.md` beschrieben.
 
-
-## Navigation V9.4.2
+## Navigation der stabilen V9.4.2
 
 `HAUPT | SCOPE | LOG | INFO | ⚙`
 
-Der CAN-Logger befindet sich unter INFO. Die Scope-Seite unterstützt Einfinger-Wischbedienung direkt auf den Zeit- und Y-Achsen sowie eine verschiebbare, farbcodierte Legende. Der Ringpuffer zeichnet 1800 Messpunkte im 1-s-Raster und damit bis zu 30 Minuten auf.
+Der CAN-Logger befindet sich unter INFO. Die Scope-Seite unterstützt Einfinger-Wischbedienung direkt auf den Zeit- und Y-Achsen sowie eine verschiebbare, farbcodierte Legende. Der bisherige Ringpuffer zeichnet 1800 Messpunkte im 1-s-Raster und damit bis zu 30 Minuten auf.
 
 ## Projektbilder
 
