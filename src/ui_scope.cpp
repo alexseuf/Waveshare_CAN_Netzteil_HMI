@@ -28,7 +28,7 @@ void makeLegendLine(lv_obj_t*parent,int y,lv_color_t color,const char*text){lv_o
 }
 
 void makeScope(lv_obj_t *parent){
- lv_obj_t*box=lv_obj_create(parent);lv_obj_set_size(box,780,422);stylePanel(box);makeLabel(box,"SCOPE / TREND",&lv_font_montserrat_24,orange());
+ lv_obj_t*box=lv_obj_create(parent);lv_obj_set_size(box,780,422);stylePanel(box);
  lv_obj_t*reset=makeButton(box,"↺ STANDARD",218,2,132,40,blue(),&ui_font_de_14);lv_obj_add_event_cb(reset,control,LV_EVENT_CLICKED,(void*)5);
  lv_obj_t*minus=makeButton(box,"-",360,2,42,40,blue(),&lv_font_montserrat_24);lv_obj_add_event_cb(minus,control,LV_EVENT_CLICKED,(void*)3);
  windowLabel=makeLabel(box,"10.0 min",&ui_font_de_16,lv_color_white());lv_obj_set_pos(windowLabel,413,13);
@@ -39,7 +39,7 @@ void makeScope(lv_obj_t *parent){
  chart=lv_chart_create(box);lv_obj_set_pos(chart,PLOT_X,PLOT_Y);lv_obj_set_size(chart,PLOT_W,PLOT_H);lv_chart_set_type(chart,LV_CHART_TYPE_LINE);lv_chart_set_point_count(chart,SCOPE_POINTS);lv_chart_set_range(chart,LV_CHART_AXIS_PRIMARY_Y,0,1000);lv_obj_set_style_bg_color(chart,bg(),0);lv_obj_set_style_border_color(chart,border(),0);lv_obj_set_style_line_color(chart,border(),LV_PART_MAIN);lv_obj_set_style_size(chart,0,0,LV_PART_INDICATOR);
  seriesV=lv_chart_add_series(chart,green(),LV_CHART_AXIS_PRIMARY_Y);seriesI=lv_chart_add_series(chart,blue(),LV_CHART_AXIS_PRIMARY_Y);seriesP=lv_chart_add_series(chart,orange(),LV_CHART_AXIS_PRIMARY_Y);
  for(int n=0;n<5;n++){int y=52+n*76;vLabels[n]=makeLabel(box,"",&ui_font_de_14,green());lv_obj_set_pos(vLabels[n],14,y);iLabels[n]=makeLabel(box,"",&ui_font_de_14,blue());lv_obj_set_pos(iLabels[n],60,y);pLabels[n]=makeLabel(box,"",&ui_font_de_14,orange());lv_obj_set_pos(pLabels[n],100,y);}updateYAxis(); 
- for(int n=0;n<5;n++){xLabels[n]=makeLabel(box,"",&ui_font_de_14,lv_color_white());lv_obj_set_pos(xLabels[n],135+n*150,378);}lv_obj_t*zeit=makeLabel(box,"Zeit",&ui_font_de_14,lightGrey());lv_obj_set_pos(zeit,18,397);updateXAxis();
+ for(int n=0;n<5;n++){xLabels[n]=makeLabel(box,"",&ui_font_de_14,lv_color_white());lv_obj_set_pos(xLabels[n],135+n*150,378);}lv_obj_t*zeit=makeLabel(box,"Zeit",&ui_font_de_14,lightGrey());lv_obj_set_pos(zeit,34,388);updateXAxis();
  legend=lv_obj_create(box);lv_obj_set_pos(legend,510,80);lv_obj_set_size(legend,LEGEND_W,LEGEND_H);stylePanel(legend);lv_obj_add_flag(legend,LV_OBJ_FLAG_CLICKABLE);lv_obj_add_event_cb(legend,dragLegend,LV_EVENT_PRESSING,nullptr);makeLabel(legend,"LEGENDE",&ui_font_de_16,lv_color_white());makeLegendLine(legend,28,green(),"U  Spannung");makeLegendLine(legend,52,blue(),"I  Strom");makeLegendLine(legend,76,orange(),"P  Leistung");
 }
 void updateScope(const PowerSupplyState&s,uint32_t now){if(!scopePaused&&now-lastSampleMs>=1000){lastSampleMs=now;auto&d=samples[scopeHead];d.ms=now;if(s.online(now)){d.voltage=s.voltageOut;d.current=s.currentOut;d.power=s.outputPowerW();}else d.voltage=d.current=d.power=NAN;scopeHead=(scopeHead+1)%SCOPE_CAPACITY;if(scopeCount<SCOPE_CAPACITY)scopeCount++;rebuild();}}
