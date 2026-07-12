@@ -92,12 +92,12 @@ void loop() {
   static uint32_t healthMs = 0;
   if (now - healthMs >= 5000) {
     healthMs = now;
-    const char *wifiState = networkStarted ? HmiWifi::statusText().c_str() : "noch nicht gestartet";
+    String wifiState = networkStarted ? HmiWifi::statusText() : String("noch nicht gestartet");
     DebugLog::printf("[HEALTH] heap=%u psram=%u touch=%s CAN=%s RX=%s age=%lu ms status=0x%02X WiFi=%s\n",
                      ESP.getFreeHeap(), ESP.getFreePsram(), Touch::online()?"OK":"FEHLER",
                      state.canStarted?"OK":"FEHLER", state.online(now)?"OK":"TIMEOUT",
                      state.lastRxMs ? static_cast<unsigned long>(now-state.lastRxMs) : 0UL,
-                     state.status, wifiState);
+                     state.status, wifiState.c_str());
   }
 
   Display::task();
