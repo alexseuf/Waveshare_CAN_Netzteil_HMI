@@ -25,7 +25,7 @@ static void lvTouchRead(lv_indev_t *, lv_indev_data_t *d) {
 
 void setup() {
   DebugLog::begin();
-  DebugLog::println("\n===== NETZTEIL-HMI v9.3 =====");
+  DebugLog::println("\n===== NETZTEIL-HMI v9.4 =====");
   DebugLog::printf("[DEBUG] UART TX=GPIO%d RX=GPIO%d, %lu Baud\n",
                    AppConfig::PIN_DEBUG_TX, AppConfig::PIN_DEBUG_RX,
                    static_cast<unsigned long>(AppConfig::SERIAL_BAUD));
