@@ -10,7 +10,7 @@ ScopeSample samples[SCOPE_CAPACITY];int scopeHead=0,scopeCount=0;uint32_t lastSa
 uint32_t visibleWindowMs=600000UL;float vmax=60.0f,imax=20.0f,pmax=1000.0f;
 lv_obj_t *chart=nullptr,*windowLabel=nullptr,*pauseText=nullptr,*legend=nullptr,*xLabels[5]{},*vLabels[5]{},*iLabels[5]{},*pLabels[5]{};
 lv_chart_series_t *seriesV=nullptr,*seriesI=nullptr,*seriesP=nullptr;
-bool pinch=false;float pinchLast=0;uint8_t pinchMode=0;
+bool axisDrag=false;float dragLastX=0,dragLastY=0;uint8_t dragMode=0;
 constexpr int SCOPE_SCREEN_X=10,SCOPE_SCREEN_Y=48;
 constexpr int PLOT_X=140,PLOT_Y=48,PLOT_W=620,PLOT_H=322;
 constexpr int LEGEND_W=230,LEGEND_H=118;
@@ -61,5 +61,33 @@ void makeScope(lv_obj_t *parent){
  legend=lv_obj_create(box);lv_obj_set_pos(legend,510,80);lv_obj_set_size(legend,LEGEND_W,LEGEND_H);stylePanel(legend);lv_obj_add_flag(legend,LV_OBJ_FLAG_CLICKABLE);lv_obj_add_event_cb(legend,dragLegend,LV_EVENT_PRESSING,nullptr);makeLabel(legend,"LEGENDE",&ui_font_de_16,lv_color_white());makeLegendLine(legend,28,green(),"U  Spannung");makeLegendLine(legend,52,blue(),"I  Strom");makeLegendLine(legend,76,orange(),"P  Leistung");
 }
 void updateScope(const PowerSupplyState&s,uint32_t now){if(!scopePaused&&now-lastSampleMs>=1000){lastSampleMs=now;auto&d=samples[scopeHead];d.ms=now;if(s.online(now)){d.voltage=s.voltageOut;d.current=s.currentOut;d.power=s.outputPowerW();}else d.voltage=d.current=d.power=NAN;scopeHead=(scopeHead+1)%SCOPE_CAPACITY;if(scopeCount<SCOPE_CAPACITY)scopeCount++;rebuild();}}
-void handleScopeTouch(const TouchSample&s){if(!s.newPacket)return;if(!s.pressed||s.points<2){pinch=false;pinchLast=0;return;}const float dx=(float)s.pointX[1]-s.pointX[0],dy=(float)s.pointY[1]-s.pointY[0];const float dist=sqrtf(dx*dx+dy*dy);const float cx=((float)s.pointX[0]+s.pointX[1])*0.5f-SCOPE_SCREEN_X,cy=((float)s.pointY[0]+s.pointY[1])*0.5f-SCOPE_SCREEN_Y;if(dist<20)return;if(!pinch){pinch=true;pinchLast=dist;if(cy>=PLOT_Y+PLOT_H-8)pinchMode=1;else if(cx<PLOT_X){if(cx<52)pinchMode=2;else if(cx<96)pinchMode=3;else pinchMode=4;}else pinchMode=5;return;}const float r=dist/pinchLast;if(r<0.96f||r>1.04f){if(pinchMode==1||pinchMode==5)visibleWindowMs=constrain((uint32_t)lroundf(visibleWindowMs/r),5000UL,1800000UL);if(pinchMode==2||pinchMode==5)vmax=constrain(vmax/r,5.0f,100.0f);if(pinchMode==3||pinchMode==5)imax=constrain(imax/r,1.0f,40.0f);if(pinchMode==4||pinchMode==5)pmax=constrain(pmax/r,100.0f,2000.0f);pinchLast=dist;updateWindowLabel();updateXAxis();updateYAxis();rebuild();}}
+void handleScopeTouch(const TouchSample&s){
+ if(!s.newPacket)return;
+ if(!s.pressed||s.points!=1){axisDrag=false;dragMode=0;return;}
+ const float x=(float)s.pointX[0]-SCOPE_SCREEN_X;
+ const float y=(float)s.pointY[0]-SCOPE_SCREEN_Y;
+ if(!axisDrag){
+  axisDrag=true;dragLastX=x;dragLastY=y;
+  if(y>=PLOT_Y+PLOT_H-12)dragMode=1;
+  else if(x<PLOT_X){
+   if(x<52)dragMode=2;
+   else if(x<96)dragMode=3;
+   else dragMode=4;
+  }else dragMode=0;
+  return;
+ }
+ const float dx=x-dragLastX,dy=y-dragLastY;
+ bool changed=false;
+ if(dragMode==1&&fabsf(dx)>=6.0f){
+  const float factor=powf(2.0f,dx/120.0f);
+  visibleWindowMs=constrain((uint32_t)lroundf(visibleWindowMs*factor),5000UL,1800000UL);
+  dragLastX=x;changed=true;
+ }else if(dragMode>=2&&dragMode<=4&&fabsf(dy)>=6.0f){
+  const float factor=powf(2.0f,-dy/120.0f);
+  if(dragMode==2)vmax=constrain(vmax*factor,5.0f,100.0f);
+  else if(dragMode==3)imax=constrain(imax*factor,1.0f,40.0f);
+  else pmax=constrain(pmax*factor,100.0f,2000.0f);
+  dragLastY=y;changed=true;
+ }
+ if(changed){updateWindowLabel();updateXAxis();updateYAxis();rebuild();}
 }
