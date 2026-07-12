@@ -91,3 +91,4 @@ void handleScopeTouch(const TouchSample&s){
  }
  if(changed){updateWindowLabel();updateXAxis();updateYAxis();rebuild();}
 }
+}
