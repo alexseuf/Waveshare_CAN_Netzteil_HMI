@@ -12,6 +12,9 @@ esp_lcd_panel_handle_t panel = nullptr;
 lv_display_t *display = nullptr;
 uint8_t *drawBuffer1 = nullptr;
 uint8_t *drawBuffer2 = nullptr;
+volatile uint32_t flushCount = 0;
+uint32_t fpsWindowMs = 0;
+uint16_t currentFps = 0;
 
 constexpr int PIN_LCD_HSYNC = 46;
 constexpr int PIN_LCD_VSYNC = 3;
@@ -31,6 +34,7 @@ void flush(lv_display_t *disp, const lv_area_t *area, uint8_t *pixels) {
   const esp_err_t result = esp_lcd_panel_draw_bitmap(panel, area->x1, area->y1,
                                                      area->x2 + 1, area->y2 + 1, pixels);
   if (result != ESP_OK) DebugLog::printf("[DISPLAY] draw_bitmap Fehler: %s\n", esp_err_to_name(result));
+  ++flushCount;
   lv_display_flush_ready(disp);
 }
 
@@ -89,10 +93,23 @@ bool Display::begin() {
   if (!display) return false;
   lv_display_set_flush_cb(display, flush);
   lv_display_set_buffers(display, drawBuffer1, drawBuffer2, bufferBytes, LV_DISPLAY_RENDER_MODE_PARTIAL);
+  fpsWindowMs = millis();
   DebugLog::println("[DISPLAY] READY");
   return true;
 }
 
 void Display::task() {
   lv_timer_handler();
+  const uint32_t now = millis();
+  if (now - fpsWindowMs >= 1000) {
+    noInterrupts();
+    const uint32_t frames = flushCount;
+    flushCount = 0;
+    interrupts();
+    const uint32_t elapsed = now - fpsWindowMs;
+    currentFps = elapsed ? static_cast<uint16_t>((frames * 1000UL) / elapsed) : 0;
+    fpsWindowMs = now;
+  }
 }
+
+uint16_t Display::fps() { return currentFps; }

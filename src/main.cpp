@@ -33,7 +33,7 @@ void setup() {
   Settings::begin(state);
   DebugLog::println("[BOOT] Board/CH422G");
   if (!BoardIO::begin()) DebugLog::println("[BOOT] CH422G FEHLER");
-  BoardIO::selectCanMode(); // FSUSB42 SEL=HIGH => HSD2 => CAN
+  BoardIO::selectCanMode();
   BoardIO::setBacklight(true);
 
   DebugLog::println("[BOOT] Display/LVGL");
@@ -52,12 +52,13 @@ void setup() {
   state.canStarted = CanDriver::begin();
   state.linkState = state.canStarted ? CanLinkState::Recovering : CanLinkState::Offline;
   Ui::begin(state);
-  // STOP is the safe boot state; nevertheless Message 1 must be sent every 1 s as heartbeat.
   CanDriver::sendCommand(state);
   DebugLog::println("[APP] Bereit");
 }
 
 void loop() {
+  const uint32_t loopStartUs = micros();
+
   CanDriver::poll(state);
   Settings::task(state);
   const uint32_t now = millis();
@@ -80,6 +81,22 @@ void loop() {
                      state.lastRxMs ? static_cast<unsigned long>(now-state.lastRxMs) : 0UL,
                      state.status);
   }
+
   Display::task();
+
+  const uint32_t busyUs = micros() - loopStartUs;
+  static uint64_t accumulatedBusyUs = 0;
+  static uint32_t performanceWindowUs = micros();
+  accumulatedBusyUs += busyUs;
+  const uint32_t performanceNowUs = micros();
+  const uint32_t elapsedUs = performanceNowUs - performanceWindowUs;
+  if (elapsedUs >= 1000000UL) {
+    uint64_t loadValue = (accumulatedBusyUs * 100ULL) / elapsedUs;
+    if (loadValue > 100ULL) loadValue = 100ULL;
+    Ui::setPerformance(static_cast<uint8_t>(loadValue), busyUs);
+    accumulatedBusyUs = 0;
+    performanceWindowUs = performanceNowUs;
+  }
+
   delay(3);
 }

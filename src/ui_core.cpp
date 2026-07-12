@@ -12,6 +12,8 @@ int currentPage = 0;
 bool canPaused = false;
 bool logPaused = false;
 lv_obj_t *clockLabel = nullptr;
+uint8_t cpuLoadPercent = 0;
+uint32_t loopTimeUs = 0;
 
 lv_color_t bg()        { return lv_color_hex(0x020304); }
 lv_color_t panelColor(){ return lv_color_hex(0x080A0D); }
@@ -114,7 +116,8 @@ void Ui::begin(PowerSupplyState &s){
 }
 void Ui::update(const PowerSupplyState &s){
   using namespace UiInternal;const uint32_t now=millis();char clock[32];formatClock(now,clock,sizeof(clock));char uptime[40];snprintf(uptime,sizeof(uptime),"Uptime %s",clock);lv_label_set_text(clockLabel,uptime);
-  updateMain(s,now);updateScope(s,now);if(currentPage==2&&!logPaused)updateLog();if(currentPage==3){updateInfo(s,now);if(infoCanVisible()&&!canPaused)updateCan();}
+  updateMain(s,now);updateScope(s,now);if(currentPage==2&&!logPaused)updateLog();if(currentPage==3){updateInfo(s,now);if(infoCanVisible()&&!canPaused)updateCan();}if(currentPage==4)updateSettings(now);
 }
 void Ui::updateTouchDiag(const TouchSample &sample){UiInternal::updateTouchSettings(sample);}
 void Ui::handleTouch(const TouchSample &sample){if(UiInternal::currentPage==1)UiInternal::handleScopeTouch(sample);}
+void Ui::setPerformance(uint8_t load, uint32_t loopUs){UiInternal::cpuLoadPercent=load;UiInternal::loopTimeUs=loopUs;}

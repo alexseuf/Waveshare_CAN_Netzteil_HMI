@@ -1,5 +1,20 @@
 # Changelog
 
+## 9.5.0-dev
+
+- Entwicklungsbranch `feature/v9.5` angelegt und Firmwareversion auf `9.5.0-dev` erhöht.
+- Neues Einstellungsmenü mit den Unterseiten Debug Settings, WiFi und MQTT/Home Assistant spezifiziert.
+- Freigegebenes Einstellungs-Mockup als SVG in der Dokumentation ergänzt.
+- Systemdiagnose für RAM, PSRAM, CPU-Auslastung, LVGL-FPS, Loop-Zeit, Uptime und Reset-Grund vorgesehen.
+- Größerer Diagramm-Ringpuffer im PSRAM mit Min-/Max-Verdichtung geplant.
+- Relative Laufzeit bleibt immer verfügbar; NTP ergänzt absolute UTC-Zeitstempel und eine absolute Diagramm-X-Achse.
+- Nicht blockierender WiFi-Manager mit Netzwerksuche, Wiederverbindung und Access-Point-Fallback vorgesehen.
+- MQTT- und Home-Assistant-Discovery inklusive LWT/Availability spezifiziert; Fernsteuerung bleibt standardmäßig deaktiviert.
+- Lokaler Webserver mit Dashboard, Diagrammen, Status, Konfiguration und Systemdiagnose vorgesehen.
+- Web-Steuerung und Konfiguration erfordern Administratorzugang; Zugriff wird auf das lokale Netzwerk beschränkt.
+- Lokale Touchbedienung erhält Vorrang vor Web- und MQTT-Befehlen.
+- CAN, Ladebetrieb, Display und Aufzeichnung bleiben von WLAN-, NTP-, MQTT- und Webserverfehlern unabhängig.
+
 ## 9.1.0
 
 - Buttonfarben durch Entfernen aller LVGL-Theme-Stile deterministisch gemacht.
