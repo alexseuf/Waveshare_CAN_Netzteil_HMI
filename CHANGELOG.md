@@ -55,3 +55,10 @@
 - Redundante Seitenüberschrift „SCOPE / TREND“ entfernt und die Beschriftung „Zeit“ innerhalb des Achsenbereichs neu positioniert.
 
 - Scope-Zeitdarstellung korrigiert: Messpunkte werden jetzt anhand ihres tatsächlichen Zeitstempels statt anhand der Anzahl ausgewählter Punkte positioniert.
+
+## 9.4.2
+
+- Zwei-Finger-Pinch-Zoom durch Einfinger-Wischbedienung direkt auf den Achsen ersetzt.
+- Horizontales Wischen auf der X-Achse verändert das Zeitfenster.
+- Vertikales Wischen auf den farbigen Y-Achsenspalten skaliert Spannung, Strom oder Leistung unabhängig.
+- Keine zusätzlichen sichtbaren Slider oder Schaltflächen erforderlich.
