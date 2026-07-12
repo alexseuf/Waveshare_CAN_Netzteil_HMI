@@ -15,19 +15,6 @@ bool wifiOptionsDirty=true;
 bool passwordVisible=false;
 enum class Page:uint8_t{Overview,Debug,Wifi,Mqtt};
 
-static const char *germanLowerMap[]={
-  "q","w","e","r","t","z","u","i","o","p","ü",LV_SYMBOL_BACKSPACE,"\n",
-  "ABC","a","s","d","f","g","h","j","k","l","ö","ä","\n",
-  "123","y","x","c","v","b","n","m","ß","-","_","\n",
-  ".com","@"," ",".",LV_SYMBOL_NEW_LINE,""
-};
-static const char *germanUpperMap[]={
-  "Q","W","E","R","T","Z","U","I","O","P","Ü",LV_SYMBOL_BACKSPACE,"\n",
-  "abc","A","S","D","F","G","H","J","K","L","Ö","Ä","\n",
-  "123","Y","X","C","V","B","N","M","ẞ","-","_","\n",
-  ".com","@"," ",".",LV_SYMBOL_NEW_LINE,""
-};
-
 void logMemory(const char *tag){
   DebugLog::printf("[WIFI-UI] %s heap=%u intFree=%u intLargest=%u psFree=%u psLargest=%u\n",
     tag,ESP.getFreeHeap(),
@@ -37,17 +24,15 @@ void logMemory(const char *tag){
     (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_SPIRAM));
 }
 
-void destroyKeyboard(){
+void hideKeyboard(){
   if(!wifiKeyboard)return;
-  logMemory("Tastatur vor Löschen");
   lv_keyboard_set_textarea(wifiKeyboard,nullptr);
-  lv_obj_delete(wifiKeyboard);
-  wifiKeyboard=nullptr;
-  logMemory("Tastatur gelöscht");
+  lv_obj_add_flag(wifiKeyboard,LV_OBJ_FLAG_HIDDEN);
+  logMemory("Standardtastatur ausgeblendet");
 }
 
 void show(Page page){
-  if(page!=Page::Wifi)destroyKeyboard();
+  if(page!=Page::Wifi)hideKeyboard();
   lv_obj_t *all[]={overview,debugPage,wifiPage,mqttPage};
   for(auto *o:all)if(o)lv_obj_add_flag(o,LV_OBJ_FLAG_HIDDEN);
   lv_obj_t *target=overview;
@@ -84,25 +69,20 @@ void updateCount(){
 
 void keyboardEvent(lv_event_t *e){
   const lv_event_code_t code=lv_event_get_code(e);
-  if(code==LV_EVENT_READY||code==LV_EVENT_CANCEL)destroyKeyboard();
+  if(code==LV_EVENT_READY||code==LV_EVENT_CANCEL)hideKeyboard();
 }
 
 void passwordFocus(lv_event_t *){
-  if(wifiKeyboard)return;
-  logMemory("Tastatur vor Erzeugen");
-  wifiKeyboard=lv_keyboard_create(lv_obj_get_parent(wifiPage));
-  if(!wifiKeyboard){DebugLog::println("[WIFI-UI] Tastatur konnte nicht erzeugt werden");return;}
-  lv_obj_set_size(wifiKeyboard,760,205);
-  lv_obj_align(wifiKeyboard,LV_ALIGN_BOTTOM_MID,0,0);
-  lv_keyboard_set_map(wifiKeyboard,LV_KEYBOARD_MODE_TEXT_LOWER,germanLowerMap,nullptr);
-  lv_keyboard_set_map(wifiKeyboard,LV_KEYBOARD_MODE_TEXT_UPPER,germanUpperMap,nullptr);
-  lv_keyboard_set_mode(wifiKeyboard,LV_KEYBOARD_MODE_TEXT_LOWER);
+  if(!wifiKeyboard){
+    DebugLog::println("[WIFI-UI] Standardtastatur nicht verfügbar");
+    return;
+  }
+  logMemory("Standardtastatur vor Einblenden");
   lv_keyboard_set_textarea(wifiKeyboard,wifiPassword);
-  lv_obj_set_style_text_font(wifiKeyboard,&ui_font_de_14,LV_PART_ITEMS);
-  lv_obj_add_event_cb(wifiKeyboard,keyboardEvent,LV_EVENT_READY,nullptr);
-  lv_obj_add_event_cb(wifiKeyboard,keyboardEvent,LV_EVENT_CANCEL,nullptr);
+  lv_keyboard_set_mode(wifiKeyboard,LV_KEYBOARD_MODE_TEXT_LOWER);
+  lv_obj_clear_flag(wifiKeyboard,LV_OBJ_FLAG_HIDDEN);
   lv_obj_move_foreground(wifiKeyboard);
-  logMemory("Tastatur erzeugt");
+  logMemory("Standardtastatur eingeblendet");
 }
 
 void passwordChanged(lv_event_t *){updateCount();}
@@ -123,7 +103,7 @@ void connectEvent(lv_event_t *){
     DebugLog::println("[WIFI-UI] Kein gültiges WLAN ausgewählt");return;
   }
   HmiWifi::connectTo(ssid,String(lv_textarea_get_text(wifiPassword)));
-  destroyKeyboard();
+  hideKeyboard();
 }
 
 void rebuildWifiOptions(){
@@ -179,6 +159,21 @@ void makeSettings(lv_obj_t *parent){
   wifiEye=makeButton(config,LV_SYMBOL_EYE_OPEN,338,140,64,44,darkGrey(),&lv_font_montserrat_18);lv_obj_add_event_cb(wifiEye,passwordEye,LV_EVENT_CLICKED,nullptr);
   wifiCount=makeLabel(config,"0 Zeichen",&ui_font_de_14,lightGrey());lv_obj_set_pos(wifiCount,12,188);
   lv_obj_t *connect=makeButton(config,"SPEICHERN & VERBINDEN",10,224,392,48,blue(),&ui_font_de_14);lv_obj_add_event_cb(connect,connectEvent,LV_EVENT_CLICKED,nullptr);
+
+  logMemory("Standardtastatur vor einmaligem Erzeugen");
+  wifiKeyboard=lv_keyboard_create(box);
+  if(wifiKeyboard){
+    lv_obj_set_size(wifiKeyboard,760,205);
+    lv_obj_align(wifiKeyboard,LV_ALIGN_BOTTOM_MID,0,0);
+    lv_keyboard_set_mode(wifiKeyboard,LV_KEYBOARD_MODE_TEXT_LOWER);
+    lv_keyboard_set_textarea(wifiKeyboard,nullptr);
+    lv_obj_add_event_cb(wifiKeyboard,keyboardEvent,LV_EVENT_READY,nullptr);
+    lv_obj_add_event_cb(wifiKeyboard,keyboardEvent,LV_EVENT_CANCEL,nullptr);
+    lv_obj_add_flag(wifiKeyboard,LV_OBJ_FLAG_HIDDEN);
+    logMemory("Standardtastatur einmalig erzeugt und versteckt");
+  }else{
+    DebugLog::println("[WIFI-UI] Standardtastatur konnte beim Boot nicht erzeugt werden");
+  }
 
   mqttPage=lv_obj_create(box);lv_obj_remove_style_all(mqttPage);lv_obj_set_size(mqttPage,760,402);back(mqttPage);
   lv_obj_t *mh=makeLabel(mqttPage,"MQTT / HOME ASSISTANT",&ui_font_de_24,lv_color_hex(0xA060FF));lv_obj_align(mh,LV_ALIGN_TOP_MID,0,8);
