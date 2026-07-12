@@ -9,9 +9,9 @@
 
 Die Toolchain wird nur bewusst und mit Changelog-Eintrag aktualisiert.
 
-## V9.2
+## Stand V9.4.2
 
-Die Toolchain bleibt gegenüber V9.1 festgeschrieben:
+Die Toolchain ist seit V9.1 unverändert festgeschrieben:
 
 - PioArduino platform-espressif32: 55.03.39
 - LVGL: 9.5.0
