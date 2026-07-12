@@ -62,3 +62,4 @@
 - Horizontales Wischen auf der X-Achse verändert das Zeitfenster.
 - Vertikales Wischen auf den farbigen Y-Achsenspalten skaliert Spannung, Strom oder Leistung unabhängig.
 - Keine zusätzlichen sichtbaren Slider oder Schaltflächen erforderlich.
+- Bedienrichtung der Y-Achsen invertiert: nach oben wischen zoomt hinein, nach unten wischen zoomt heraus.
