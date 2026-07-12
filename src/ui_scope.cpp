@@ -5,10 +5,10 @@
 
 namespace UiInternal {
 namespace {
-constexpr int SCOPE_CAPACITY_PSRAM=1800,SCOPE_CAPACITY_FALLBACK=300,SCOPE_POINTS=180;
+constexpr int SCOPE_CAPACITY_PSRAM=300,SCOPE_CAPACITY_FALLBACK=180,SCOPE_POINTS=180;
 struct ScopeSample{uint32_t ms=0;float voltage=NAN,current=NAN,power=NAN;};
 ScopeSample *samples=nullptr;int scopeCapacity=0,scopeHead=0,scopeCount=0;uint32_t lastSampleMs=0;bool scopePaused=false;
-uint32_t visibleWindowMs=600000UL;float vmax=60.0f,imax=20.0f,pmax=1000.0f;
+uint32_t visibleWindowMs=300000UL;float vmax=60.0f,imax=20.0f,pmax=1000.0f;
 lv_obj_t *chart=nullptr,*windowLabel=nullptr,*pauseText=nullptr,*legend=nullptr,*xLabels[5]{},*vLabels[5]{},*iLabels[5]{},*pLabels[5]{};
 lv_chart_series_t *seriesV=nullptr,*seriesI=nullptr,*seriesP=nullptr;
 bool axisDrag=false;float dragLastX=0,dragLastY=0;uint8_t dragMode=0;
@@ -19,7 +19,7 @@ constexpr int LEGEND_W=230,LEGEND_H=118;
 bool allocateSamples(){
  if(samples)return true;
  samples=static_cast<ScopeSample*>(heap_caps_malloc(sizeof(ScopeSample)*SCOPE_CAPACITY_PSRAM,MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT));
- if(samples){scopeCapacity=SCOPE_CAPACITY_PSRAM;DebugLog::printf("[SCOPE] PSRAM-Puffer: %d Punkte / %u Byte\n",scopeCapacity,static_cast<unsigned>(sizeof(ScopeSample)*scopeCapacity));return true;}
+ if(samples){scopeCapacity=SCOPE_CAPACITY_PSRAM;DebugLog::printf("[SCOPE] PSRAM-Puffer reduziert: %d Punkte / %u Byte\n",scopeCapacity,static_cast<unsigned>(sizeof(ScopeSample)*scopeCapacity));return true;}
  samples=static_cast<ScopeSample*>(heap_caps_malloc(sizeof(ScopeSample)*SCOPE_CAPACITY_FALLBACK,MALLOC_CAP_8BIT));
  if(samples){scopeCapacity=SCOPE_CAPACITY_FALLBACK;DebugLog::printf("[SCOPE] Fallback-Puffer im Heap: %d Punkte / %u Byte\n",scopeCapacity,static_cast<unsigned>(sizeof(ScopeSample)*scopeCapacity));return true;}
  DebugLog::println("[SCOPE] Kein Speicher für Verlaufspuffer");
@@ -49,8 +49,8 @@ void rebuild(){
  }
  lv_chart_refresh(chart);
 }
-void resetView(){visibleWindowMs=600000UL;vmax=60;imax=20;pmax=1000;lv_obj_set_pos(legend,510,80);updateWindowLabel();updateXAxis();updateYAxis();rebuild();}
-void control(lv_event_t*e){int id=(int)(intptr_t)lv_event_get_user_data(e);if(id==1){scopePaused=!scopePaused;lv_label_set_text(pauseText,scopePaused?"FORTSETZEN":"PAUSE");}else if(id==2)clearSamples();else if(id==3){visibleWindowMs=max<uint32_t>(5000,visibleWindowMs/2);updateWindowLabel();updateXAxis();rebuild();}else if(id==4){visibleWindowMs=min<uint32_t>(1800000,visibleWindowMs*2);updateWindowLabel();updateXAxis();rebuild();}else if(id==5)resetView();}
+void resetView(){visibleWindowMs=300000UL;vmax=60;imax=20;pmax=1000;lv_obj_set_pos(legend,510,80);updateWindowLabel();updateXAxis();updateYAxis();rebuild();}
+void control(lv_event_t*e){int id=(int)(intptr_t)lv_event_get_user_data(e);if(id==1){scopePaused=!scopePaused;lv_label_set_text(pauseText,scopePaused?"FORTSETZEN":"PAUSE");}else if(id==2)clearSamples();else if(id==3){visibleWindowMs=max<uint32_t>(5000,visibleWindowMs/2);updateWindowLabel();updateXAxis();rebuild();}else if(id==4){visibleWindowMs=min<uint32_t>(300000,visibleWindowMs*2);updateWindowLabel();updateXAxis();rebuild();}else if(id==5)resetView();}
 void dragLegend(lv_event_t*){lv_indev_t*ind=lv_indev_active();if(!ind)return;lv_point_t v;lv_indev_get_vect(ind,&v);lv_coord_t x=lv_obj_get_x(legend)+v.x,y=lv_obj_get_y(legend)+v.y;x=constrain(x,PLOT_X,PLOT_X+PLOT_W-LEGEND_W);y=constrain(y,PLOT_Y,PLOT_Y+PLOT_H-LEGEND_H);lv_obj_set_pos(legend,x,y);}
 void makeLegendLine(lv_obj_t*parent,int y,lv_color_t color,const char*text){lv_obj_t*line=lv_obj_create(parent);lv_obj_remove_style_all(line);lv_obj_set_pos(line,8,y+7);lv_obj_set_size(line,28,3);lv_obj_set_style_bg_opa(line,LV_OPA_COVER,0);lv_obj_set_style_bg_color(line,color,0);lv_obj_t*l=makeLabel(parent,text,&ui_font_de_14,lv_color_white());lv_obj_set_pos(l,44,y);}
 }
@@ -60,7 +60,7 @@ void makeScope(lv_obj_t *parent){
  lv_obj_t*box=lv_obj_create(parent);lv_obj_set_size(box,780,422);stylePanel(box);
  lv_obj_t*reset=makeButton(box,"↺ STANDARD",218,2,132,40,blue(),&ui_font_de_14);lv_obj_add_event_cb(reset,control,LV_EVENT_CLICKED,(void*)5);
  lv_obj_t*minus=makeButton(box,"-",360,2,42,40,blue(),&lv_font_montserrat_24);lv_obj_add_event_cb(minus,control,LV_EVENT_CLICKED,(void*)3);
- windowLabel=makeLabel(box,"10.0 min",&ui_font_de_16,lv_color_white());lv_obj_set_pos(windowLabel,413,13);
+ windowLabel=makeLabel(box,"5.0 min",&ui_font_de_16,lv_color_white());lv_obj_set_pos(windowLabel,413,13);
  lv_obj_t*plus=makeButton(box,"+",482,2,42,40,blue(),&lv_font_montserrat_24);lv_obj_add_event_cb(plus,control,LV_EVENT_CLICKED,(void*)4);
  lv_obj_t*pause=makeButton(box,"PAUSE",535,2,105,40,orange(),&ui_font_de_16);pauseText=lv_obj_get_child(pause,0);lv_obj_add_event_cb(pause,control,LV_EVENT_CLICKED,(void*)1);
  lv_obj_t*clear=makeButton(box,"LÖSCHEN",650,2,110,40,blue(),&ui_font_de_16);lv_obj_add_event_cb(clear,control,LV_EVENT_CLICKED,(void*)2);
@@ -91,7 +91,7 @@ void handleScopeTouch(const TouchSample&s){
  bool changed=false;
  if(dragMode==1&&fabsf(dx)>=6.0f){
   const float factor=powf(2.0f,dx/120.0f);
-  visibleWindowMs=constrain((uint32_t)lroundf(visibleWindowMs*factor),5000UL,1800000UL);
+  visibleWindowMs=constrain((uint32_t)lroundf(visibleWindowMs*factor),5000UL,300000UL);
   dragLastX=x;changed=true;
  }else if(dragMode>=2&&dragMode<=4&&fabsf(dy)>=6.0f){
   const float factor=powf(2.0f,dy/120.0f);
