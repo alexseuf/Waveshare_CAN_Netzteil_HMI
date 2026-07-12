@@ -8,7 +8,7 @@
 #include "power_supply.h"
 #include "settings.h"
 #include "can_driver.h"
-#include "network_manager.h"
+#include "hmi_wifi.h"
 #include "ui.h"
 
 PowerSupplyState state;
@@ -54,7 +54,7 @@ void setup() {
   state.linkState = state.canStarted ? CanLinkState::Recovering : CanLinkState::Offline;
 
   DebugLog::println("[BOOT] WiFi/NTP");
-  NetworkManager::begin();
+  HmiWifi::begin();
 
   Ui::begin(state);
   CanDriver::sendCommand(state);
@@ -66,7 +66,7 @@ void loop() {
 
   CanDriver::poll(state);
   Settings::task(state);
-  NetworkManager::task();
+  HmiWifi::task();
 
   const uint32_t now = millis();
   state.updateEnergy(now);
@@ -86,7 +86,7 @@ void loop() {
                      ESP.getFreeHeap(), ESP.getFreePsram(), Touch::online()?"OK":"FEHLER",
                      state.canStarted?"OK":"FEHLER", state.online(now)?"OK":"TIMEOUT",
                      state.lastRxMs ? static_cast<unsigned long>(now-state.lastRxMs) : 0UL,
-                     state.status, NetworkManager::statusText().c_str());
+                     state.status, HmiWifi::statusText().c_str());
   }
 
   Display::task();
