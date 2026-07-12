@@ -19,9 +19,13 @@ uint32_t connectStartedMs=0;
 uint32_t lastReconnectMs=0;
 uint32_t disconnectedSinceMs=0;
 uint32_t lastNtpSyncMs=0;
+uint32_t lastApAttemptMs=0;
+uint8_t apAttemptCount=0;
 constexpr uint32_t CONNECT_TIMEOUT_MS=15000;
 constexpr uint32_t RECONNECT_INTERVAL_MS=30000;
 constexpr uint32_t AP_FALLBACK_DELAY_MS=120000;
+constexpr uint32_t AP_RETRY_INTERVAL_MS=60000;
+constexpr uint8_t AP_MAX_ATTEMPTS=3;
 constexpr const char *AP_SSID="Charger-HMI-Setup";
 constexpr const char *TZ_RULE="CET-1CEST,M3.5.0/2,M10.5.0/3";
 
@@ -77,8 +81,13 @@ void HmiWifi::begin(){
   loadConfig();
   WiFi.persistent(false);
   WiFi.setSleep(true);
+  apAttemptCount=0;
+  lastApAttemptMs=0;
   if(wifiEnabled&&!savedSsid.isEmpty())startStationConnect();
-  else WiFi.mode(WIFI_OFF);
+  else {
+    WiFi.mode(WIFI_STA);
+    disconnectedSinceMs=millis();
+  }
 }
 
 void HmiWifi::task(){
@@ -104,6 +113,7 @@ void HmiWifi::task(){
   if(WiFi.status()==WL_CONNECTED){
     wantConnect=false;
     disconnectedSinceMs=0;
+    apAttemptCount=0;
     if(apActive)stopAccessPoint();
     configureNtp();
     updateNtpState();
@@ -122,16 +132,32 @@ void HmiWifi::task(){
     startStationConnect();
   }
 
-  if(!apActive&&now-disconnectedSinceMs>=AP_FALLBACK_DELAY_MS){
+  if(!apActive && now-disconnectedSinceMs>=AP_FALLBACK_DELAY_MS &&
+     apAttemptCount<AP_MAX_ATTEMPTS &&
+     (lastApAttemptMs==0 || now-lastApAttemptMs>=AP_RETRY_INTERVAL_MS)){
+    lastApAttemptMs=now;
+    ++apAttemptCount;
     startAccessPoint();
+    if(!apActive && apAttemptCount>=AP_MAX_ATTEMPTS){
+      DebugLog::println("[WIFI] Access-Point-Fallback nach 3 Fehlversuchen gestoppt");
+    }
   }
 }
 
 bool HmiWifi::enabled(){return wifiEnabled;}
 void HmiWifi::setEnabled(bool enabled){
   wifiEnabled=enabled;saveConfig();
-  if(enabled){if(!savedSsid.isEmpty())startStationConnect();}
-  else{wantConnect=false;stopAccessPoint();WiFi.disconnect(true,false);WiFi.mode(WIFI_OFF);}
+  if(enabled){
+    disconnectedSinceMs=millis();
+    apAttemptCount=0;
+    lastApAttemptMs=0;
+    if(!savedSsid.isEmpty())startStationConnect();
+  } else {
+    wantConnect=false;
+    stopAccessPoint();
+    WiFi.disconnect(true,false);
+    WiFi.mode(WIFI_OFF);
+  }
 }
 
 bool HmiWifi::connected(){return WiFi.status()==WL_CONNECTED;}
@@ -157,14 +183,25 @@ String HmiWifi::macText(){return WiFi.macAddress();}
 int32_t HmiWifi::rssi(){return connected()?WiFi.RSSI():-127;}
 uint8_t HmiWifi::signalPercent(){
   const int32_t value=rssi();
-  if(value<=-100)return 0;if(value>=-50)return 100;return static_cast<uint8_t>(2*(value+100));
+  if(value<=-100)return 0;
+  if(value>=-50)return 100;
+  return static_cast<uint8_t>(2*(value+100));
 }
 String HmiWifi::localTimeText(){
-  struct tm info;if(!getLocalTime(&info,0))return "-";char b[32];strftime(b,sizeof(b),"%d.%m.%Y %H:%M:%S",&info);return String(b);
+  struct tm info;
+  if(!getLocalTime(&info,0))return "-";
+  char b[32];
+  strftime(b,sizeof(b),"%d.%m.%Y %H:%M:%S",&info);
+  return String(b);
 }
 String HmiWifi::lastSyncText(){
   if(!timeValid())return "-";
-  struct tm info;time_t now=time(nullptr);localtime_r(&now,&info);char b[24];strftime(b,sizeof(b),"%d.%m.%Y %H:%M",&info);return String(b);
+  struct tm info;
+  time_t now=time(nullptr);
+  localtime_r(&now,&info);
+  char b[24];
+  strftime(b,sizeof(b),"%d.%m.%Y %H:%M",&info);
+  return String(b);
 }
 
 void HmiWifi::requestScan(){scanRequested=true;scanDone=false;}
@@ -177,13 +214,37 @@ bool HmiWifi::scanEncrypted(int index){const int n=scanCount();return index>=0&&
 
 bool HmiWifi::connectTo(const String &newSsid,const String &password){
   if(newSsid.isEmpty())return false;
-  savedSsid=newSsid;savedPassword=password;wifiEnabled=true;saveConfig();stopAccessPoint();WiFi.disconnect(false,false);startStationConnect();return true;
+  savedSsid=newSsid;
+  savedPassword=password;
+  wifiEnabled=true;
+  saveConfig();
+  stopAccessPoint();
+  WiFi.disconnect(false,false);
+  apAttemptCount=0;
+  lastApAttemptMs=0;
+  disconnectedSinceMs=millis();
+  startStationConnect();
+  return true;
 }
-void HmiWifi::disconnect(){wantConnect=false;WiFi.disconnect(false,false);disconnectedSinceMs=millis();}
+void HmiWifi::disconnect(){
+  wantConnect=false;
+  WiFi.disconnect(false,false);
+  disconnectedSinceMs=millis();
+  apAttemptCount=0;
+  lastApAttemptMs=0;
+}
 void HmiWifi::startAccessPoint(){
   if(apActive)return;
   WiFi.mode(WIFI_AP_STA);
-  apActive=WiFi.softAP(AP_SSID);
-  DebugLog::printf("[WIFI] Access Point %s: %s\n",AP_SSID,apActive?"aktiv":"Fehler");
+  const bool started=WiFi.softAP(AP_SSID);
+  apActive=started;
+  DebugLog::printf("[WIFI] Access Point %s: %s (Versuch %u/%u)\n",
+                   AP_SSID,started?"aktiv":"Fehler",
+                   static_cast<unsigned>(apAttemptCount),
+                   static_cast<unsigned>(AP_MAX_ATTEMPTS));
 }
-void HmiWifi::stopAccessPoint(){if(!apActive)return;WiFi.softAPdisconnect(true);apActive=false;}
+void HmiWifi::stopAccessPoint(){
+  if(!apActive)return;
+  WiFi.softAPdisconnect(true);
+  apActive=false;
+}
