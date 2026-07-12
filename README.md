@@ -25,7 +25,14 @@ V9.5 ergänzt schrittweise:
 - Beschränkung des Webzugriffs auf das lokale Netzwerk
 - Vorrang der lokalen Touchbedienung
 
-Der vollständige Entwicklungsplan steht in [`docs/V9.5_PLAN.md`](docs/V9.5_PLAN.md).
+Dokumentation:
+- [Entwicklungsplan V9.5](docs/V9.5_PLAN.md)
+- [UI-Spezifikation Einstellungen](docs/V9.5_UI_SPEC.md)
+- [Changelog](CHANGELOG.md)
+
+### Freigegebenes Einstellungs-Mockup
+
+![V9.5 Einstellungsmenü](docs/images/v9_5_settings_mockup.svg)
 
 ## Toolchain
 Die Plattform ist reproduzierbar auf PioArduino `55.03.39` festgeschrieben. Details: `docs/Toolchain.md`.
