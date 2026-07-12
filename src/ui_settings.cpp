@@ -44,7 +44,7 @@ void setKeyboardMode(bool active){
   if(wifiSelectedLabel){
     if(active){
       String ssid=selectedNetwork();
-      if(ssid.isEmpty())ssid="Kein Netzwerk ausgewählt";
+      if(ssid.isEmpty())ssid="Noch kein Netzwerk ausgewählt";
       String text="Ausgewähltes Netzwerk:  "+ssid;
       lv_label_set_text(wifiSelectedLabel,text.c_str());
       lv_obj_clear_flag(wifiSelectedLabel,LV_OBJ_FLAG_HIDDEN);
@@ -94,13 +94,14 @@ void keyboardEvent(lv_event_t *e){const lv_event_code_t code=lv_event_get_code(e
 
 void passwordFocus(lv_event_t *){
   if(!wifiKeyboard){DebugLog::println("[WIFI-UI] Standardtastatur nicht verfügbar");return;}
-  if(selectedNetwork().isEmpty()){DebugLog::println("[WIFI-UI] Vor Passworteingabe zuerst Netzwerk auswählen");return;}
   setKeyboardMode(true);
   logMemory("Standardtastatur vor Einblenden");
   lv_keyboard_set_textarea(wifiKeyboard,wifiPassword);
   lv_keyboard_set_mode(wifiKeyboard,LV_KEYBOARD_MODE_TEXT_LOWER);
   lv_obj_clear_flag(wifiKeyboard,LV_OBJ_FLAG_HIDDEN);
   lv_obj_move_foreground(wifiKeyboard);
+  lv_obj_invalidate(wifiKeyboard);
+  DebugLog::printf("[WIFI-UI] Tastatur eingeblendet, Netzwerk='%s'\n",selectedNetwork().c_str());
   logMemory("Standardtastatur eingeblendet");
 }
 
@@ -157,7 +158,7 @@ void makeSettings(lv_obj_t *parent){
   lv_obj_t *passwordLabel=makeLabel(config,"Passwort",&ui_font_de_14,lightGrey());lv_obj_set_pos(passwordLabel,10,90);
   wifiCount=makeLabel(config,"0 Zeichen",&ui_font_de_14,lightGrey());lv_obj_set_pos(wifiCount,112,90);
   wifiPassword=lv_textarea_create(config);lv_obj_set_pos(wifiPassword,10,108);lv_obj_set_size(wifiPassword,300,38);lv_textarea_set_one_line(wifiPassword,true);lv_textarea_set_password_mode(wifiPassword,true);lv_textarea_set_placeholder_text(wifiPassword,"WLAN-Passwort");lv_obj_set_style_text_font(wifiPassword,&ui_font_de_14,0);
-  lv_obj_add_event_cb(wifiPassword,passwordFocus,LV_EVENT_CLICKED,nullptr);lv_obj_add_event_cb(wifiPassword,passwordChanged,LV_EVENT_VALUE_CHANGED,nullptr);
+  lv_obj_add_event_cb(wifiPassword,passwordFocus,LV_EVENT_CLICKED,nullptr);lv_obj_add_event_cb(wifiPassword,passwordFocus,LV_EVENT_FOCUSED,nullptr);lv_obj_add_event_cb(wifiPassword,passwordChanged,LV_EVENT_VALUE_CHANGED,nullptr);
   wifiEye=makeButton(config,LV_SYMBOL_EYE_OPEN,318,108,50,38,darkGrey(),&lv_font_montserrat_18);lv_obj_add_event_cb(wifiEye,passwordEye,LV_EVENT_CLICKED,nullptr);
   lv_obj_t *connect=makeButton(config,"VERBINDEN",378,108,122,38,blue(),&ui_font_de_14);lv_obj_add_event_cb(connect,connectEvent,LV_EVENT_CLICKED,nullptr);
 
