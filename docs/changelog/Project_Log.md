@@ -60,3 +60,11 @@
 - Dynamische Achsenbeschriftungen zeigen nach jeder Zoomgeste die tatsächlich verwendeten Maximalwerte.
 - Legende kann nur noch innerhalb des Plotbereichs verschoben werden und überdeckt keine Achsenbeschriftungen.
 - Spannung, Strom und Leistung erhalten in der Legende jeweils einen kurzen Strich in Signalfarbe.
+
+## V9.4.2
+
+- Firmwareversion auf die zentrale Konstante AppConfig::FIRMWARE_VERSION vereinheitlicht; INFO-Seite und UART-Startmeldung zeigen denselben Stand.
+- Scope-Darstellung auf zeitgenaue Positionierung der Messwerte umgestellt.
+- Zwei-Finger-Pinch-Zoom durch Einfinger-Wischen direkt auf den Achsen ersetzt.
+- Horizontales Wischen skaliert das Zeitfenster; vertikales Wischen skaliert U, I oder P getrennt.
+- Ringpuffer, Zeitdarstellung, UI-Bedienung und Abnahmeprüfung vollständig dokumentiert.
