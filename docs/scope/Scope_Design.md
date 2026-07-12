@@ -25,7 +25,7 @@ Der einstellbare Zeitbereich reicht von 5 s bis 30 min.
 - Vertikales Wischen in der grünen Y-Achsenspalte skaliert Spannung U.
 - Vertikales Wischen in der blauen Y-Achsenspalte skaliert Strom I.
 - Vertikales Wischen in der orangefarbenen Y-Achsenspalte skaliert Leistung P.
-- Nach oben wischen vergrößert den Maximalwert; nach unten wischen verkleinert ihn.
+- Nach oben wischen verkleinert den dargestellten Wertebereich und zoomt hinein; nach unten wischen vergrößert den Wertebereich und zoomt heraus.
 - STANDARD setzt Zeitfenster und Y-Skalierungen auf 10 min, 60 V, 20 A und 1000 W zurück.
 - PAUSE/FORTSETZEN hält die Aufzeichnung an bzw. setzt sie fort.
 - LÖSCHEN leert den Ringpuffer.
