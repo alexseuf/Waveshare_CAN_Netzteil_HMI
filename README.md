@@ -30,3 +30,19 @@ Schaltplan, CAN-Protokoll, UI-Richtlinien und Änderungsanforderungen liegen im 
 `HAUPT | SCOPE | LOG | INFO | ⚙`
 
 Der CAN-Logger befindet sich unter INFO. Die Scope-Seite unterstützt Einfinger-Wischbedienung direkt auf den Zeit- und Y-Achsen sowie eine verschiebbare, farbcodierte Legende. Der Ringpuffer zeichnet 1800 Messpunkte im 1-s-Raster und damit bis zu 30 Minuten auf.
+
+## Projektbilder
+
+### Bedienoberfläche
+
+![Hauptansicht V9.4.2](docs/images/hmi_main_screen_v9_4_2.jpg)
+
+![Scope-Ansicht V9.4.2](docs/images/hmi_scope_screen_v9_4_2.jpg)
+
+### Hardware
+
+![Waveshare ESP32-S3-LCD-4.3](docs/images/waveshare_esp32_s3_lcd_4_3_board.jpg)
+
+![CAN-Netzteil mit Lüfter](docs/images/charger_top_fan.jpg)
+
+![Typenschild des CAN-Netzteils](docs/images/charger_nameplate.jpg)
