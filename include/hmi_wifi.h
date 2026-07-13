@@ -6,6 +6,7 @@ namespace HmiWifi {
 
 void begin();
 void task();
+void serviceScanOnUiCore();
 
 bool enabled();
 void setEnabled(bool enabled);

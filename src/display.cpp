@@ -11,8 +11,7 @@
 namespace {
 esp_lcd_panel_handle_t panel = nullptr;
 lv_display_t *display = nullptr;
-uint8_t *drawBuffer1 = nullptr;
-uint8_t *drawBuffer2 = nullptr;
+uint8_t *drawBuffer = nullptr;
 std::atomic<uint32_t> flushCount{0};
 uint32_t fpsWindowMs = 0;
 uint16_t currentFps = 0;
@@ -21,8 +20,6 @@ constexpr int PIN_LCD_HSYNC = 46;
 constexpr int PIN_LCD_VSYNC = 3;
 constexpr int PIN_LCD_DE = 5;
 constexpr int PIN_LCD_PCLK = 7;
-// Correct data-lane order confirmed by the two-phase LCD color test.
-// esp_lcd expects B0..B4, G0..G5, R0..R4 for RGB565 on this panel.
 constexpr int LCD_DATA_PINS[16] = {
   14, 38, 18, 17, 10,
   39, 0, 45, 48, 47, 21,
@@ -32,18 +29,20 @@ constexpr int LCD_DATA_PINS[16] = {
 uint32_t tickMs() { return millis(); }
 
 void flush(lv_display_t *disp, const lv_area_t *area, uint8_t *pixels) {
-  const esp_err_t result = esp_lcd_panel_draw_bitmap(panel, area->x1, area->y1,
-                                                     area->x2 + 1, area->y2 + 1, pixels);
-  if (result != ESP_OK) DebugLog::printf("[DISPLAY] draw_bitmap Fehler: %s\n", esp_err_to_name(result));
+  const esp_err_t result = esp_lcd_panel_draw_bitmap(
+      panel, area->x1, area->y1, area->x2 + 1, area->y2 + 1, pixels);
+  if (result != ESP_OK) {
+    DebugLog::printf("[DISPLAY] draw_bitmap Fehler: %s\n", esp_err_to_name(result));
+  }
   flushCount.fetch_add(1, std::memory_order_relaxed);
   lv_display_flush_ready(disp);
 }
 
 bool initPanel() {
-  DebugLog::println("[DISPLAY] RGB-Panel konfigurieren");
+  DebugLog::println("[DISPLAY] RGB-Panel stabil konfigurieren");
   esp_lcd_rgb_panel_config_t cfg = {};
   cfg.clk_src = LCD_CLK_SRC_DEFAULT;
-  cfg.timings.pclk_hz = 16000000;
+  cfg.timings.pclk_hz = 12000000;
   cfg.timings.h_res = AppConfig::LCD_WIDTH;
   cfg.timings.v_res = AppConfig::LCD_HEIGHT;
   cfg.timings.hsync_pulse_width = 4;
@@ -55,7 +54,7 @@ bool initPanel() {
   cfg.timings.flags.pclk_active_neg = true;
   cfg.data_width = 16;
   cfg.num_fbs = 1;
-  cfg.bounce_buffer_size_px = AppConfig::LCD_WIDTH * 10;
+  cfg.bounce_buffer_size_px = AppConfig::LCD_WIDTH * 16;
   cfg.hsync_gpio_num = PIN_LCD_HSYNC;
   cfg.vsync_gpio_num = PIN_LCD_VSYNC;
   cfg.de_gpio_num = PIN_LCD_DE;
@@ -67,35 +66,50 @@ bool initPanel() {
   esp_err_t result = esp_lcd_new_rgb_panel(&cfg, &panel);
   DebugLog::printf("[DISPLAY] esp_lcd_new_rgb_panel: %s\n", esp_err_to_name(result));
   if (result != ESP_OK) return false;
+
   result = esp_lcd_panel_reset(panel);
   DebugLog::printf("[DISPLAY] esp_lcd_panel_reset: %s\n", esp_err_to_name(result));
   if (result != ESP_OK) return false;
+
   result = esp_lcd_panel_init(panel);
   DebugLog::printf("[DISPLAY] esp_lcd_panel_init: %s\n", esp_err_to_name(result));
   return result == ESP_OK;
 }
-}
+}  // namespace
 
 bool Display::begin() {
   if (!initPanel()) return false;
+
   DebugLog::println("[DISPLAY] LVGL initialisieren");
   lv_init();
   lv_tick_set_cb(tickMs);
 
-  constexpr size_t lines = 24;
-  constexpr size_t bufferBytes = AppConfig::LCD_WIDTH * lines * sizeof(lv_color_t);
-  drawBuffer1 = static_cast<uint8_t *>(heap_caps_malloc(bufferBytes, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
-  drawBuffer2 = static_cast<uint8_t *>(heap_caps_malloc(bufferBytes, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
-  DebugLog::printf("[DISPLAY] Puffer 1=%p Puffer 2=%p, je %u Byte\n",
-                drawBuffer1, drawBuffer2, static_cast<unsigned>(bufferBytes));
-  if (!drawBuffer1 || !drawBuffer2) return false;
+  // Der interne SRAM war nach WiFi, LVGL und dem großen Bounce-Buffer zu knapp.
+  // Das führte während Ui::begin zu einem Software-Reset. Deshalb liegt der
+  // kleine LVGL-Zeichenpuffer wieder im PSRAM. Der vergrößerte interne
+  // Bounce-Buffer und der reduzierte Pixeltakt bleiben zur Displaystabilisierung.
+  constexpr size_t lines = 8;
+  constexpr size_t bufferBytes =
+      AppConfig::LCD_WIDTH * lines * sizeof(lv_color_t);
+  drawBuffer = static_cast<uint8_t *>(
+      heap_caps_malloc(bufferBytes, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
+
+  DebugLog::printf("[DISPLAY] PSRAM-LVGL-Puffer=%p, %u Byte\n",
+                   drawBuffer, static_cast<unsigned>(bufferBytes));
+  if (!drawBuffer) {
+    DebugLog::println("[DISPLAY] PSRAM-LVGL-Puffer konnte nicht reserviert werden");
+    return false;
+  }
 
   display = lv_display_create(AppConfig::LCD_WIDTH, AppConfig::LCD_HEIGHT);
   if (!display) return false;
+
   lv_display_set_flush_cb(display, flush);
-  lv_display_set_buffers(display, drawBuffer1, drawBuffer2, bufferBytes, LV_DISPLAY_RENDER_MODE_PARTIAL);
+  lv_display_set_buffers(display, drawBuffer, nullptr, bufferBytes,
+                         LV_DISPLAY_RENDER_MODE_PARTIAL);
+
   fpsWindowMs = millis();
-  DebugLog::println("[DISPLAY] READY");
+  DebugLog::println("[DISPLAY] READY - PSRAM-Einzelpuffer mit internem Bounce-Buffer");
   return true;
 }
 
@@ -105,7 +119,9 @@ void Display::task() {
   if (now - fpsWindowMs >= 1000) {
     const uint32_t frames = flushCount.exchange(0, std::memory_order_relaxed);
     const uint32_t elapsed = now - fpsWindowMs;
-    currentFps = elapsed ? static_cast<uint16_t>((frames * 1000UL) / elapsed) : 0;
+    currentFps = elapsed
+                     ? static_cast<uint16_t>((frames * 1000UL) / elapsed)
+                     : 0;
     fpsWindowMs = now;
   }
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 namespace AppConfig {
-constexpr const char *FIRMWARE_VERSION = "9.5.3-test3";
+constexpr const char *FIRMWARE_VERSION = "9.5.4-test13";
 constexpr uint32_t SERIAL_BAUD = 115200;
 constexpr int PIN_DEBUG_TX = 43;
 constexpr int PIN_DEBUG_RX = 44;
