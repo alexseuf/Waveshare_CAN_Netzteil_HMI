@@ -1,7 +1,7 @@
 #include "ui_internal.h"
 #include "app_config.h"
 #include "can_driver.h"
-#include <ESP.h>
+#include <Arduino.h>
 namespace UiInternal {
 static lv_obj_t *infoText=nullptr,*touchText=nullptr,*infoSystem=nullptr,*infoCan=nullptr;
 static bool showCanLogger=false;
@@ -23,7 +23,7 @@ void makeSettings(lv_obj_t *parent){
   opt(box,"System",20,82,DebugLog::SYSTEM);opt(box,"Fehler",20,116,DebugLog::ERROR);opt(box,"Warnungen",20,150,DebugLog::WARNING);opt(box,"CAN RX",190,82,DebugLog::CAN_RX);opt(box,"CAN TX",190,116,DebugLog::CAN_TX);opt(box,"Bedienung",190,150,DebugLog::UI);opt(box,"Touch",360,82,DebugLog::TOUCH);opt(box,"NVS / Speicher",360,116,DebugLog::STORAGE);
   lv_obj_t *d=lv_checkbox_create(box);lv_checkbox_set_text(d,"Ausgabe auf Display");lv_obj_set_pos(d,20,200);lv_obj_set_style_text_font(d,&ui_font_de_16,0);if(DebugLog::displayEnabled())lv_obj_add_state(d,LV_STATE_CHECKED);lv_obj_add_event_cb(d,outOption,LV_EVENT_VALUE_CHANGED,(void*)1);
   lv_obj_t *u=lv_checkbox_create(box);lv_checkbox_set_text(u,"Ausgabe über UART");lv_obj_set_pos(u,250,200);lv_obj_set_style_text_font(u,&ui_font_de_16,0);if(DebugLog::uartEnabled())lv_obj_add_state(u,LV_STATE_CHECKED);lv_obj_add_event_cb(u,outOption,LV_EVENT_VALUE_CHANGED,(void*)2);
-  lv_obj_t *er=makeButton(box,"ENERGIE LÖSCHEN",20,250,230,50,blue(),&ui_font_de_16);lv_obj_add_event_cb(er,actionEvent,LV_EVENT_CLICKED,(void*)21);lv_obj_t *r=makeButton(box,"WERKSEINSTELLUNGEN",270,250,260,50,redDark(),&ui_font_de_16);lv_obj_add_event_cb(r,actionEvent,LV_EVENT_CLICKED,(void*)20);
+  lv_obj_t *er=makeButton(box,u8"ENERGIE L\u00D6SCHEN",20,250,230,50,blue(),&ui_font_de_16);lv_obj_add_event_cb(er,actionEvent,LV_EVENT_CLICKED,(void*)21);lv_obj_t *r=makeButton(box,"WERKSEINSTELLUNGEN",270,250,260,50,redDark(),&ui_font_de_16);lv_obj_add_event_cb(r,actionEvent,LV_EVENT_CLICKED,(void*)20);
   touchText=makeLabel(box,"Touch-Diagnose",&ui_font_de_14,lightGrey());lv_obj_set_pos(touchText,20,320);lv_obj_set_size(touchText,720,80);
 }
 void updateTouchSettings(const TouchSample &s){if(!touchText)return;char text[384];snprintf(text,sizeof(text),"Touch: %s  Adresse 0x%02X  Punkte %u  RAW %u/%u  SCREEN %u/%u  I2C-Fehler R:%lu W:%lu",Touch::online()?"ONLINE":"OFFLINE",Touch::address(),s.points,s.rawX,s.rawY,s.x,s.y,(unsigned long)Touch::readErrors(),(unsigned long)Touch::writeErrors());lv_label_set_text(touchText,text);}
