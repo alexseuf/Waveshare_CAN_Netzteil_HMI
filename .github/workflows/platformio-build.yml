@@ -32,7 +32,24 @@ jobs:
         run: python -m pip install --upgrade platformio
 
       - name: Build firmware
-        run: pio run --environment waveshare_esp32s3_lcd43
+        shell: bash
+        run: |
+          set +e
+          pio run --environment waveshare_esp32s3_lcd43 2>&1 | tee platformio-build.log
+          status=${PIPESTATUS[0]}
+          grep -nE "fatal error:|error:|undefined reference|FAILED|Error [0-9]+" platformio-build.log > platformio-errors.txt || true
+          exit "$status"
+
+      - name: Upload build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlatformIO-build-errors-${{ github.run_number }}
+          path: |
+            platformio-build.log
+            platformio-errors.txt
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Collect build files
         if: success()
