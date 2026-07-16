@@ -1,12 +1,13 @@
 #include "ui_internal.h"
 #include "app_config.h"
 #include <cmath>
+#include "esp_heap_caps.h"
 
 namespace UiInternal {
 namespace {
-constexpr int SCOPE_CAPACITY=1800,SCOPE_POINTS=180;
+constexpr int SCOPE_CAPACITY_PSRAM=1800,SCOPE_CAPACITY_FALLBACK=300,SCOPE_POINTS=180;
 struct ScopeSample{uint32_t ms=0;float voltage=NAN,current=NAN,power=NAN;};
-ScopeSample samples[SCOPE_CAPACITY];int scopeHead=0,scopeCount=0;uint32_t lastSampleMs=0;bool scopePaused=false;
+ScopeSample *samples=nullptr;int scopeCapacity=0,scopeHead=0,scopeCount=0;uint32_t lastSampleMs=0;bool scopePaused=false;
 uint32_t visibleWindowMs=600000UL;float vmax=60.0f,imax=20.0f,pmax=1000.0f;
 lv_obj_t *chart=nullptr,*windowLabel=nullptr,*pauseText=nullptr,*legend=nullptr,*xLabels[5]{},*vLabels[5]{},*iLabels[5]{},*pLabels[5]{};
 lv_chart_series_t *seriesV=nullptr,*seriesI=nullptr,*seriesP=nullptr;
@@ -15,6 +16,15 @@ constexpr int SCOPE_SCREEN_X=10,SCOPE_SCREEN_Y=48;
 constexpr int PLOT_X=140,PLOT_Y=48,PLOT_W=620,PLOT_H=322;
 constexpr int LEGEND_W=230,LEGEND_H=118;
 
+bool allocateSamples(){
+ if(samples)return true;
+ samples=static_cast<ScopeSample*>(heap_caps_malloc(sizeof(ScopeSample)*SCOPE_CAPACITY_PSRAM,MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT));
+ if(samples){scopeCapacity=SCOPE_CAPACITY_PSRAM;DebugLog::printf("[SCOPE] PSRAM-Puffer: %d Punkte / %u Byte\n",scopeCapacity,static_cast<unsigned>(sizeof(ScopeSample)*scopeCapacity));return true;}
+ samples=static_cast<ScopeSample*>(heap_caps_malloc(sizeof(ScopeSample)*SCOPE_CAPACITY_FALLBACK,MALLOC_CAP_8BIT));
+ if(samples){scopeCapacity=SCOPE_CAPACITY_FALLBACK;DebugLog::printf("[SCOPE] Fallback-Puffer im Heap: %d Punkte / %u Byte\n",scopeCapacity,static_cast<unsigned>(sizeof(ScopeSample)*scopeCapacity));return true;}
+ DebugLog::println("[SCOPE] Kein Speicher für Verlaufspuffer");
+ return false;
+}
 int scaled(float v,float m){if(!isfinite(v)||m<=0)return LV_CHART_POINT_NONE;return (int)lroundf(constrain(v/m,0.0f,1.0f)*1000.0f);} 
 void updateWindowLabel(){char t[24];if(visibleWindowMs<60000)snprintf(t,sizeof(t),"%lu s",(unsigned long)(visibleWindowMs/1000));else snprintf(t,sizeof(t),"%.1f min",visibleWindowMs/60000.0f);lv_label_set_text(windowLabel,t);} 
 void updateXAxis(){for(int i=0;i<5;i++){float frac=(4-i)/4.0f;uint32_t ms=(uint32_t)(visibleWindowMs*frac);char t[24];if(i==4)snprintf(t,sizeof(t),"0 s");else if(ms<60000)snprintf(t,sizeof(t),"-%lu s",(unsigned long)(ms/1000));else snprintf(t,sizeof(t),"-%.1f min",ms/60000.0f);lv_label_set_text(xLabels[i],t);}}
@@ -25,10 +35,10 @@ void rebuild(){
  lv_chart_set_all_values(chart,seriesV,LV_CHART_POINT_NONE);
  lv_chart_set_all_values(chart,seriesI,LV_CHART_POINT_NONE);
  lv_chart_set_all_values(chart,seriesP,LV_CHART_POINT_NONE);
- if(!scopeCount){lv_chart_refresh(chart);return;}
- const uint32_t now=samples[(scopeHead-1+SCOPE_CAPACITY)%SCOPE_CAPACITY].ms;
+ if(!scopeCount||!samples||scopeCapacity<=0){lv_chart_refresh(chart);return;}
+ const uint32_t now=samples[(scopeHead-1+scopeCapacity)%scopeCapacity].ms;
  for(int i=0;i<scopeCount;i++){
-  auto&s=samples[(scopeHead-scopeCount+i+SCOPE_CAPACITY)%SCOPE_CAPACITY];
+  auto&s=samples[(scopeHead-scopeCount+i+scopeCapacity)%scopeCapacity];
   const uint32_t age=now-s.ms;
   if(age>visibleWindowMs)continue;
   const uint32_t elapsed=visibleWindowMs-age;
@@ -46,6 +56,7 @@ void makeLegendLine(lv_obj_t*parent,int y,lv_color_t color,const char*text){lv_o
 }
 
 void makeScope(lv_obj_t *parent){
+ allocateSamples();
  lv_obj_t*box=lv_obj_create(parent);lv_obj_set_size(box,780,422);stylePanel(box);
  lv_obj_t*reset=makeButton(box,"↺ STANDARD",218,2,132,40,blue(),&ui_font_de_14);lv_obj_add_event_cb(reset,control,LV_EVENT_CLICKED,(void*)5);
  lv_obj_t*minus=makeButton(box,"-",360,2,42,40,blue(),&lv_font_montserrat_24);lv_obj_add_event_cb(minus,control,LV_EVENT_CLICKED,(void*)3);
@@ -60,7 +71,7 @@ void makeScope(lv_obj_t *parent){
  for(int n=0;n<5;n++){xLabels[n]=makeLabel(box,"",&ui_font_de_14,lv_color_white());lv_obj_set_pos(xLabels[n],135+n*150,378);}lv_obj_t*zeit=makeLabel(box,"Zeit",&ui_font_de_14,lightGrey());lv_obj_set_pos(zeit,34,388);updateXAxis();
  legend=lv_obj_create(box);lv_obj_set_pos(legend,510,80);lv_obj_set_size(legend,LEGEND_W,LEGEND_H);stylePanel(legend);lv_obj_add_flag(legend,LV_OBJ_FLAG_CLICKABLE);lv_obj_add_event_cb(legend,dragLegend,LV_EVENT_PRESSING,nullptr);makeLabel(legend,"LEGENDE",&ui_font_de_16,lv_color_white());makeLegendLine(legend,28,green(),"U  Spannung");makeLegendLine(legend,52,blue(),"I  Strom");makeLegendLine(legend,76,orange(),"P  Leistung");
 }
-void updateScope(const PowerSupplyState&s,uint32_t now){if(!scopePaused&&now-lastSampleMs>=1000){lastSampleMs=now;auto&d=samples[scopeHead];d.ms=now;if(s.online(now)){d.voltage=s.voltageOut;d.current=s.currentOut;d.power=s.outputPowerW();}else d.voltage=d.current=d.power=NAN;scopeHead=(scopeHead+1)%SCOPE_CAPACITY;if(scopeCount<SCOPE_CAPACITY)scopeCount++;rebuild();}}
+void updateScope(const PowerSupplyState&s,uint32_t now){if(!scopePaused&&samples&&scopeCapacity>0&&now-lastSampleMs>=1000){lastSampleMs=now;auto&d=samples[scopeHead];d.ms=now;if(s.online(now)){d.voltage=s.voltageOut;d.current=s.currentOut;d.power=s.outputPowerW();}else d.voltage=d.current=d.power=NAN;scopeHead=(scopeHead+1)%scopeCapacity;if(scopeCount<scopeCapacity)scopeCount++;rebuild();}}
 void handleScopeTouch(const TouchSample&s){
  if(!s.newPacket)return;
  if(!s.pressed||s.points!=1){axisDrag=false;dragMode=0;return;}

@@ -2,6 +2,7 @@
 #include "app_config.h"
 #include <Arduino.h>
 #include <lvgl.h>
+#include <atomic>
 #include "esp_heap_caps.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_rgb.h"
@@ -12,7 +13,7 @@ esp_lcd_panel_handle_t panel = nullptr;
 lv_display_t *display = nullptr;
 uint8_t *drawBuffer1 = nullptr;
 uint8_t *drawBuffer2 = nullptr;
-volatile uint32_t flushCount = 0;
+std::atomic<uint32_t> flushCount{0};
 uint32_t fpsWindowMs = 0;
 uint16_t currentFps = 0;
 
@@ -34,7 +35,7 @@ void flush(lv_display_t *disp, const lv_area_t *area, uint8_t *pixels) {
   const esp_err_t result = esp_lcd_panel_draw_bitmap(panel, area->x1, area->y1,
                                                      area->x2 + 1, area->y2 + 1, pixels);
   if (result != ESP_OK) DebugLog::printf("[DISPLAY] draw_bitmap Fehler: %s\n", esp_err_to_name(result));
-  ++flushCount;
+  flushCount.fetch_add(1, std::memory_order_relaxed);
   lv_display_flush_ready(disp);
 }
 
@@ -102,10 +103,7 @@ void Display::task() {
   lv_timer_handler();
   const uint32_t now = millis();
   if (now - fpsWindowMs >= 1000) {
-    noInterrupts();
-    const uint32_t frames = flushCount;
-    flushCount = 0;
-    interrupts();
+    const uint32_t frames = flushCount.exchange(0, std::memory_order_relaxed);
     const uint32_t elapsed = now - fpsWindowMs;
     currentFps = elapsed ? static_cast<uint16_t>((frames * 1000UL) / elapsed) : 0;
     fpsWindowMs = now;

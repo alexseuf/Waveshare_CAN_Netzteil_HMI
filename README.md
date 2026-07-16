@@ -4,7 +4,7 @@
 
 ### Touch-HMI für ein CAN-gesteuertes Ladegerät auf Basis des Waveshare ESP32-S3-LCD-4.3
 
-**Aktueller Entwicklungsstand:** `V9.5.0-dev`  
+**Aktueller Teststand:** `V9.5.3-test1`  
 **Stabile Version auf `main`:** `V9.4.2`
 
 </div>
@@ -23,7 +23,7 @@ Das Gerät übernimmt:
 - Überwachung der CAN-Kommunikation
 - grafische Aufzeichnung der Messwerte
 - Fehler- und Debug-Anzeige
-- ab V9.5 zusätzlich WiFi, MQTT, Home Assistant und lokalen Webzugriff
+- ab V9.5 zusätzlich WiFi, NTP, MQTT, Home Assistant und lokalen Webzugriff
 
 > Die Ladegeräte- und CAN-Funktion bleibt auch bei Ausfall von WLAN, MQTT, NTP oder Webserver vollständig lauffähig.
 
@@ -56,51 +56,29 @@ Die Scope-Seite zeichnet Spannung, Strom und Leistung als zeitlichen Verlauf auf
 
 ---
 
-## Neues Einstellungsmenü für V9.5
+## Einstellungsmenü V9.5
 
 <img src="docs/images/v9_5_settings_mockup.svg" alt="Mockup des neuen V9.5 Einstellungsmenüs" width="100%">
 
-Das neue Einstellungsmenü wird in drei klar getrennte Bereiche aufgeteilt:
+| Bereich | Funktion | Stand |
+|---|---|---|
+| **Debug Settings** | Log-Level, Diagnoseanzeigen, FPS, RAM, PSRAM und CPU-Last | umgesetzt |
+| **WiFi** | Netzwerksuche, Zugangsdaten, Status, Signalstärke, IP, NTP und AP-Fallback | Testversion umgesetzt |
+| **MQTT / Home Assistant** | Broker, Discovery, Availability/LWT und optionale Fernsteuerung | folgt in Stufe 3 |
 
-| Bereich | Funktion |
-|---|---|
-| **Debug Settings** | Log-Level, Diagnoseanzeigen, FPS, RAM, PSRAM, CPU-Last und CAN-Rohdaten |
-| **WiFi** | Netzwerksuche, SSID, Passwort, IP-Adresse, Signalstärke, NTP und Access-Point-Fallback |
-| **MQTT / Home Assistant** | Broker, Topic-Präfix, Discovery, Availability/LWT und optionale Fernsteuerung |
+### WiFi-/NTP-Stufe 2
 
-Die lokale Touchbedienung hat immer Vorrang vor Web- und MQTT-Befehlen.
+Die Testversion `9.5.3-test1` enthält:
 
----
-
-## Geplante Erweiterungen in V9.5
-
-### Systemdiagnose
-
-- freier interner RAM
-- freier und gesamter PSRAM
-- CPU-Auslastung
-- LVGL-FPS
-- Loop-Zeit
-- Uptime und Reset-Grund
-
-### Leistungsfähiger Diagrammpuffer
-
-- größerer Ringpuffer im PSRAM
-- relative Laufzeit bleibt immer verfügbar
-- absolute UTC-Zeitstempel nach NTP-Synchronisation
-- umschaltbare X-Achse: Laufzeit oder Uhrzeit
-- Min-/Max-Verdichtung für lange Zeitbereiche
-- keine SD-Karte für den Live-Puffer erforderlich
-
-### WiFi, MQTT und Webserver
-
-- nicht blockierende WLAN-Verbindung
-- automatischer Wiederverbindungsversuch
-- Access-Point-Fallback zur Ersteinrichtung
-- MQTT-Telemetrie und Home-Assistant-Discovery
-- lokaler Webserver mit Dashboard, Diagrammen und Konfiguration
-- Administratorpasswort für START, STOP, Sollwerte und Einstellungen
-- Webzugriff nur aus dem lokalen Netzwerk
+- asynchrone WLAN-Netzwerksuche
+- Auswahl des WLANs per Touch
+- Passwortfeld mit Bildschirmtastatur
+- Speicherung der Zugangsdaten in NVS
+- automatische Verbindung und Wiederverbindung
+- Anzeige von SSID, RSSI, Signalqualität, IP, Gateway und MAC-Adresse
+- Access-Point-Fallback `Charger-HMI-Setup`
+- NTP-Synchronisation mit deutscher Sommer-/Winterzeit
+- keine blockierende Abhängigkeit der CAN- oder Ladefunktion vom Netzwerk
 
 ---
 
@@ -129,14 +107,6 @@ Das HMI sendet die Sollwerte zyklisch über CAN und verarbeitet die Status- und 
 </tr>
 </table>
 
-<details>
-<summary><strong>Typenschild des Netzteils anzeigen</strong></summary>
-
-<br>
-<img src="docs/images/charger_nameplate.jpg" alt="Typenschild des CAN-Netzteils" width="600">
-
-</details>
-
 ---
 
 ## CAN-Kommunikation
@@ -153,8 +123,6 @@ Die Firmware startet immer im sicheren STOP-Zustand. Das zyklische Steuertelegra
 
 ## Navigation
 
-Aktuelle stabile Navigation:
-
 ```text
 HAUPT | SCOPE | LOG | INFO | ⚙
 ```
@@ -163,39 +131,25 @@ HAUPT | SCOPE | LOG | INFO | ⚙
 - **SCOPE:** zeitlicher Verlauf von Spannung, Strom und Leistung
 - **LOG:** Debug-Ausgaben
 - **INFO:** Systemstatus und CAN-Monitor
-- **⚙:** Geräte- und Diagnoseeinstellungen
+- **⚙:** Debug-, WiFi- und später MQTT-Einstellungen
 
 ---
 
-## Projektstruktur
+## Entwicklungszweige
 
 ```text
-include/           zentrale Header und Konfiguration
-src/               Firmware, CAN, Display, Touch und UI
-docs/              Schaltpläne, Protokolle und Entwicklungsdokumentation
-docs/images/       Screenshots, Hardwarebilder und Mockups
-platformio.ini     reproduzierbare PlatformIO-Konfiguration
+main                     stabile V9.4.2
+feature/v9.5             allgemeine V9.5-Entwicklung
+test/v9.5.2-ui-fixes     aktueller Teststand V9.5.3-test1 mit WiFi/NTP
 ```
-
----
-
-## Entwicklungsstand V9.5
-
-Die Arbeiten erfolgen im Branch:
-
-```text
-feature/v9.5
-```
-
-Der zugehörige Pull Request bleibt bis zur vollständigen Implementierung und Hardwareprüfung als Entwurf geöffnet.
 
 ### Dokumentation
 
 - [Entwicklungsplan V9.5](docs/V9.5_PLAN.md)
-- [UI-Spezifikation Einstellungen](docs/V9.5_UI_SPEC.md)
+- [Schritt 1: Einstellungsmenü](docs/V9.5_STEP1.md)
+- [Stufe 2: WiFi und NTP](docs/V9.5.3_TEST1_WIFI.md)
+- [UI-Spezifikation](docs/V9.5_UI_SPEC.md)
 - [Changelog](CHANGELOG.md)
-- [Toolchain](docs/Toolchain.md)
-- [Hardwarefehler und Korrekturen](docs/Board_Bugs_and_Fixes.md)
 
 ---
 
@@ -207,10 +161,6 @@ Der zugehörige Pull Request bleibt bis zur vollständigen Implementierung und H
 - LVGL `9.5.0`
 - ESP32-S3 mit 16 MB Flash und OPI-PSRAM
 
-Die verwendete Plattformversion ist festgeschrieben, damit das Projekt reproduzierbar gebaut werden kann.
-
----
-
 ## Debug-Schnittstelle
 
 ```text
@@ -221,8 +171,6 @@ Pegel: 3,3 V
 ```
 
 Bei aktiviertem CAN wird die native USB-Datenverbindung über den FSUSB42 getrennt. Für Laufzeitdiagnose und Bootmeldungen ist deshalb der separate Debug-UART vorgesehen.
-
----
 
 ## Kritischer Hardwarehinweis
 
