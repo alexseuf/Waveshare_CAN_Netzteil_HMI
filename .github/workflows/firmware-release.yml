@@ -3,6 +3,9 @@ name: Firmware Release
 on:
   push:
     tags: ["v*"]
+    branches: [main]
+    paths:
+      - ".github/workflows/firmware-release.yml"
   workflow_dispatch:
     inputs:
       tag:
@@ -15,10 +18,12 @@ permissions:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.event.inputs.tag || (github.ref_type == 'tag' && github.ref_name) || 'v9.4.2' }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.tag || github.ref }}
+          ref: ${{ env.RELEASE_TAG }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
@@ -33,7 +38,6 @@ jobs:
             0x10000 .pio/build/waveshare_esp32s3_lcd43/firmware.bin
       - name: Create web installer manifest
         env:
-          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
           REPOSITORY: ${{ github.repository }}
         run: |
           python - <<'PY'
@@ -58,7 +62,6 @@ jobs:
       - name: Create or update GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
         run: |
           gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --generate-notes
           gh release upload "$RELEASE_TAG" firmware.factory.bin manifest.json --clobber
