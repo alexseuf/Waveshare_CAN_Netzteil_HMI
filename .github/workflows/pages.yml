@@ -29,14 +29,73 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Create static release list
+      - name: Create static release files
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
+          PAGES_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
         run: |
           mkdir -p site
           cp -a web/. site/
-          gh api --method GET "repos/$REPOSITORY/releases?per_page=100" > site/releases.json
+          gh api --method GET "repos/$REPOSITORY/releases?per_page=100" > /tmp/releases-api.json
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import subprocess
+          import urllib.parse
+
+          releases = json.loads(pathlib.Path("/tmp/releases-api.json").read_text(encoding="utf-8"))
+          pages_url = os.environ["PAGES_URL"].rstrip("/")
+          output = []
+
+          for release in releases:
+              if release.get("draft"):
+                  continue
+              assets = {asset["name"]: asset for asset in release.get("assets", [])}
+              if "manifest.json" not in assets or "firmware.factory.bin" not in assets:
+                  continue
+
+              tag = release["tag_name"]
+              folder = urllib.parse.quote(tag, safe="")
+              destination = pathlib.Path("site/firmware") / folder
+              destination.mkdir(parents=True, exist_ok=True)
+
+              for filename in ("manifest.json", "firmware.factory.bin"):
+                  subprocess.run([
+                      "curl", "--fail", "--location", "--silent", "--show-error",
+                      assets[filename]["browser_download_url"],
+                      "--output", str(destination / filename)
+                  ], check=True)
+
+              manifest_path = destination / "manifest.json"
+              manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+              for build in manifest.get("builds", []):
+                  for part in build.get("parts", []):
+                      if pathlib.PurePosixPath(part.get("path", "")).name == "firmware.factory.bin":
+                          part["path"] = f"{pages_url}/firmware/{folder}/firmware.factory.bin"
+              manifest_path.write_text(
+                  json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+                  encoding="utf-8"
+              )
+
+              output.append({
+                  "tag_name": tag,
+                  "name": release.get("name") or tag,
+                  "prerelease": release.get("prerelease", False),
+                  "draft": False,
+                  "html_url": release["html_url"],
+                  "assets": [{
+                      "name": "manifest.json",
+                      "browser_download_url": f"{pages_url}/firmware/{folder}/manifest.json"
+                  }]
+              })
+
+          pathlib.Path("site/releases.json").write_text(
+              json.dumps(output, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8"
+          )
+          PY
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
