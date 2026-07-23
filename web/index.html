@@ -25,8 +25,12 @@
     .android-flash { margin:24px 0 0; padding:16px; border:1px solid #4b7198; border-radius:12px; background:#081a2e; }
     .android-flash h2 { margin:0 0 8px; font-size:1.18rem; }
     .android-flash ol { margin:10px 0; padding-left:22px; line-height:1.5; }
-    .download-button { display:inline-block; margin-top:6px; padding:11px 16px; border-radius:9px; background:#1677c8; color:white; font-weight:700; text-decoration:none; }
+    .android-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+    .download-button,.app-link { display:inline-block; padding:11px 16px; border-radius:9px; color:white; font-weight:700; text-decoration:none; }
+    .download-button { background:#1677c8; }
     .download-button:hover { background:#258dde; }
+    .app-link { background:#2e7d32; }
+    .app-link:hover { background:#3b9140; }
     .download-button[aria-disabled="true"] { opacity:.55; pointer-events:none; }
     .android-note { margin:10px 0 0; color:#b9cce0; font-size:.92rem; }
     .project-link { margin:22px 0 0; text-align:center; }
@@ -69,7 +73,10 @@
       <li>Firmware unten herunterladen.</li>
       <li>In einer ESP32-Flasher-App die Datei auswählen und als Flash-Adresse <strong>0x0000</strong> eintragen.</li>
     </ol>
-    <a id="androidDownload" class="download-button" href="#" download="firmware.factory.bin" aria-disabled="true">Firmware für Android herunterladen</a>
+    <div class="android-actions">
+      <a class="app-link" href="https://play.google.com/store/apps/details?id=com.esp_flash.esp_flash_app" target="_blank" rel="noopener">ESP32_Flasher im Play Store öffnen ↗</a>
+      <a id="androidDownload" class="download-button" href="#" download="firmware.factory.bin" aria-disabled="true">Firmware für Android herunterladen</a>
+    </div>
     <p class="android-note">Der direkte Installieren-Button ist für PC-Browser gedacht. Android verwendet den Download und eine separate Flasher-App.</p>
   </section>
   <p class="project-link"><a href="https://github.com/alexseuf/Waveshare_CAN_Netzteil_HMI" target="_blank" rel="noopener">GitHub-Projekt öffnen ↗</a></p>
