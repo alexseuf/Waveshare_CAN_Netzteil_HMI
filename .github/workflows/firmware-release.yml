@@ -31,6 +31,15 @@ jobs:
           if grep -q '^#include <ESP.h>$' src/ui_settings.cpp; then
             sed -i 's/^#include <ESP.h>$/#include <Arduino.h>/' src/ui_settings.cpp
           fi
+      - name: Synchronize firmware version with release
+        run: |
+          if [ "$RELEASE_TAG" = "testversion-latest" ]; then
+            firmware_version="9.5.0-test"
+          else
+            firmware_version="${RELEASE_TAG#v}"
+          fi
+          sed -i -E 's/(FIRMWARE_VERSION = ")[^"]+(")/\1'"$firmware_version"'\2/' include/app_config.h
+          grep 'FIRMWARE_VERSION' include/app_config.h
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
