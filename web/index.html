@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Waveshare CAN-Netzteil-HMI – Firmware installieren</title>
-  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <script type="module" src="https://unpkg.com/tasmota-esp-web-tools@12.2.2/dist/web/install-button.js?module"></script>
   <style>
     :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#071426; color:#eef6ff; }
     body { margin:0; min-height:100vh; display:grid; place-items:center; }
@@ -13,6 +13,8 @@
     label { display:block; margin:24px 0 8px; font-weight:700; }
     select { width:100%; padding:12px; border-radius:9px; border:1px solid #4b7198; background:#081a2e; color:inherit; font-size:1rem; }
     .install { margin-top:22px; min-height:48px; }
+    .speed-row { margin-top:18px; }
+    .speed-note { margin:7px 0 0; color:#b9cce0; font-size:.92rem; }
     .hint,.status { color:#b9cce0; line-height:1.5; }
     .port-warning { margin:20px 0 24px; padding:16px; border:2px solid #ffbf47; border-radius:12px; background:#3a2b0d; color:#fff4d6; }
     .port-warning strong { color:#ffd166; }
@@ -37,6 +39,15 @@
   </section>
   <label for="version">Verfügbare Version</label>
   <select id="version" disabled><option>Versionen werden gesucht …</option></select>
+  <div class="speed-row">
+    <label for="baudRate">Übertragungsgeschwindigkeit</label>
+    <select id="baudRate">
+      <option value="115200">115200 Baud – besonders zuverlässig</option>
+      <option value="460800" selected>460800 Baud – empfohlen</option>
+      <option value="921600">921600 Baud – schnell</option>
+    </select>
+    <p class="speed-note">Falls das Flashen abbricht oder eine Zeitüberschreitung meldet, erneut mit 115200 Baud versuchen.</p>
+  </div>
   <div id="installer" class="install"></div>
   <p id="status" class="status">GitHub-Releases werden geladen …</p>
   <p class="hint">Das Flashen funktioniert mit Chrome oder Edge. Vorhandene Einstellungen können beim Installieren optional gelöscht werden.</p>
@@ -46,6 +57,7 @@ const REPO = "alexseuf/Waveshare_CAN_Netzteil_HMI";
 const select = document.querySelector("#version");
 const installer = document.querySelector("#installer");
 const status = document.querySelector("#status");
+const baudRate = document.querySelector("#baudRate");
 
 function versionParts(tag) {
   return tag.replace(/^v/i, "").split(/[.-]/).map(x => /^\d+$/.test(x) ? Number(x) : x);
@@ -66,6 +78,7 @@ function showRelease(release) {
   if (!manifest) return;
   const button = document.createElement("esp-web-install-button");
   button.setAttribute("manifest", manifest.browser_download_url);
+  button.setAttribute("baud-rate", baudRate.value);
   installer.append(button);
   status.className = "status";
   status.innerHTML = `Ausgewählt: <strong>${release.name || release.tag_name}</strong> · <a href="${release.html_url}" target="_blank" rel="noopener">Release-Informationen</a>`;
@@ -93,6 +106,10 @@ async function loadReleases() {
     status.textContent=`Versionen konnten nicht geladen werden: ${error.message}`;
   }
 }
+baudRate.addEventListener("change", () => {
+  const button = installer.querySelector("esp-web-install-button");
+  if (button) button.setAttribute("baud-rate", baudRate.value);
+});
 loadReleases();
 </script>
 </body>
