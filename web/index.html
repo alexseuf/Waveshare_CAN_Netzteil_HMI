@@ -76,6 +76,15 @@ function compareVersions(a,b) {
   }
   return 0;
 }
+function formatReleaseTime(release) {
+  const timestamp = release.updated_at || release.published_at;
+  if (!timestamp) return "";
+  return new Intl.DateTimeFormat("de-DE", {
+    dateStyle: "short",
+    timeStyle: "medium",
+    timeZone: "Europe/Berlin"
+  }).format(new Date(timestamp));
+}
 function showRelease(release) {
   const manifest = release.assets.find(a => a.name === "manifest.json");
   installer.replaceChildren();
@@ -98,7 +107,8 @@ async function loadReleases() {
     select.replaceChildren(...releases.map((release,index) => {
       const option=document.createElement("option");
       option.value=String(index);
-      option.textContent=`${release.tag_name}${release.prerelease ? " (Vorabversion)" : ""}`;
+      const timestamp = formatReleaseTime(release);
+      option.textContent=`${release.name || release.tag_name}${release.prerelease ? " (Vorabversion)" : ""}${timestamp ? ` – ${timestamp} Uhr` : ""}`;
       return option;
     }));
     select.disabled=false;
