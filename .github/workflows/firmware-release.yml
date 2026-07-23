@@ -28,9 +28,7 @@ jobs:
           ref: ${{ env.SOURCE_REF }}
       - name: Apply compatibility fix for older releases
         run: |
-          if grep -q '^#include <ESP.h>$' src/ui_settings.cpp; then
-            sed -i 's/^#include <ESP.h>$/#include <Arduino.h>/' src/ui_settings.cpp
-          fi
+          grep -rlZ --include='*.cpp' --include='*.h' '^#include <ESP.h>$' src include |             xargs -0 -r sed -i 's/^#include <ESP.h>$/#include <Arduino.h>/'
       - name: Synchronize firmware version with release
         run: |
           if [ "$RELEASE_TAG" = "testversion-latest" ]; then
