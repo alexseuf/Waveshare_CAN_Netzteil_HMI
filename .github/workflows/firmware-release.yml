@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Vorhandener Tag, z. B. v9.4.2"
+        description: "Vorhandener Tag, z. B. v9.4.2, oder testversion-latest"
         required: true
 
 permissions:
@@ -19,11 +19,12 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     env:
-      RELEASE_TAG: ${{ github.event.inputs.tag || (github.ref_type == 'tag' && github.ref_name) || 'v9.4.2' }}
+      RELEASE_TAG: ${{ github.event.inputs.tag || (github.ref_type == 'tag' && github.ref_name) || 'testversion-latest' }}
+      SOURCE_REF: ${{ (github.event.inputs.tag == 'testversion-latest' || github.ref_type == 'branch') && 'main' || github.event.inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.RELEASE_TAG }}
+          ref: ${{ env.SOURCE_REF }}
       - name: Apply compatibility fix for older releases
         run: |
           if grep -q '^#include <ESP.h>$' src/ui_settings.cpp; then
@@ -49,9 +50,10 @@ jobs:
           import json, os
           tag = os.environ["RELEASE_TAG"]
           repo = os.environ["REPOSITORY"]
+          version = "Testversion (aktuell)" if tag == "testversion-latest" else tag
           manifest = {
               "name": "Waveshare CAN-Netzteil-HMI",
-              "version": tag,
+              "version": version,
               "new_install_prompt_erase": True,
               "builds": [{
                   "chipFamily": "ESP32-S3",
@@ -68,5 +70,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --generate-notes
+          if [ "$RELEASE_TAG" = "testversion-latest" ]; then
+            gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --target main --title "Testversion (aktuell)" --notes "Automatisch erzeugte, nicht stabile Testversion aus dem aktuellen main-Stand." --prerelease
+            gh release edit "$RELEASE_TAG" --target main --title "Testversion (aktuell)" --notes "Automatisch erzeugte, nicht stabile Testversion aus dem aktuellen main-Stand." --prerelease
+          else
+            gh release view "$RELEASE_TAG" >/dev/null 2>&1 || gh release create "$RELEASE_TAG" --title "$RELEASE_TAG" --generate-notes
+          fi
           gh release upload "$RELEASE_TAG" firmware.factory.bin manifest.json --clobber
