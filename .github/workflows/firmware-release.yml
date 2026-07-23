@@ -24,6 +24,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.RELEASE_TAG }}
+      - name: Apply compatibility fix for older releases
+        run: |
+          if grep -q '^#include <ESP.h>$' src/ui_settings.cpp; then
+            sed -i 's/^#include <ESP.h>$/#include <Arduino.h>/' src/ui_settings.cpp
+          fi
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
