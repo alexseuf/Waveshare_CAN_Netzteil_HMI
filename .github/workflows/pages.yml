@@ -85,6 +85,11 @@ jobs:
                   "prerelease": release.get("prerelease", False),
                   "draft": False,
                   "html_url": release["html_url"],
+                  "published_at": release.get("published_at"),
+                  "updated_at": max(
+                      (asset.get("updated_at") for asset in assets.values() if asset.get("updated_at")),
+                      default=release.get("published_at")
+                  ),
                   "assets": [{
                       "name": "manifest.json",
                       "browser_download_url": f"{pages_url}/firmware/{folder}/manifest.json"
