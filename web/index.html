@@ -18,8 +18,8 @@
     .hint,.status { color:#b9cce0; line-height:1.5; }
     .port-warning { margin:20px 0 24px; padding:16px; border:2px solid #ffbf47; border-radius:12px; background:#3a2b0d; color:#fff4d6; }
     .port-warning strong { color:#ffd166; }
-    .port-warning .board-image-frame { display:grid; place-items:center; height:min(67.24vw,426px); margin-top:14px; overflow:hidden; border-radius:9px; background:#071426; }
-    .port-warning img { display:block; width:min(82vw,520px); height:auto; max-width:none; transform:rotate(-90deg) scale(0.82); border-radius:9px; }
+    .port-warning .board-image-frame { position:relative; height:min(67.24vw,426px); margin-top:14px; overflow:hidden; border-radius:9px; background:#071426; }
+    .port-warning img { position:absolute; top:50%; left:50%; display:block; width:min(67.24vw,426px); height:auto; max-width:none; transform:translate(-50%,-50%) rotate(-90deg); transform-origin:center; border-radius:9px; }
     .port-warning .caption { margin:10px 0 0; font-weight:700; text-align:center; }
     .error { color:#ffb2b2; }
     .project-link { margin:22px 0 0; text-align:center; }
