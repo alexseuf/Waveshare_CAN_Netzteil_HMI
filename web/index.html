@@ -28,12 +28,14 @@
     .android-flash[open] summary { margin-bottom:8px; }
     .android-flash ol { margin:10px 0; padding-left:22px; line-height:1.5; }
     .android-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
-    .download-button,.app-link { display:inline-block; padding:11px 16px; border-radius:9px; color:white; font-weight:700; text-decoration:none; }
+    .download-button,.app-link,.combined-button { display:inline-block; padding:11px 16px; border:0; border-radius:9px; color:white; font:inherit; font-weight:700; text-decoration:none; cursor:pointer; }
     .download-button { background:#1677c8; }
     .download-button:hover { background:#258dde; }
     .app-link { background:#2e7d32; }
     .app-link:hover { background:#3b9140; }
-    .download-button[aria-disabled="true"] { opacity:.55; pointer-events:none; }
+    .combined-button { flex-basis:100%; background:#7b3fc6; }
+    .combined-button:hover { background:#9254d8; }
+    .download-button[aria-disabled="true"],.combined-button:disabled { opacity:.55; pointer-events:none; }
     .android-note { margin:10px 0 0; color:#b9cce0; font-size:.92rem; }
     .project-link { margin:22px 0 0; text-align:center; }
     .project-link a { display:inline-block; padding:10px 16px; border:1px solid #4b7198; border-radius:9px; background:#081a2e; font-weight:700; text-decoration:none; }
@@ -79,7 +81,9 @@
     <div class="android-actions">
       <a class="app-link" href="https://play.google.com/store/apps/details?id=com.esp_flash.esp_flash_app" target="_blank" rel="noopener">ESP32_Flasher im Play Store öffnen ↗</a>
       <a id="androidDownload" class="download-button" href="#" download="firmware.factory.bin" aria-disabled="true">Firmware für Android herunterladen</a>
+      <button id="androidDownloadAndOpen" class="combined-button" type="button" disabled>Firmware herunterladen &amp; ESP32-Flasher öffnen</button>
     </div>
+    <p class="android-note"><strong>Datei:</strong> die gerade ausgewählte <code>*.factory.bin</code> · <strong>Flash-Adresse:</strong> <code>0x0000</code>. Die App übernimmt diese Angaben nicht automatisch; bitte dort manuell auswählen bzw. eintragen.</p>
     <p class="android-note">Der direkte Installieren-Button ist für PC-Browser gedacht. Android verwendet den Download und eine separate Flasher-App.</p>
   </details>
   <p class="project-link"><a href="https://github.com/alexseuf/Waveshare_CAN_Netzteil_HMI" target="_blank" rel="noopener">GitHub-Projekt öffnen ↗</a></p>
@@ -91,6 +95,7 @@ const installer = document.querySelector("#installer");
 const status = document.querySelector("#status");
 const baudRate = document.querySelector("#baudRate");
 const androidDownload = document.querySelector("#androidDownload");
+const androidDownloadAndOpen = document.querySelector("#androidDownloadAndOpen");
 
 function versionParts(tag) {
   return tag.replace(/^v/i, "").split(/[.-]/).map(x => /^\d+$/.test(x) ? Number(x) : x);
@@ -120,6 +125,7 @@ function showRelease(release) {
   androidDownload.href = firmware ? firmware.browser_download_url : "#";
   androidDownload.setAttribute("aria-disabled", firmware ? "false" : "true");
   androidDownload.download = `${release.tag_name || "firmware"}.factory.bin`;
+  androidDownloadAndOpen.disabled = !firmware;
   installer.replaceChildren();
   if (!manifest) return;
   const button = document.createElement("esp-web-install-button");
@@ -153,6 +159,21 @@ async function loadReleases() {
     status.textContent=`Versionen konnten nicht geladen werden: ${error.message}`;
   }
 }
+androidDownloadAndOpen.addEventListener("click", () => {
+  if (androidDownload.getAttribute("aria-disabled") === "true") return;
+  const download = document.createElement("a");
+  download.href = androidDownload.href;
+  download.download = androidDownload.download;
+  document.body.append(download);
+  download.click();
+  download.remove();
+
+  const playStore = encodeURIComponent("https://play.google.com/store/apps/details?id=com.esp_flash.esp_flash_app");
+  window.setTimeout(() => {
+    window.location.href = `intent:#Intent;package=com.esp_flash.esp_flash_app;S.browser_fallback_url=${playStore};end`;
+  }, 350);
+});
+
 baudRate.addEventListener("change", () => {
   const button = installer.querySelector("esp-web-install-button");
   if (button) button.setAttribute("baud-rate", baudRate.value);
