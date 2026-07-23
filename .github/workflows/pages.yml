@@ -6,6 +6,10 @@ on:
     paths:
       - "web/**"
       - ".github/workflows/pages.yml"
+  release:
+    types: [published, edited]
+  schedule:
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -25,10 +29,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Create static release list
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          mkdir -p site
+          cp -a web/. site/
+          gh api --method GET "repos/$REPOSITORY/releases?per_page=100" > site/releases.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web
+          path: site
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
