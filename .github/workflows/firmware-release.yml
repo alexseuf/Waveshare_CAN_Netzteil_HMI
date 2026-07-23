@@ -32,7 +32,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - run: pip install platformio rich-click
+      - run: pip install platformio rich-click intelhex
       - run: pio run -e waveshare_esp32s3_lcd43
       - name: Merge flash image
         run: |
