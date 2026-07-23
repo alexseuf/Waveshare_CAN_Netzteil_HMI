@@ -14,6 +14,10 @@
     select { width:100%; padding:12px; border-radius:9px; border:1px solid #4b7198; background:#081a2e; color:inherit; font-size:1rem; }
     .install { margin-top:22px; min-height:48px; }
     .hint,.status { color:#b9cce0; line-height:1.5; }
+    .port-warning { margin:20px 0 24px; padding:16px; border:2px solid #ffbf47; border-radius:12px; background:#3a2b0d; color:#fff4d6; }
+    .port-warning strong { color:#ffd166; }
+    .port-warning img { display:block; width:100%; max-height:300px; margin-top:14px; object-fit:contain; border-radius:9px; background:#071426; }
+    .port-warning .caption { margin:10px 0 0; font-weight:700; text-align:center; }
     .error { color:#ffb2b2; }
     a { color:#83c9ff; }
   </style>
@@ -21,7 +25,13 @@
 <body>
 <main>
   <h1>Firmware installieren</h1>
-  <p class="hint">Waveshare ESP32-S3-Touch-LCD-4.3 per USB verbinden und gewünschte Version auswählen.</p>
+  <p class="hint">Waveshare ESP32-S3-Touch-LCD-4.3 verbinden und gewünschte Version auswählen.</p>
+  <section class="port-warning" aria-label="Wichtiger Hinweis zum USB-Anschluss">
+    <strong>⚠ Wichtig vor dem Flashen</strong>
+    <p>Stecke das USB-Datenkabel am Waveshare ESP32-S3-Touch-LCD-4.3 in den Anschluss <strong>UART</strong> – <strong>nicht</strong> in den Anschluss USB.</p>
+    <img src="https://raw.githubusercontent.com/alexseuf/Waveshare_CAN_Netzteil_HMI/main/docs/images/waveshare_esp32_s3_lcd_4_3_board.jpg" alt="Waveshare ESP32-S3-Touch-LCD-4.3 – zum Flashen den mit UART beschrifteten Anschluss verwenden" loading="lazy">
+    <p class="caption">Zum Flashen: USB-Kabel → UART-Port</p>
+  </section>
   <label for="version">Verfügbare Version</label>
   <select id="version" disabled><option>Versionen werden gesucht …</option></select>
   <div id="installer" class="install"></div>
