@@ -30,6 +30,10 @@ Dieser Ordner enthält vollständig ausgearbeitete Beispielprojekte auf Basis re
 - [16 Bewertung und offene Verifikation](PFC_20kW_3x64mm_HighFlux/16_Bewertung_und_offene_Verifikation.md)
 - [17 Quellenbasis](PFC_20kW_3x64mm_HighFlux/17_Quellenbasis.md)
 
+### PFC-Drossel 525 µH – 3 × 56 mm – 48 Windungen
+
+- [Projektübersicht](PFC_20kW_3x56mm_525uH_N48/README.md)
+
 ## Zweck
 
 Die Beispiele zeigen, wie die modulare Vorlage unter `../Vorlage/` für konkrete Drosselprojekte ausgefüllt wird. Sie dienen als Referenz für Struktur, Tabellen, Formeln, Berechnungsannahmen, Prüfmerkmale und offene Verifikationspunkte.
