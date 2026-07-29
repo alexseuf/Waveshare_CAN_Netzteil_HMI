@@ -7,4 +7,8 @@ $$P_{ges}=P_{Cu}+P_{core}$$
 | 20 kW | 19,3 W | 26,6 W | 4,0 W | 30,6 W |
 | 40 kW | 77,3 W | 106,4 W | 4,0 W | 110,4 W |
 
+![Abbildung 9: Gesamtverluste](Bilder/abbildung_08_gesamtverluste.svg)
+
+*Abbildung 9: Gesamtverluste über dem Effektivstrom bei Verwendung der DC-Widerstände für 25 °C und 120 °C.*
+
 Nicht enthalten sind HF-Wicklungsverluste, Anschlussverluste, Streuflussverluste und temperaturabhängige Änderungen der Kernverlustparameter.
