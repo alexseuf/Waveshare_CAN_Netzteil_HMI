@@ -109,6 +109,97 @@ Neben dem Skin-Effekt verursachen Magnetfelder benachbarter Leiter eine ungleich
 
 Für PFC-Drosseln im Bereich 50…100 kHz haben sich Litzen mit 0,071…0,10 mm Einzeldrahtdurchmesser bewährt. Die endgültige Auswahl erfolgt unter Berücksichtigung von Strombelastbarkeit, Wickelraum und Fertigung.
 
+## Praxisfaktoren für frequenzabhängige Kupferverluste
+
+Für eine überschlägige Vorbemessung kann der Wechselstromwiderstand über einen AC-Widerstandsfaktor abgeschätzt werden:
+
+```math
+k_{\mathrm{AC}}=\frac{R_{\mathrm{AC}}}{R_{\mathrm{DC}}}
+```
+
+Damit gilt:
+
+```math
+R_{\mathrm{AC}}=k_{\mathrm{AC}}\cdot R_{\mathrm{DC}}
+```
+
+und für die Kupferverluste:
+
+```math
+P_{\mathrm{Cu}}=I_{\mathrm{RMS}}^2\cdot R_{\mathrm{AC}}
+```
+
+Der Faktor ist kein reiner Materialparameter. Er hängt unter anderem von Frequenz, Einzeldrahtdurchmesser, Litzenaufbau, Windungszahl, Lagenzahl, Feldverteilung im Wickelraum und Abstand zu Luftspalten ab.
+
+### Typische Praxisbereiche
+
+Die folgenden Werte sind Erfahrungsbereiche für die Vorentwicklung. Sie ersetzen keine detaillierte Dowell-, FEM- oder Messauswertung.
+
+| Wicklungsaufbau | Frequenzbereich | typischer Bereich für $k_{\mathrm{AC}}$ |
+|---|---:|---:|
+| Massivdraht | 20…50 kHz | 2…5 |
+| Massivdraht | 70…100 kHz | 4…10 |
+| HF-Litze, gut dimensioniert | 20…70 kHz | 1,05…1,30 |
+| HF-Litze, gut dimensioniert | 70…150 kHz | 1,10…1,50 |
+| HF-Litze, ungünstig gewickelt | 70…150 kHz | 1,5…3 |
+| mehrlagige, dicht gepackte Wicklung | > 50 kHz | 2…6 |
+
+### Einfluss des Skin-Effekts
+
+Für runde Einzeldrähte kann das Verhältnis aus Drahtdurchmesser und Skintiefe als erste Orientierung verwendet werden.
+
+| Verhältnis $d/\delta$ | qualitative Bewertung | typische Erhöhung des AC-Widerstands |
+|---:|---|---:|
+| < 0,5 | Skin-Effekt meist vernachlässigbar | sehr gering |
+| ≈ 1 | beginnender Einfluss | etwa 5…15 % |
+| ≈ 2 | deutlicher Einfluss | etwa 30…70 % |
+| ≈ 3 | starker Einfluss | Faktor etwa 2…3 |
+
+Diese Werte gelten nur als überschlägige Orientierung. Bei Litzen ist zusätzlich der Verseilaufbau zu berücksichtigen.
+
+### Einfluss des Proximity-Effekts
+
+In Leistungsdrosseln kann der Proximity-Effekt stärker wirken als der reine Skin-Effekt. Besonders kritisch sind:
+
+- mehrere übereinanderliegende Wicklungslagen,
+- dicht benachbarte Leiter,
+- große hochfrequente Stromanteile,
+- hohe lokale Streufelder,
+- geringe Abstände zu konzentrierten Luftspalten,
+- ungleichmäßige Feldverteilung über den Wickelquerschnitt.
+
+### Praxisfaktoren für PFC-Drosseln
+
+Für PFC-Drosseln im Bereich etwa 50…100 kHz können für die Vorentwicklung folgende Erfahrungswerte verwendet werden:
+
+| Wicklungsqualität | typischer Bereich für $k_{\mathrm{AC}}$ |
+|---|---:|
+| sehr gut, einlagig oder sehr feldarm | 1,05…1,15 |
+| gut ausgelegte HF-Litze | 1,15…1,30 |
+| durchschnittlicher Serienaufbau | 1,30…1,60 |
+| ungünstige Mehrlagenwicklung | 1,60…2,50 |
+
+### Konservative Startwerte für die Vorentwicklung
+
+| Anwendung | empfohlener Startwert |
+|---|---:|
+| hochwertige HF-Litze, günstiger Aufbau | $k_{\mathrm{AC}}=1,2$ |
+| normale HF-Litze, mittlere Feldbelastung | $k_{\mathrm{AC}}=1,35$ |
+| ungünstige Mehrlagenwicklung | $k_{\mathrm{AC}}=1,6…2,5$ |
+| Massivdraht bei hoher Frequenz | $k_{\mathrm{AC}}=2…5$ oder höher |
+
+> **Wichtiger Hinweis:** Die Praxisfaktoren beziehen sich auf den hochfrequent belasteten Stromanteil. Bei Strömen mit Grundwelle und Schaltwelligkeit ist eine getrennte Verlustberechnung der Frequenzanteile genauer als die Multiplikation des gesamten RMS-Stroms mit einem einzigen pauschalen Faktor.
+
+### Genauere Berechnung
+
+Für eine belastbare Auslegung sollten die frequenzabhängigen Kupferverluste mindestens mit einem der folgenden Verfahren bestimmt werden:
+
+- analytische Dowell- oder Ferreira-Modelle,
+- harmonische Zerlegung des Stromverlaufs,
+- 2D- oder 3D-FEM des Wickelraums,
+- Impedanzmessung der realen Wicklung,
+- kalorimetrische Verlustmessung am Prototyp.
+
 ---
 
 ## B1.3 Litzenaufbau und Packungsfaktor
