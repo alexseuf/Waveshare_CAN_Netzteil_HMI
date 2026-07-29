@@ -15,4 +15,8 @@ $$P_{core}=P_v\,V_e$$
 | mittlerer Kernverlust | 4,0 W |
 | maximaler momentaner Rechenwert | 9,2 W |
 
+![Kernverlust über einer Netzperiode](Bilder/abbildung_02_kernverlust_netzwinkel.svg)
+
+*Abbildung 2: Momentaner Kernverlust über dem Netzwinkel; gestrichelt ist der Mittelwert von 4,0 W dargestellt.*
+
 In dieser Fassung werden Flussdichte in Tesla und Frequenz in kHz eingesetzt. Der reale Flussdichteverlauf aus der Schaltsimulation ist vor Freigabe zu verifizieren.
