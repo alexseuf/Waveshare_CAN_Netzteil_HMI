@@ -5,7 +5,7 @@ Dieser Ordner enthält vollständig ausgearbeitete Beispielprojekte auf Basis re
 ## Lesen
 
 - [Gesamtausgabe – alle Beispielprojekte auf einer Seite](Gesamtausgabe.md)  
-  **Zuletzt aktualisiert:** 29.07.2026, 18:36 Uhr CEST
+  **Zuletzt aktualisiert:** 29.07.2026, 18:57 Uhr CEST
 
 ## Inhaltsverzeichnis
 
