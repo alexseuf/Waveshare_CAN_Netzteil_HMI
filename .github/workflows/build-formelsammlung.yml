@@ -92,7 +92,7 @@ jobs:
 
       - name: Änderungen übernehmen
         run: |
-          if git diff --quiet -- docs/Formelsammlung/Gesamtausgabe.md; then
+          if [ -z "$(git status --porcelain -- docs/Formelsammlung/Gesamtausgabe.md)" ]; then
             echo "Gesamtausgabe ist bereits aktuell."
             exit 0
           fi
