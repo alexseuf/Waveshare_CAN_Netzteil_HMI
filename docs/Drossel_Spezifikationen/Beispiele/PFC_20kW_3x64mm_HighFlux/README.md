@@ -28,8 +28,19 @@ Dieses Beispiel wurde aus der Entwicklungsspezifikation für eine dreiphasige 20
 2. [Systemanforderungen](02_Systemanforderungen.md)
 3. [Magnetischer Aufbau](03_Magnetischer_Aufbau.md)
 4. [Wicklungsaufbau](04_Wicklungsaufbau.md)
-
-Weitere Kapitel der Word-Spezifikation werden schrittweise ergänzt.
+5. [Mechanischer Aufbau und Befestigung](05_Mechanischer_Aufbau.md)
+6. [Berechnungsgrundlagen](06_Berechnungsgrundlagen.md)
+7. [Magnetische Kennlinien](07_Magnetische_Kennlinien.md)
+8. [Stromwelligkeit und Flussdichtehub](08_Stromwelligkeit_und_Flussdichtehub.md)
+9. [Elektrische Wicklungsverluste](09_Elektrische_Wicklungsverluste.md)
+10. [Kernverluste](10_Kernverluste.md)
+11. [Gesamtverluste](11_Gesamtverluste.md)
+12. [Thermische Anforderungen](12_Thermische_Anforderungen.md)
+13. [Fertigungsanforderungen](13_Fertigungsanforderungen.md)
+14. [Prüf- und Abnahmekriterien](14_Pruef_und_Abnahmekriterien.md)
+15. [PLECS-/MATLAB-Parametersatz](15_PLECS_MATLAB_Parametersatz.md)
+16. [Bewertung und offene Verifikation](16_Bewertung_und_offene_Verifikation.md)
+17. [Quellenbasis](17_Quellenbasis.md)
 
 ## Hinweis zum Entwicklungsstand
 
