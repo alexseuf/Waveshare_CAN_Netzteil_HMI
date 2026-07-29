@@ -20,6 +20,8 @@ Für High Flux 60 µ werden folgende Koeffizienten verwendet:
 
 Für die numerische Darstellung wird als Arbeitskonvention $f$ in MHz, $\Delta B$ in kG und $P_v$ in W/cm³ angesetzt.
 
-> Die Einheitensetzung ist vor Serienfreigabe anhand der exakten Magnetics-Katalogseite zu bestätigen. Für die endgültige Verlustbewertung ist außerdem der reale Flussdichteverlauf aus der PLECS-Simulation über eine Netzperiode zu verwenden.
+![Abbildung 7: Kernverlust über dem Flussdichtehub](Bilder/abbildung_07_kernverluste.svg)
 
-Vorgesehen ist ein Diagramm des Kernverlusts über dem Flussdichtehub bei 70 kHz mit Kennzeichnung des verwendeten Voltsekunden-Arbeitspunkts.
+*Abbildung 7: Kernverlust über dem Flussdichtehub bei 70 kHz mit dem verwendeten Voltsekunden-Arbeitspunkt.*
+
+> Die Einheitensetzung ist vor Serienfreigabe anhand der exakten Magnetics-Katalogseite zu bestätigen. Für die endgültige Verlustbewertung ist außerdem der reale Flussdichteverlauf aus der PLECS-Simulation über eine Netzperiode zu verwenden.
