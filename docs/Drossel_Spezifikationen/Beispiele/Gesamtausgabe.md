@@ -1,18 +1,19 @@
 ---
 title: "Drossel-Spezifikationen – Beispiele – Gesamtausgabe"
-version: "2026-07-29"
-last_updated: "2026-07-29 18:36 CEST"
+version: "automatisch zusammengestellt"
+last_updated: "2026-07-29 18:57 CEST"
 ---
 
 # Drossel-Spezifikationen – Beispiele – Gesamtausgabe
 
-**Zuletzt aktualisiert:** 29.07.2026, 18:36 Uhr CEST
+Diese Datei enthält die derzeit vorhandenen Beispielprojekte in einer fortlaufenden Leseansicht. Sie wurde aus den Einzelkapiteln des Beispielprojekts neu zusammengestellt.
 
-Diese Datei enthält das Beispielprojekt **PFC-Drossel 20 kW – 3 × 64-mm-High-Flux-Ringkern** in einer fortlaufenden Leseansicht. Sie wurde aus den einzelnen Kapiteldateien des Beispielordners zusammengestellt.
+**Zuletzt aktualisiert:** 29.07.2026, 18:57 Uhr CEST
 
 ## Inhaltsverzeichnis
 
-- [Projektübersicht](#projektübersicht)
+### PFC-Drossel 20 kW – 3 × 64-mm-High-Flux-Ringkern
+
 - [1 Zweck und Geltungsbereich](#1-zweck-und-geltungsbereich)
 - [2 Systemanforderungen](#2-systemanforderungen)
 - [3 Magnetischer Aufbau](#3-magnetischer-aufbau)
@@ -36,6 +37,8 @@ Diese Datei enthält das Beispielprojekt **PFC-Drossel 20 kW – 3 × 64-mm-High
 # PFC-Drossel 20 kW
 
 **3 × 64-mm-High-Flux-Ringkern · 26 Windungen · 680 × 0,10-mm-HF-Litze**
+
+Dieses Beispiel wurde aus der Entwicklungsspezifikation für eine dreiphasige 20-kW-Interleaved-PFC-Drossel in eine modulare GitHub-Markdown-Struktur übertragen.
 
 ## Projektübersicht
 
@@ -61,9 +64,13 @@ Es enthält die Berechnungsmodelle, Kennlinien, Fertigungsanforderungen und Prü
 
 Die B(H)-Kennlinie und die daraus abgeleitete differentielle Induktivität werden mit der in der bereitgestellten Formelsammlung dokumentierten Magnetics-Herstellerfitfunktion berechnet.
 
+Für den Stromrippel um einen DC-Arbeitspunkt ist die differentielle Induktivität maßgebend:
+
 $$
 L_{\mathrm{diff}} = \frac{\mathrm{d}\Psi}{\mathrm{d}I}
 $$
+
+Die Sekanteninduktivität dient ergänzend zur Bewertung der gespeicherten Flussverkettung:
 
 $$
 L_{\mathrm{sec}} = \frac{\Psi}{I}
@@ -171,7 +178,7 @@ Vor der Freigabe sind Kernbezeichnung, Beschichtungsabmessungen, effektive Magne
 
 Die 26 Windungen werden einlagig und gleichmäßig über den gesamten Umfang von 360° verteilt. Kreuzungen der Litze sind zu vermeiden.
 
-![Abbildung 2: Drauf- und Seitenansicht des einlagigen Wicklungs- und Kernstapelaufbaus](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_02_wicklungsaufbau.svg)
+![Abbildung 2: Drauf- und Seitenansicht des Wicklungs- und Kernstapelaufbaus](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_02_wicklungsaufbau.svg)
 
 *Abbildung 2: Drauf- und Seitenansicht des einlagigen Wicklungs- und Kernstapelaufbaus.*
 
@@ -208,7 +215,7 @@ Die Einlagigkeit ist anhand des realen Litzenaußendurchmessers, der Kernbeschic
 
 Der Kernstapel wird liegend auf einer elektrisch isolierenden Grundplatte montiert. Vorgesehen sind eine vollflächige beziehungsweise segmentierte Verklebung des Kernstapels und vier zusätzliche, nicht stromführende mechanische Befestigungspunkte. Die Grundplatte muss mindestens UL94 V-0 erfüllen. Zwischen Kernbeschichtung und Litze ist bei Bedarf eine zusätzliche abriebfeste Isolierlage vorzusehen.
 
-![Abbildung 1: Vorgesehener mechanischer Aufbau der Drossel](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_01_mechanischer_aufbau.svg)
+![Abbildung 1: Vorgesehener mechanischer Aufbau](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_01_mechanischer_aufbau.svg)
 
 *Abbildung 1: Vorgesehener mechanischer Aufbau der Drossel auf einer isolierenden Grundplatte.*
 
@@ -265,30 +272,20 @@ $$L_{\mathrm{sec}}(I)=N\,A_e\,\frac{B(H)-B(0)}{I}$$
 
 # 7 Magnetische Kennlinien
 
-Die magnetischen Arbeitspunkte sind:
-
 - 20 kW bei $I_{pk}=40{,}82\,\text{A}$
 - 40 kW für 0,5 s bei $I_{pk}=81{,}65\,\text{A}$
 
 ## 7.1 B(H)-Kennlinie
 
-![Abbildung 3: B(H)-Kennlinie mit den magnetischen Arbeitspunkten](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_03_bh_kennlinie.svg)
+![Abbildung 3: B(H)-Kennlinie](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_03_bh_kennlinie.svg)
 
-*Abbildung 3: B(H)-Kennlinie mit vollständig beschrifteten Achsen und Arbeitspunkten.*
-
-## 7.2 Induktivitätskennlinien
+## 7.2 Differentielle und Sekanteninduktivität
 
 ![Abbildung 4: Differentielle und Sekanteninduktivität](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_04_induktivitaet.svg)
-
-*Abbildung 4: Differentielle und Sekanteninduktivität über dem Strom.*
 
 ## 7.3 Differentielle Permeabilität
 
 ![Abbildung 5: Differentielle relative Permeabilität](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_05_permeabilitaet.svg)
-
-*Abbildung 5: Differentielle relative Permeabilität über dem Strom.*
-
-## Kennwerte aus der Herstellerfitfunktion
 
 | Strom | Feldstärke | Flussdichte | $L_{diff}$ | $L_{sec}$ |
 |---:|---:|---:|---:|---:|
@@ -298,6 +295,8 @@ Die magnetischen Arbeitspunkte sind:
 | 57,7 A | 131,0 Oe | 0,699 T | 253 µH | 337 µH |
 | 81,6 A | 185,5 Oe | 0,888 T | 192 µH | 303 µH |
 | 90,0 A | 204,2 Oe | 0,941 T | 175 µH | 292 µH |
+
+> Die Fitkurve liefert bei sehr kleinen Feldstärken einen kleinen Offset und eine lokale Anfangssteigung, die nicht exakt der nominellen Permeabilität 60 entspricht. Für die reale Bauteilfreigabe sind deshalb Messwerte von $L(I)$ maßgebend.
 
 ---
 
@@ -323,24 +322,22 @@ $$P_{Cu}=I_{RMS}^2\,R(T)$$
 
 ![Abbildung 6: DC-Kupferverluste](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_06_kupferverluste.svg)
 
-*Abbildung 6: DC-Kupferverluste bei 25 °C und 120 °C mit vollständig beschrifteten Achsen.*
-
 | Arbeitspunkt | Strom | $P_{Cu}$ bei 25 °C | $P_{Cu}$ bei 120 °C |
 |---|---:|---:|---:|
 | 20 kW Dauerbetrieb | 28,87 A RMS | 23,1 W | 31,7 W |
 | 40 kW / 0,5 s | 57,74 A RMS | 92,3 W | 126,7 W |
 
+HF-Zusatzverluste durch Skin- und Proximity-Effekt sind in diesen DC-Werten nicht enthalten.
+
 ---
 
 # 10 Kernverluste
 
+Verwendete Steinmetzgleichung gemäß der zugrunde liegenden Formelsammlung:
+
 $$P_v=a\,f^b\,(\Delta B)^c$$
 
 $$P_{core}=P_v\,V_e$$
-
-![Abbildung 7: Kernverlust bei 70 kHz](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_07_kernverluste.svg)
-
-*Abbildung 7: Kernverlust über dem Flussdichtehub bei 70 kHz.*
 
 | Parameter | Wert |
 |---|---:|
@@ -352,6 +349,32 @@ $$P_{core}=P_v\,V_e$$
 | Kernvolumen $V_e$ | 155,5 cm³ |
 | Berechneter Worst-Case-Kernverlust | 98,9 W |
 
+## 10.1 Kernverlust über dem Flussdichtehub
+
+![Abbildung 7: Kernverlust über dem Flussdichtehub](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_07_kernverluste.svg)
+
+*Abbildung 7: Kernverlust über dem Flussdichtehub bei 70 kHz mit dem verwendeten Voltsekunden-Arbeitspunkt.*
+
+## 10.2 Ergänzende Diagramme aus Entwicklungsspezifikation Revision 4.3
+
+Die folgenden beiden Diagramme wurden aus der Entwicklungsspezifikation Revision 4.3 übernommen. Sie zeigen den Verlauf des hochfrequenten Flussdichtehubs und des daraus berechneten momentanen Kernverlusts über einer Netzperiode.
+
+> **Hinweis zur Zuordnung:** Die Diagramme stammen aus der Variante mit 3 × Magnetics 0058111A2, 48 Windungen und $A_e=432\,\mathrm{mm^2}$. Sie dienen als ergänzende Darstellung der Berechnungsmethodik und sind nicht unmittelbar die Kennlinien des 3 × 64-mm-/26-Windungs-Beispiels.
+
+### Flussdichtehub über einer Netzperiode
+
+![Diagramm 4: Flussdichtehub über einer Netzperiode](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_04_flussdichtehub_netzwinkel.svg)
+
+*Diagramm 4 aus Revision 4.3: Der berechnete Bereich beträgt $\Delta B_{pp}=31{,}2$ bis $129{,}2\,\mathrm{mT}$.*
+
+### Kernverlust über einer Netzperiode
+
+![Diagramm 5: Momentaner Kernverlust über einer Netzperiode](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_05_kernverlust_netzwinkel.svg)
+
+*Diagramm 5 aus Revision 4.3: Der über die Netzperiode gemittelte Kernverlust beträgt 4,0 W; der maximale momentane Rechenwert beträgt 9,2 W.*
+
+> Die Einheitensetzung ist vor Serienfreigabe anhand der exakten Magnetics-Katalogseite zu bestätigen. Für die endgültige Verlustbewertung ist außerdem der reale Flussdichteverlauf aus der PLECS-Simulation über eine Netzperiode zu verwenden.
+
 ---
 
 # 11 Gesamtverluste
@@ -360,7 +383,7 @@ $$P_{ges}=P_{Cu}+P_{core}$$
 
 ![Abbildung 8: Gesamtverluste](PFC_20kW_3x64mm_HighFlux/Bilder/abbildung_08_gesamtverluste.svg)
 
-*Abbildung 8: Gesamtverluste über dem Effektivstrom bei 25 °C und 120 °C.*
+Nicht enthalten sind Wicklungs-HF-Verluste, Anschlussverluste, Streuflussverluste und temperaturabhängige Änderungen der Kernverlustparameter.
 
 | Parameter | Wert |
 |---|---:|
@@ -368,8 +391,6 @@ $$P_{ges}=P_{Cu}+P_{core}$$
 | Gesamtverlust 20 kW / 120 °C | 130,6 W |
 | Gesamtverlust 40 kW / 25 °C | 191,3 W |
 | Gesamtverlust 40 kW / 120 °C | 225,7 W |
-
-Nicht enthalten sind Wicklungs-HF-Verluste, Anschlussverluste, Streuflussverluste und temperaturabhängige Änderungen der Kernverlustparameter.
 
 ---
 
@@ -448,15 +469,15 @@ c_StMetz = 1.311;
 
 Der Aufbau ist mechanisch deutlich plausibler als die zuvor betrachtete 80-Windungs-Variante. Die 26 Windungen können bei einem garantierten Litzenaußendurchmesser bis 3,65 mm einlagig ausgeführt werden.
 
-Offene Verifikationspunkte:
+## Offene Verifikationspunkte
 
-- exakte Einheitensetzung der verwendeten Steinmetzparameter,
-- realer Spannungs- und Voltsekundenverlauf des verwendeten PFC-Zweigs,
-- HF-Wicklungsverluste durch Skin- und Proximity-Effekt,
-- thermische Randbedingungen des konkreten Einbaus,
-- gemessene L(I)-Kennlinie von 0 bis mindestens 90 A,
-- reale Litzenaußenabmessung und Einlagigkeit der Wicklung,
-- Dauerfestigkeit von Verklebung, Isolationslagen und mechanischen Haltepunkten.
+- Exakte Einheitensetzung der verwendeten Steinmetzparameter
+- Realer Spannungs- und Voltsekundenverlauf des verwendeten PFC-Zweigs
+- HF-Wicklungsverluste durch Skin- und Proximity-Effekt
+- Thermische Randbedingungen des konkreten Einbaus
+- Gemessene L(I)-Kennlinie von 0 bis mindestens 90 A
+- Reale Litzenaußenabmessung und Einlagigkeit der Wicklung
+- Dauerfestigkeit von Verklebung, Isolationslagen und mechanischen Haltepunkten
 
 ---
 
@@ -465,6 +486,7 @@ Offene Verifikationspunkte:
 ## Projektspezifische Grundlage
 
 - Entwicklungsspezifikation **„Entwicklungsspezifikation_PFC_Drossel_3x64mm_26Wdg_mit_Arbeitspunkten“**, Dokumentversion 3.0.
+- Entwicklungsspezifikation **„Entwicklungsspezifikation_PFC_Drossel_Rev4_4_final“**, Revision 4.3, als Quelle für die ergänzenden Diagramme zum Flussdichtehub und Kernverlust über der Netzperiode.
 
 ## Berechnungsgrundlage
 
