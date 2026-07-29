@@ -8,6 +8,11 @@ status: "Entwurfs- und Berechnungsstand"
 
 **3 × Magnetics C058110A2 · High Flux 60 µ · 48 Windungen · zweilagig 28 + 20 · Litze 630 × 0,10 mm**
 
+## Lesen
+
+- [Gesamtausgabe](Gesamtausgabe.md)  
+  **Zuletzt aktualisiert:** 29.07.2026, 19:38 Uhr CEST
+
 ## Projektübersicht
 
 | Parameter | Wert |
