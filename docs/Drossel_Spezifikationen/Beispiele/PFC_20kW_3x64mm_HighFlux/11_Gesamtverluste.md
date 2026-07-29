@@ -18,4 +18,6 @@ Nicht enthalten sind:
 | Gesamtverlust 40 kW / 25 °C | 191,3 W |
 | Gesamtverlust 40 kW / 120 °C | 225,7 W |
 
-Vorgesehen ist ein Diagramm des Gesamtverlusts über dem Effektivstrom einschließlich der Arbeitspunkte bei 20 kW und 40 kW.
+![Abbildung 8: Gesamtverlust über dem Effektivstrom](Bilder/abbildung_08_gesamtverluste.svg)
+
+*Abbildung 8: Gesamtverlust über dem Effektivstrom einschließlich der Arbeitspunkte bei 20 kW und 40 kW.*
