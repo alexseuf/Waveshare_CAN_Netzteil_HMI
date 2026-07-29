@@ -1,0 +1,103 @@
+name: Formelsammlung zusammenführen
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "docs/Formelsammlung/**/*.md"
+      - ".github/workflows/build-formelsammlung.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Gesamtausgabe erzeugen
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          root = Path("docs/Formelsammlung")
+          output = root / "Gesamtausgabe.md"
+
+          chapters = [
+              ("Band B – Wicklungsberechnung", root / "Band_B" / "B1_1.md"),
+              (None, root / "Band_B" / "B1_2.md"),
+              (None, root / "Band_B" / "B1_3.md"),
+              (None, root / "Band_B" / "B1_4.md"),
+              (None, root / "Band_B" / "B1_5.md"),
+              ("Band C – Magnetische Auslegung", root / "Band_C" / "C1.md"),
+              (None, root / "Band_C" / "C2.md"),
+              (None, root / "Band_C" / "C3.md"),
+              (None, root / "Band_C" / "C4.md"),
+              (None, root / "Band_C" / "C5.md"),
+              (None, root / "Band_C" / "C6.md"),
+              (None, root / "Band_C" / "C7.md"),
+              (None, root / "Band_C" / "C8.md"),
+          ]
+
+          toc = """---
+          title: "Formelsammlung – Gesamtausgabe"
+          version: "automatisch erzeugt"
+          ---
+
+          # Formelsammlung – Gesamtausgabe
+
+          Diese Datei enthält alle Kapitel in einer fortlaufenden Leseansicht. Sie wird automatisch aus den einzelnen Kapiteldateien erzeugt.
+
+          ## Inhaltsverzeichnis
+
+          ### Band B – Wicklungsberechnung
+
+          - [B1.1 Leiterarten und Grundlagen](#b11-leiterarten-und-grundlagen)
+          - [B1.2 Skin- und Proximity-Effekt](#b12-skin--und-proximity-effekt)
+          - [B1.3 Litzenaufbau und Packungsfaktor](#b13-litzenaufbau-und-packungsfaktor)
+          - [B1.4 Stromdichte und Auswahlkriterien](#b14-stromdichte-und-auswahlkriterien)
+          - [B1.5 Praxisleitfaden Leiterauswahl](#b15-praxisleitfaden-leiterauswahl)
+
+          ### Band C – Magnetische Auslegung
+
+          - [C1 Geometrische Kenngrößen](#c1-geometrische-kenngrößen)
+          - [C2 Der magnetische Kreis](#c2-der-magnetische-kreis)
+          - [C3 Induktivitätsberechnung](#c3-induktivitätsberechnung)
+          - [C4 Flussdichte und Sättigung](#c4-flussdichte-und-sättigung)
+          - [C5 Magnetische Kernmaterialien](#c5-magnetische-kernmaterialien)
+          - [C6 Kernverluste](#c6-kernverluste)
+          - [C7 Thermische Auslegung](#c7-thermische-auslegung)
+          - [C8 Vollständige Auslegungsbeispiele](#c8-vollständige-auslegungsbeispiele)
+          """
+
+          parts = [toc.strip()]
+
+          for band_title, path in chapters:
+              if not path.exists():
+                  raise FileNotFoundError(f"Kapiteldatei fehlt: {path}")
+
+              text = path.read_text(encoding="utf-8")
+              text = re.sub(r"^---\n.*?\n---\n+", "", text, flags=re.DOTALL)
+              text = re.sub(r"^# Band [^\n]+\n+", "", text)
+
+              if band_title:
+                  parts.append(f"\n\n---\n\n# {band_title}\n")
+
+              parts.append("\n\n---\n\n" + text.strip())
+
+          output.write_text("".join(parts).strip() + "\n", encoding="utf-8")
+
+      - name: Änderungen übernehmen
+        run: |
+          if git diff --quiet -- docs/Formelsammlung/Gesamtausgabe.md; then
+            echo "Gesamtausgabe ist bereits aktuell."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/Formelsammlung/Gesamtausgabe.md
+          git commit -m "Update combined formula collection"
+          git push
