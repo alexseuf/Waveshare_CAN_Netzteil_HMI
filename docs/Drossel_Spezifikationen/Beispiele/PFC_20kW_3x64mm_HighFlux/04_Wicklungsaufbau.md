@@ -17,6 +17,10 @@
 
 Die 26 Windungen werden einlagig und gleichmäßig über den gesamten Umfang von 360° verteilt. Kreuzungen der Litze sind zu vermeiden.
 
+![Abbildung 2: Drauf- und Seitenansicht des einlagigen Wicklungs- und Kernstapelaufbaus](Bilder/abbildung_02_wicklungsaufbau.svg)
+
+*Abbildung 2: Drauf- und Seitenansicht des einlagigen Wicklungs- und Kernstapelaufbaus.*
+
 Die verfügbare mittlere Teilung beträgt:
 
 $$
