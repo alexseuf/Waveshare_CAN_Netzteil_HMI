@@ -32,4 +32,6 @@ Für den vorliegenden Wicklungsaufbau werden $R_{DC,25}=27{,}7\,\mathrm{m\Omega}
 | $P_{Cu}$ bei 40 kW / 120 °C | 126,8 W |
 | Energie bei 40 kW, 0,5 s / 120 °C | 63,4 J |
 
-Vorgesehen ist eine Darstellung der DC-Kupferverlustkennlinien bei 25 °C und 120 °C einschließlich beider Arbeitspunkte.
+![Abbildung 6: DC-Kupferverlustkennlinien](Bilder/abbildung_06_kupferverluste.svg)
+
+*Abbildung 6: DC-Kupferverlustkennlinien bei 25 °C und 120 °C einschließlich beider Arbeitspunkte.*
