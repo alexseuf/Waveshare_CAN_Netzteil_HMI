@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#222}.grid{stroke:#d9d9d9;stroke-width:1}.axis{stroke:#222;stroke-width:1.5}.c1{fill:none;stroke:#1f77b4;stroke-width:3}.c2{fill:none;stroke:#d62728;stroke-width:3}.dash{fill:none;stroke:#777;stroke-width:2;stroke-dasharray:7 5}</style>
+<rect width="100%" height="100%" fill="white"/>
+<text x="450" y="30" font-size="22" text-anchor="middle">Stromwelligkeit mit Ldiff als Funktion der Grundwelle</text>
+<g class="grid">
+<line x1="80" y1="450" x2="870" y2="450"/><line x1="80" y1="378.2" x2="870" y2="378.2"/><line x1="80" y1="306.4" x2="870" y2="306.4"/><line x1="80" y1="234.5" x2="870" y2="234.5"/><line x1="80" y1="162.7" x2="870" y2="162.7"/><line x1="80" y1="90.9" x2="870" y2="90.9"/>
+<line x1="80" y1="55" x2="80" y2="450"/><line x1="178.8" y1="55" x2="178.8" y2="450"/><line x1="277.5" y1="55" x2="277.5" y2="450"/><line x1="376.2" y1="55" x2="376.2" y2="450"/><line x1="475" y1="55" x2="475" y2="450"/><line x1="573.8" y1="55" x2="573.8" y2="450"/><line x1="672.5" y1="55" x2="672.5" y2="450"/><line x1="771.2" y1="55" x2="771.2" y2="450"/><line x1="870" y1="55" x2="870" y2="450"/>
+</g>
+<line class="axis" x1="80" y1="450" x2="870" y2="450"/><line class="axis" x1="80" y1="55" x2="80" y2="450"/>
+<g font-size="13" text-anchor="end"><text x="68" y="455">0</text><text x="68" y="383">2</text><text x="68" y="311">4</text><text x="68" y="239">6</text><text x="68" y="167">8</text><text x="68" y="95">10</text></g>
+<g font-size="13" text-anchor="middle"><text x="80" y="475">0°</text><text x="178.8" y="475">45°</text><text x="277.5" y="475">90°</text><text x="376.2" y="475">135°</text><text x="475" y="475">180°</text><text x="573.8" y="475">225°</text><text x="672.5" y="475">270°</text><text x="771.2" y="475">315°</text><text x="870" y="475">360°</text></g>
+<text x="475" y="505" font-size="15" text-anchor="middle">Netzwinkel φ</text><text x="20" y="260" font-size="15" transform="rotate(-90 20 260)" text-anchor="middle">ΔIpp [A]</text>
+<path class="c1" d="M 80.0,105.3 L 112.9,155.5 L 145.8,220.1 L 178.8,285.9 L 211.7,319.8 L 244.6,353.0 L 277.5,367.0 L 310.4,353.0 L 343.3,319.8 L 376.2,285.9 L 409.2,220.1 L 442.1,155.5 L 475.0,105.3 L 507.9,155.5 L 540.8,220.1 L 573.8,285.9 L 606.7,319.8 L 639.6,353.0 L 672.5,367.0 L 705.4,353.0 L 738.3,319.8 L 771.2,285.9 L 804.2,220.1 L 837.1,155.5 L 870.0,105.3"/>
+<path class="c2" d="M 80.0,105.3 L 112.9,182.4 L 145.8,171.6 L 178.8,154.4 L 211.7,199.7 L 244.6,253.1 L 277.5,278.0 L 310.4,253.1 L 343.3,199.7 L 376.2,154.4 L 409.2,171.6 L 442.1,182.4 L 475.0,105.3 L 507.9,182.4 L 540.8,171.6 L 573.8,154.4 L 606.7,199.7 L 639.6,253.1 L 672.5,278.0 L 705.4,253.1 L 738.3,199.7 L 771.2,154.4 L 804.2,171.6 L 837.1,182.4 L 870.0,105.3"/>
+<path class="dash" d="M 80.0,266.8 L 112.9,276.1 L 145.8,301.5 L 178.8,336.3 L 211.7,371.0 L 244.6,396.5 L 277.5,405.8 L 310.4,396.5 L 343.3,371.0 L 376.2,336.3 L 409.2,301.5 L 442.1,276.1 L 475.0,266.8 L 507.9,276.1 L 540.8,301.5 L 573.8,336.3 L 606.7,371.0 L 639.6,396.5 L 672.5,405.8 L 705.4,396.5 L 738.3,371.0 L 771.2,336.3 L 804.2,301.5 L 837.1,276.1 L 870.0,266.8"/>
+<line x1="605" y1="70" x2="645" y2="70" class="c1"/><text x="655" y="75" font-size="14">20 kW: Î1 = 40,8 A</text>
+<line x1="605" y1="92" x2="645" y2="92" class="c2"/><text x="655" y="97" font-size="14">40 kW: Î1 = 81,6 A</text>
+<line x1="605" y1="114" x2="645" y2="114" class="dash"/><text x="655" y="119" font-size="14">konstant: L0 = 525 µH</text>
+</svg>
