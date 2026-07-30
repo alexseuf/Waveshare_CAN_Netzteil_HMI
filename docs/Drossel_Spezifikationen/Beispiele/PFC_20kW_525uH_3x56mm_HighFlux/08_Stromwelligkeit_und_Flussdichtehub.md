@@ -74,7 +74,7 @@ Daraus ergeben sich:
 | 20 kW, 28,87 A RMS | 40,83 A | 2,31 A | 5,46 A |
 | 40 kW, 57,74 A RMS | 81,66 A | 4,80 A | 8,24 A |
 
-Die früher angegebenen Maximalwerte von $9{,}60\,\mathrm{A}$ beruhten auf dem nicht korrigierten Wert $L_{diff}(0)\approx279\,\mu\mathrm{H}$ und sind nach der Korrektur von Kapitel 7 nicht mehr konsistent.
+Die früher angegebenen Maximalwerte von $9{,}60\,\mathrm{A}$ beruhten auf dem nicht korrigierten Wert $L_{diff}(0)\approx279\,\mu\mathrm{H}$ und werden nach der Korrektur von Kapitel 7 nicht mehr verwendet.
 
 ![Abbildung 7: Stromwelligkeit mit differentieller Induktivität](Bilder/abbildung_11_stromwelligkeit_ldiff_grundwelle.svg)
 
@@ -82,13 +82,13 @@ Die früher angegebenen Maximalwerte von $9{,}60\,\mathrm{A}$ beruhten auf dem n
 
 ## 8.4 Zeitverlauf aus 50-Hz-Grundwelle und 70-kHz-Dreiecksrippel
 
-Der normierte symmetrische Dreiecksträger besitzt den Wertebereich $-1\ldots+1$:
+Der normierte symmetrische Dreiecksträger besitzt den Wertebereich $-1\ldots+1$. Zur fehlerfreien Darstellung auf GitHub wird die Bezeichnung mit `\mathrm{tri}` statt mit dem dort nicht zugelassenen Makro `\operatorname` geschrieben:
 
-$$\operatorname{tri}(t)=4\left|\left(f_s t\bmod1\right)-\frac12\right|-1.$$
+$$\mathrm{tri}(t)=4\left|\left(f_s t\bmod 1\right)-\frac{1}{2}\right|-1.$$
 
-Der überlagerte Phasenstrom wird für jeden Zeitpunkt numerisch berechnet:
+Der überlagerte Phasenstrom wird für jeden diskreten Zeitpunkt numerisch berechnet:
 
-$$i(t)=i_1(t)+\frac{\Delta I_{pp}(t)}{2}\operatorname{tri}(t).$$
+$$i(t)=i_1(t)+\frac{\Delta I_{pp}(t)}{2}\,\mathrm{tri}(t).$$
 
 Die Rippelamplitude bezüglich der Grundwelle beträgt
 
@@ -102,9 +102,9 @@ und
 
 $$i_{unten}(t)=i_1(t)-\frac{\Delta I_{pp}(t)}{2}.$$
 
-![Abbildung 9: Berechneter Stromverlauf über eine Netzperiode](Bilder/abbildung_09_stromverlauf_50Hz_70kHz.svg)
+![Abbildung 8: Berechneter Stromverlauf über eine Netzperiode](Bilder/abbildung_09_stromverlauf_50Hz_70kHz.svg)
 
-*Abbildung 9: Numerisch berechnete Überlagerung der 50-Hz-Grundwelle mit dem netzwinkel- und arbeitspunktabhängigen 70-kHz-Dreiecksrippel. Oben sind die berechneten Rippel-Hüllkurven über eine vollständige Netzperiode dargestellt; unten ist der 70-kHz-Verlauf am positiven Grundwellen-Scheitel vergrößert.*
+*Abbildung 8: Numerisch berechnete Überlagerung der 50-Hz-Grundwelle mit dem netzwinkel- und arbeitspunktabhängigen 70-kHz-Dreiecksrippel. Das obere Diagramm zeigt Grundwellen und Rippel-Hüllkurven über eine vollständige Netzperiode. Das untere Diagramm zeigt den berechneten 70-kHz-Stromverlauf in einem Zeitfenster von 300 µs am positiven Grundwellen-Scheitel. Beide Diagramme besitzen vollständig beschriftete Achsen mit Einheiten und Zahlenwerten.*
 
 | Betriebspunkt | Grundwellen-Scheitel | maximaler Gesamtstrom | minimaler Gesamtstrom |
 |---|---:|---:|---:|
@@ -138,9 +138,9 @@ $$\Delta B_{pp,min}=31{,}193\,\mathrm{mT}.$$
 | 20 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,588 mT |
 | 40 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,588 mT |
 
-![Abbildung 8: Flussdichtehub](Bilder/abbildung_12_flussdichtehub_ldiff_grundwelle.svg)
+![Abbildung 9: Flussdichtehub](Bilder/abbildung_12_flussdichtehub_ldiff_grundwelle.svg)
 
-*Abbildung 8: Der Flussdichtehub ist bei konsistenter Rechnung für beide Lastfälle identisch.*
+*Abbildung 9: Der Flussdichtehub ist bei konsistenter Rechnung für beide Lastfälle identisch.*
 
 ## 8.6 Konsequenz für die Kernverlustberechnung
 
