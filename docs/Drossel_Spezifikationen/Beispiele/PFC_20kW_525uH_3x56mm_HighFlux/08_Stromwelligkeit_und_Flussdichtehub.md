@@ -2,141 +2,148 @@
 
 ## 8.1 Phasenspannung und Tastgrad
 
-Für das vereinfachte phasenbezogene Zweilevel-PWM-Modell gilt bei sinusförmiger Netzphasenspannung
+Für das vereinfachte phasenbezogene Zweilevel-PWM-Modell gilt
 
-$$u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi)$$
+$$u_{Phase}(t)=\hat U_{Phase}\sin(2\pi f_{Netz}t)$$
 
 mit
 
-$$\hat U_{Phase}=\frac{\sqrt{2}\,U_{LL,rms}}{\sqrt{3}}
-=\frac{\sqrt{2}\cdot400\,\mathrm{V}}{\sqrt{3}}
-=326{,}6\,\mathrm{V}.$$
+$$\hat U_{Phase}=\frac{\sqrt{2}\,U_{LL,rms}}{\sqrt{3}}=326{,}6\,\mathrm{V}.$$
 
-Der zugehörige Tastgrad lautet
+Der Tastgrad lautet
 
-$$d(\varphi)=0{,}5+\frac{u_{Phase}(\varphi)}{U_{DC}}.$$
+$$d(t)=0{,}5+\frac{u_{Phase}(t)}{U_{DC}}.$$
 
-Bei $U_{DC}=750\,\mathrm{V}$ ergibt sich
+Bei $U_{DC}=750\,\mathrm{V}$ gilt
 
-$$d_{min}=0{,}5-\frac{326{,}6}{750}=0{,}0645$$
-
-und
-
-$$d_{max}=0{,}5+\frac{326{,}6}{750}=0{,}9355.$$
+$$d_{min}=0{,}0645,\qquad d_{max}=0{,}9355.$$
 
 ## 8.2 Stromwelligkeit bei konstanter Anfangsinduktivität
 
-Während eines PWM-Zyklus steigt und fällt der Drosselstrom näherungsweise linear. Aus der Voltsekundenbilanz ergibt sich für die Spitze-Spitze-Stromwelligkeit
+Aus der Voltsekundenbilanz folgt
 
-$$\Delta I_{pp}(\varphi)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{L\,f_s}.$$
+$$\Delta I_{pp}(t)=\frac{U_{DC}\,d(t)\,[1-d(t)]}{L\,f_s}.$$
 
-Für die Übersicht wird zunächst die Anfangsinduktivität
+Für $L=L_0=525\,\mu\mathrm{H}$ ergeben sich
 
-$$L=L_0=525\,\mu\mathrm{H}$$
+$$\Delta I_{pp,max}=5{,}10\,\mathrm{A}$$
 
-verwendet. Bei $d=0{,}5$ ist das Produkt $d(1-d)$ maximal:
+bei $d=0{,}5$ und
 
-$$\Delta I_{pp,max}
-=\frac{750\cdot0{,}25}{525\cdot10^{-6}\cdot70\cdot10^3}
-=5{,}10\,\mathrm{A}.$$
+$$\Delta I_{pp,min}=1{,}23\,\mathrm{A}$$
 
-Am Scheitelpunkt der Netzphasenspannung gilt $d=0{,}0645$ beziehungsweise $d=0{,}9355$:
-
-$$\Delta I_{pp,min}
-=\frac{750\cdot0{,}0645\cdot(1-0{,}0645)}{525\cdot10^{-6}\cdot70\cdot10^3}
-=1{,}23\,\mathrm{A}.$$
+am Scheitel der Netzphasenspannung.
 
 ![Abbildung 6: Stromwelligkeit über einer Netzperiode](Bilder/abbildung_10_stromwelligkeit_netzwinkel.svg)
 
-*Abbildung 6: Berechnete Spitze-Spitze-Stromwelligkeit über dem Netzwinkel bei konstanter Anfangsinduktivität von $525\,\mu\mathrm{H}$. Die Maxima liegen an den Nulldurchgängen der Phasenspannung, die Minima an deren Scheitelpunkten.*
+*Abbildung 6: Spitze-Spitze-Stromwelligkeit über dem Netzwinkel bei konstanter Anfangsinduktivität.*
 
-## 8.3 Verbesserte Stromwelligkeit mit $L_{diff}$ als Funktion der Grundwelle
+## 8.3 Stromwelligkeit mit arbeitspunktabhängiger differentieller Induktivität
 
-Für die realistischere Berechnung wird der momentane Grundwellenstrom als Arbeitspunkt der differentiellen Induktivität verwendet:
+Der Grundwellenstrom lautet
 
-$$i_1(\varphi)=\hat I_1\sin(\varphi).$$
+$$i_1(t)=\hat I_1\sin(2\pi f_{Netz}t)$$
 
-Damit folgt
+mit
 
-$$L_{diff}(\varphi)=L_{diff}\!\left(\left|i_1(\varphi)\right|\right)$$
+$$\hat I_1=\sqrt{2}\,I_{1,rms}.$$
 
-und schließlich
+Damit gilt
 
-$$\Delta I_{pp}(\varphi)=
-\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}
-{L_{diff}\!\left(\left|\hat I_1\sin(\varphi)\right|\right)\,f_s}.$$
+$$L_{diff}(t)=L_{diff}\!\left(\left|i_1(t)\right|\right)$$
 
-Für das Diagramm wurden die in Kapitel 7 angegebenen Stützstellen der differentiellen Induktivität verwendet und zwischen den Stützstellen linear interpoliert:
+und
+
+$$\Delta I_{pp}(t)=\frac{U_{DC}\,d(t)\,[1-d(t)]}{L_{diff}\!\left(\left|i_1(t)\right|\right)\,f_s}.$$
+
+Für die numerische Berechnung werden die korrigierten Stützstellen aus Kapitel 7 linear interpoliert:
 
 | Strom | $L_{diff}$ |
 |---:|---:|
-| 0,0 A | 279 µH |
+| 0,0 A | 525 µH |
 | 28,9 A | 364 µH |
 | 40,8 A | 280 µH |
 | 57,7 A | 202 µH |
 | 81,6 A | 135 µH |
 | 90,0 A | 119 µH |
 
-Dargestellt sind zwei Betriebspunkte:
+Daraus ergeben sich:
 
-- 20 kW mit $\hat I_1=40{,}8\,\mathrm{A}$,
-- 40 kW mit $\hat I_1=81{,}6\,\mathrm{A}$.
+| Betriebspunkt | $\hat I_1$ | $\Delta I_{pp,min}$ | $\Delta I_{pp,max}$ |
+|---|---:|---:|---:|
+| 20 kW, 28,87 A RMS | 40,83 A | 2,31 A | 5,46 A |
+| 40 kW, 57,74 A RMS | 81,66 A | 4,80 A | 8,24 A |
+
+Die früher angegebenen Maximalwerte von $9{,}60\,\mathrm{A}$ beruhten auf dem nicht korrigierten Wert $L_{diff}(0)\approx279\,\mu\mathrm{H}$ und sind nach der Korrektur von Kapitel 7 nicht mehr konsistent.
 
 ![Abbildung 7: Stromwelligkeit mit differentieller Induktivität](Bilder/abbildung_11_stromwelligkeit_ldiff_grundwelle.svg)
 
-*Abbildung 7: Verbesserte Berechnung von $\Delta I_{pp}$ über dem Netzwinkel. Die Kurven für 20 kW und 40 kW verwenden $L_{diff}$ als Funktion des momentanen Grundwellenstroms; die gestrichelte Vergleichskurve zeigt die Rechnung mit konstanten $525\,\mu\mathrm{H}$.*
+*Abbildung 7: Arbeitspunktabhängige Spitze-Spitze-Stromwelligkeit mit der korrigierten differentiellen Induktivität.*
 
-Mit der derzeit verwendeten $L_{diff}(I)$-Kennlinie ergeben sich:
+## 8.4 Zeitverlauf aus 50-Hz-Grundwelle und 70-kHz-Dreiecksrippel
 
-- 20 kW: $\Delta I_{pp}=2{,}31$ bis $9{,}60\,\mathrm{A}$,
-- 40 kW: $\Delta I_{pp}=4{,}79$ bis $9{,}60\,\mathrm{A}$.
+Der normierte symmetrische Dreiecksträger besitzt den Wertebereich $-1\ldots+1$:
 
-Der hohe Rechenwert am Nulldurchgang entsteht aus dem im empirischen B(H)-Fit enthaltenen niedrigen Wert von $L_{diff}(0)\approx279\,\mu\mathrm{H}$. Wie bereits in Kapitel 7 erläutert, besitzt der Fit im Bereich $H\rightarrow0$ einen Offset. Dieser Teil der Kurve muss später durch Messwerte oder ein validiertes Kleinsignalmodell ersetzt werden.
+$$\operatorname{tri}(t)=4\left|\left(f_s t\bmod1\right)-\frac12\right|-1.$$
 
-## 8.4 Flussdichtehub aus den beiden verbesserten Stromwelligkeitskurven
+Der überlagerte Phasenstrom wird für jeden Zeitpunkt numerisch berechnet:
 
-Für jeden Netzwinkel wird der Flussdichtehub aus der jeweils verwendeten differentiellen Induktivität und der zugehörigen Stromwelligkeit berechnet:
+$$i(t)=i_1(t)+\frac{\Delta I_{pp}(t)}{2}\operatorname{tri}(t).$$
 
-$$\Delta B_{pp}(\varphi)=
-\frac{L_{diff}(\varphi)\,\Delta I_{pp}(\varphi)}{N\,A_e}.$$
+Die Rippelamplitude bezüglich der Grundwelle beträgt
 
-Setzt man die Gleichung aus Abschnitt 8.3 ein, kürzt sich $L_{diff}(\varphi)$ vollständig heraus:
+$$\hat I_{Ripple}(t)=\frac{\Delta I_{pp}(t)}{2}.$$
 
-$$\Delta B_{pp}(\varphi)=
-\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{N\,A_e\,f_s}.$$
+Die momentanen Grenzen lauten
 
-Damit liefern die beiden unterschiedlich großen $\Delta I_{pp}$-Kurven für 20 kW und 40 kW denselben Flussdichtehub. Die Abnahme von $L_{diff}$ erhöht die Stromwelligkeit genau in dem Maß, dass das Produkt $L_{diff}\,\Delta I_{pp}$ durch die vorgegebenen PWM-Voltsekunden unverändert bleibt.
+$$i_{oben}(t)=i_1(t)+\frac{\Delta I_{pp}(t)}{2}$$
 
-Mit
+und
 
-- $U_{DC}=750\,\mathrm{V}$,
-- $N=48$,
-- $A_e=432\,\mathrm{mm^2}=432\cdot10^{-6}\,\mathrm{m^2}$,
-- $f_s=70\,\mathrm{kHz}$
+$$i_{unten}(t)=i_1(t)-\frac{\Delta I_{pp}(t)}{2}.$$
 
-folgt am Nulldurchgang der Phasenspannung bei $d=0{,}5$:
+![Abbildung 9: Berechneter Stromverlauf über eine Netzperiode](Bilder/abbildung_09_stromverlauf_50Hz_70kHz.svg)
 
-$$\Delta B_{pp,max}
-=\frac{750\cdot0{,}25}{48\cdot432\cdot10^{-6}\cdot70\cdot10^3}
-=129{,}175\,\mathrm{mT}.$$
+*Abbildung 9: Numerisch berechnete Überlagerung der 50-Hz-Grundwelle mit dem netzwinkel- und arbeitspunktabhängigen 70-kHz-Dreiecksrippel. Oben sind die berechneten Rippel-Hüllkurven über eine vollständige Netzperiode dargestellt; unten ist der 70-kHz-Verlauf am positiven Grundwellen-Scheitel vergrößert.*
 
-Am Scheitelpunkt der Phasenspannung mit $d=0{,}0645$ beziehungsweise $d=0{,}9355$ ergibt sich:
+| Betriebspunkt | Grundwellen-Scheitel | maximaler Gesamtstrom | minimaler Gesamtstrom |
+|---|---:|---:|---:|
+| 20 kW | 40,83 A | 41,98 A | −41,98 A |
+| 40 kW | 81,66 A | 84,05 A | −84,05 A |
+
+Die Maximalwerte des Gesamtstroms sind nicht allgemein gleich $\hat I_1+\Delta I_{pp,max}/2$, weil das Maximum der Rippelbreite und der Scheitel der Grundwelle zeitlich nicht zwingend zusammenfallen. Die Werte werden direkt aus der zeitdiskreten Kurve bestimmt.
+
+Die vollständige reproduzierbare Berechnung liegt in `Berechnungen/stromverlauf_50Hz_70kHz.py`. Die verwendeten Stützstellen und Ergebniskennwerte stehen in `Daten/stromverlauf_50Hz_70kHz_kennwerte.csv`.
+
+## 8.5 Flussdichtehub aus der Stromwelligkeit
+
+Für jeden Zeitpunkt gilt
+
+$$\Delta B_{pp}(t)=\frac{L_{diff}(t)\,\Delta I_{pp}(t)}{N\,A_e}.$$
+
+Durch Einsetzen kürzt sich $L_{diff}(t)$ heraus:
+
+$$\Delta B_{pp}(t)=\frac{U_{DC}\,d(t)\,[1-d(t)]}{N\,A_e\,f_s}.$$
+
+Mit $U_{DC}=750\,\mathrm{V}$, $N=48$, $A_e=432\,\mathrm{mm^2}$ und $f_s=70\,\mathrm{kHz}$ folgt
+
+$$\Delta B_{pp,max}=129{,}175\,\mathrm{mT}$$
+
+und
 
 $$\Delta B_{pp,min}=31{,}193\,\mathrm{mT}.$$
 
-Für beide Betriebspunkte gilt somit identisch:
-
-| Betriebspunkt | $\Delta B_{pp,min}$ | $\Delta B_{pp,max}$ | $B_{pk,min}=\Delta B_{pp,min}/2$ | $B_{pk,max}=\Delta B_{pp,max}/2$ |
+| Betriebspunkt | $\Delta B_{pp,min}$ | $\Delta B_{pp,max}$ | $B_{pk,min}$ | $B_{pk,max}$ |
 |---|---:|---:|---:|---:|
-| 20 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
-| 40 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
+| 20 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,588 mT |
+| 40 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,588 mT |
 
-![Abbildung 8: Flussdichtehub aus den Ldiff-basierten Stromwelligkeitskurven](Bilder/abbildung_12_flussdichtehub_ldiff_grundwelle.svg)
+![Abbildung 8: Flussdichtehub](Bilder/abbildung_12_flussdichtehub_ldiff_grundwelle.svg)
 
-*Abbildung 8: Aus den beiden verbesserten $\Delta I_{pp}$-Kurven zurückgerechneter Flussdichtehub. Die Kurven für 20 kW und 40 kW sind deckungsgleich, weil der Flussdichtehub bei konsistenter Rechnung ausschließlich von den PWM-Voltsekunden, der Windungszahl, dem Kernquerschnitt und der Schaltfrequenz bestimmt wird.*
+*Abbildung 8: Der Flussdichtehub ist bei konsistenter Rechnung für beide Lastfälle identisch.*
 
-## 8.5 Konsequenz für die Kernverlustberechnung
+## 8.6 Konsequenz für die Kernverlustberechnung
 
-Da $B_{pk}(\varphi)=\Delta B_{pp}(\varphi)/2$ für 20 kW und 40 kW identisch ist, entstehen im bisher verwendeten Steinmetz-Modell auch identische Kernverlustkurven. Das Modell berücksichtigt in dieser Form keinen zusätzlichen Einfluss der DC-Vormagnetisierung auf die Steinmetz-Parameter.
+Da $B_{pk}(t)=\Delta B_{pp}(t)/2$ für 20 kW und 40 kW identisch ist, entstehen im bisher verwendeten Steinmetz-Modell identische Kernverlustkurven. Das Modell berücksichtigt in dieser Form keinen zusätzlichen Einfluss der DC-Vormagnetisierung auf die Steinmetz-Parameter.
 
-Die dargestellten Werte beruhen weiterhin auf dem vereinfachten phasenbezogenen Zweilevel-PWM-Modell. Für die endgültige Auslegung ist der reale Voltsekunden- und Flussdichteverlauf aus der PLECS-Schaltsimulation zu verwenden. Zusätzlich ist zu prüfen, ob Herstellerkennfelder oder ein iGSE-Modell eine Abhängigkeit der Kernverluste von der DC-Vormagnetisierung berücksichtigen müssen.
+Für die endgültige Auslegung ist der reale Voltsekunden- und Flussdichteverlauf aus der PLECS-Schaltsimulation zu verwenden.
