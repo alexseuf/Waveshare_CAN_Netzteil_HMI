@@ -4,8 +4,7 @@
 
 Für das vereinfachte phasenbezogene Zweilevel-PWM-Modell gilt bei sinusförmiger Netzphasenspannung
 
-$$
-u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi)$$
+$$u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi)$$
 
 mit
 
@@ -85,20 +84,28 @@ Dargestellt sind zwei Betriebspunkte:
 
 ![Abbildung 7: Stromwelligkeit mit differentieller Induktivität](Bilder/abbildung_11_stromwelligkeit_ldiff_grundwelle.svg)
 
-*Abbildung 7: Verbesserte Berechnung von $\Delta I_{pp}$ über dem Netzwinkel. Die blaue und rote Kurve verwenden $L_{diff}$ als Funktion des momentanen Grundwellenstroms; die gestrichelte Kurve zeigt zum Vergleich die bisherige Rechnung mit konstanten $525\,\mu\mathrm{H}$.*
+*Abbildung 7: Verbesserte Berechnung von $\Delta I_{pp}$ über dem Netzwinkel. Die Kurven für 20 kW und 40 kW verwenden $L_{diff}$ als Funktion des momentanen Grundwellenstroms; die gestrichelte Vergleichskurve zeigt die Rechnung mit konstanten $525\,\mu\mathrm{H}$.*
 
-Die Rechnung zeigt, dass die Annahme einer konstanten Anfangsinduktivität die Stromwelligkeit deutlich unterschätzt. Mit der derzeit verwendeten $L_{diff}(I)$-Kennlinie ergeben sich ungefähr folgende Bereiche:
+Mit der derzeit verwendeten $L_{diff}(I)$-Kennlinie ergeben sich:
 
-- 20 kW: $\Delta I_{pp}\approx2{,}3$ bis $9{,}6\,\mathrm{A}$,
-- 40 kW: $\Delta I_{pp}\approx4{,}8$ bis $9{,}6\,\mathrm{A}$.
+- 20 kW: $\Delta I_{pp}=2{,}31$ bis $9{,}60\,\mathrm{A}$,
+- 40 kW: $\Delta I_{pp}=4{,}79$ bis $9{,}60\,\mathrm{A}$.
 
-Der hohe Rechenwert am Nulldurchgang entsteht aus dem im empirischen B(H)-Fit enthaltenen niedrigen Wert von $L_{diff}(0)\approx279\,\mu\mathrm{H}$. Wie bereits in Kapitel 7 erläutert, besitzt der Fit im Bereich $H\rightarrow0$ einen Offset. Dieser Teil der Kurve muss daher später durch Messwerte oder ein validiertes Kleinsignalmodell ersetzt werden. Das Diagramm ist eine verbesserte arbeitspunktabhängige Abschätzung, aber noch kein Ersatz für die PLECS-Schaltsimulation.
+Der hohe Rechenwert am Nulldurchgang entsteht aus dem im empirischen B(H)-Fit enthaltenen niedrigen Wert von $L_{diff}(0)\approx279\,\mu\mathrm{H}$. Wie bereits in Kapitel 7 erläutert, besitzt der Fit im Bereich $H\rightarrow0$ einen Offset. Dieser Teil der Kurve muss später durch Messwerte oder ein validiertes Kleinsignalmodell ersetzt werden.
 
-## 8.4 Flussdichtehub
+## 8.4 Flussdichtehub aus den beiden verbesserten Stromwelligkeitskurven
 
-Aus dem Induktionsgesetz folgt unmittelbar
+Für jeden Netzwinkel wird der Flussdichtehub aus der jeweils verwendeten differentiellen Induktivität und der zugehörigen Stromwelligkeit berechnet:
 
-$$\Delta B_{pp}(\varphi)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{N\,A_e\,f_s}.$$
+$$\Delta B_{pp}(\varphi)=
+\frac{L_{diff}(\varphi)\,\Delta I_{pp}(\varphi)}{N\,A_e}.$$
+
+Setzt man die Gleichung aus Abschnitt 8.3 ein, kürzt sich $L_{diff}(\varphi)$ vollständig heraus:
+
+$$\Delta B_{pp}(\varphi)=
+\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{N\,A_e\,f_s}.$$
+
+Damit liefern die beiden unterschiedlich großen $\Delta I_{pp}$-Kurven für 20 kW und 40 kW denselben Flussdichtehub. Die Abnahme von $L_{diff}$ erhöht die Stromwelligkeit genau in dem Maß, dass das Produkt $L_{diff}\,\Delta I_{pp}$ durch die vorgegebenen PWM-Voltsekunden unverändert bleibt.
 
 Mit
 
@@ -107,35 +114,29 @@ Mit
 - $A_e=432\,\mathrm{mm^2}=432\cdot10^{-6}\,\mathrm{m^2}$,
 - $f_s=70\,\mathrm{kHz}$
 
-ergibt sich am Nulldurchgang der Phasenspannung bei $d=0{,}5$:
+folgt am Nulldurchgang der Phasenspannung bei $d=0{,}5$:
 
 $$\Delta B_{pp,max}
 =\frac{750\cdot0{,}25}{48\cdot432\cdot10^{-6}\cdot70\cdot10^3}
-=0{,}1292\,\mathrm{T}
-=129{,}2\,\mathrm{mT}.$$
+=129{,}175\,\mathrm{mT}.$$
 
-Am Scheitelpunkt der Phasenspannung gilt $d=0{,}0645$ beziehungsweise $0{,}9355$:
+Am Scheitelpunkt der Phasenspannung mit $d=0{,}0645$ beziehungsweise $d=0{,}9355$ ergibt sich:
 
-$$\Delta B_{pp,min}
-=\frac{750\cdot0{,}0645\cdot(1-0{,}0645)}{48\cdot432\cdot10^{-6}\cdot70\cdot10^3}
-=0{,}0312\,\mathrm{T}
-=31{,}2\,\mathrm{mT}.$$
+$$\Delta B_{pp,min}=31{,}193\,\mathrm{mT}.$$
 
-Damit ergibt sich über eine Netzperiode:
+Für beide Betriebspunkte gilt somit identisch:
 
-- $\Delta B_{pp}=31{,}2$ bis $129{,}2\,\mathrm{mT}$,
-- $B_{pk}=\Delta B_{pp}/2=15{,}6$ bis $64{,}6\,\mathrm{mT}$.
+| Betriebspunkt | $\Delta B_{pp,min}$ | $\Delta B_{pp,max}$ | $B_{pk,min}=\Delta B_{pp,min}/2$ | $B_{pk,max}=\Delta B_{pp,max}/2$ |
+|---|---:|---:|---:|---:|
+| 20 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
+| 40 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
 
-![Abbildung 8: Flussdichtehub über einer Netzperiode](Bilder/abbildung_01_flussdichtehub_netzwinkel.svg)
+![Abbildung 8: Flussdichtehub aus den Ldiff-basierten Stromwelligkeitskurven](Bilder/abbildung_12_flussdichtehub_ldiff_grundwelle.svg)
 
-*Abbildung 8: Berechneter Flussdichtehub über dem Netzwinkel für den Aufbau mit 48 Windungen und $A_e=432\,\mathrm{mm^2}$.*
+*Abbildung 8: Aus den beiden verbesserten $\Delta I_{pp}$-Kurven zurückgerechneter Flussdichtehub. Die Kurven für 20 kW und 40 kW sind deckungsgleich, weil der Flussdichtehub bei konsistenter Rechnung ausschließlich von den PWM-Voltsekunden, der Windungszahl, dem Kernquerschnitt und der Schaltfrequenz bestimmt wird.*
 
-## 8.5 Zusammenhang zwischen Strom- und Flussdichtewelligkeit
+## 8.5 Konsequenz für die Kernverlustberechnung
 
-Bei Verwendung derselben differentiellen Induktivität besteht der Zusammenhang
+Da $B_{pk}(\varphi)=\Delta B_{pp}(\varphi)/2$ für 20 kW und 40 kW identisch ist, entstehen im bisher verwendeten Steinmetz-Modell auch identische Kernverlustkurven. Das Modell berücksichtigt in dieser Form keinen zusätzlichen Einfluss der DC-Vormagnetisierung auf die Steinmetz-Parameter.
 
-$$\Delta B_{pp}=\frac{L_{diff}(I)\,\Delta I_{pp}}{N\,A_e}.$$
-
-Der Flussdichtehub wird durch die angelegten Voltsekunden, Windungszahl und Kernquerschnitt bestimmt. Die Stromwelligkeit hängt zusätzlich von der differentiellen Induktivität ab. Eine abnehmende Induktivität erhöht daher $\Delta I_{pp}$, während der durch die PWM-Voltsekunden vorgegebene $\Delta B_{pp}$ unverändert bleibt.
-
-Die dargestellten Werte beruhen auf dem vereinfachten phasenbezogenen Zweilevel-PWM-Modell. Für die endgültige Auslegung ist der reale Voltsekundenverlauf aus der PLECS-Schaltsimulation zu verwenden.
+Die dargestellten Werte beruhen weiterhin auf dem vereinfachten phasenbezogenen Zweilevel-PWM-Modell. Für die endgültige Auslegung ist der reale Voltsekunden- und Flussdichteverlauf aus der PLECS-Schaltsimulation zu verwenden. Zusätzlich ist zu prüfen, ob Herstellerkennfelder oder ein iGSE-Modell eine Abhängigkeit der Kernverluste von der DC-Vormagnetisierung berücksichtigen müssen.
