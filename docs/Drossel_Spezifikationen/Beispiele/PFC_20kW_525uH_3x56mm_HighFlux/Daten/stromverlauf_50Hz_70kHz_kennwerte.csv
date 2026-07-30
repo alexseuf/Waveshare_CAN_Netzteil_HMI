@@ -1,0 +1,15 @@
+Parameter;20 kW;40 kW;Einheit
+I_rms;28,87;57,74;A
+I_Grundwelle_peak;40,83;81,66;A
+Delta_I_pp_min;2,31;4,80;A
+Delta_I_pp_max;5,46;8,24;A
+i_gesamt_max;41,98;84,05;A
+i_gesamt_min;-41,98;-84,05;A
+
+Ldiff_Stuetzstelle_Strom_A;Ldiff_uH
+0,0;525
+28,9;364
+40,8;280
+57,7;202
+81,6;135
+90,0;119
