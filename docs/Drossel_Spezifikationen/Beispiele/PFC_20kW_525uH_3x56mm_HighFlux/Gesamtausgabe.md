@@ -1,12 +1,12 @@
 ---
 title: "PFC-Drossel 525 µH – Gesamtausgabe"
-version: "Revision 4.7"
-last_updated: "2026-07-30 10:05 CEST"
+version: "Revision 4.8"
+last_updated: "2026-07-30 19:04 CEST"
 ---
 
 # PFC-Drossel 525 µH – Gesamtausgabe
 
-**3 × Magnetics C058110A2 · High Flux 60 µ · 48 Windungen · 28 + 20 · Litze 630 × 0,10 mm**
+**3 × Magnetics C058110A2 · High Flux 60 µ · 48 Windungen · 28 + 20 · Litze 630 × 0,10 mm · Leiteraußendurchmesser 3,50 mm**
 
 Diese Datei fasst alle Einzelkapitel des Beispielprojekts in einer fortlaufenden Leseansicht zusammen.
 
@@ -73,10 +73,51 @@ Dieses Beispiel dokumentiert den Entwurfsstand einer dreiphasigen PFC-Drossel mi
 | Lagenzahl | 2 |
 | Litze | 630 × 0,10 mm |
 | Kupferquerschnitt | 4,948 mm² |
+| Verwendeter Litzenaußendurchmesser | 3,50 mm |
+| Dargestellte Leiterquerschnitte | 2 × 48 = 96 |
+
+Die Wicklung wird zweilagig ausgeführt. Die erste Lage umfasst 28 Windungen, die zweite Lage 20 Windungen. Jede Windung erscheint in der maßstäblichen Draufsicht einmal auf der Innen- und einmal auf der Außenseite des Ringkerns. Dadurch werden insgesamt 96 Leiterquerschnitte dargestellt.
 
 ![Zweilagiger Wicklungsaufbau](Bilder/abbildung_02_wicklungsaufbau.svg)
 
 *Abbildung 1: Zweilagiger Wicklungsaufbau mit 28 Windungen in der ersten und 20 Windungen in der zweiten Lage.*
+
+## 4.1 Mathematisch berechnete Leiterpositionen
+
+Für jeden Leiter auf einem Mittelpunktkreis mit Radius $r_k$ und $N_k$ gleichmäßig verteilten Leitern gilt
+
+$$\theta_{k,j}=\frac{2\pi j}{N_k},\qquad j=0,1,\ldots,N_k-1$$
+
+$$x_{k,j}=r_k\cos(\theta_{k,j}),\qquad y_{k,j}=r_k\sin(\theta_{k,j}).$$
+
+Der Leiteraußendurchmesser beträgt
+
+$$d_L=3{,}50\,\mathrm{mm}.$$
+
+Mit $D_3=35{,}56\,\mathrm{mm}$ und $D_4=59{,}20\,\mathrm{mm}$ gilt
+
+$$r_3=17{,}780\,\mathrm{mm},\qquad r_4=29{,}600\,\mathrm{mm}.$$
+
+Die Leiter-Mittelpunktkreise werden berechnet mit
+
+$$r_2=r_3-\frac{d_L}{2},\qquad r_1=r_2-d_L,$$
+
+$$r_5=r_4+\frac{d_L}{2},\qquad r_6=r_5+d_L.$$
+
+| Kreis | Funktion | Leiterzahl | Radius | Durchmesser |
+|---:|---|---:|---:|---:|
+| 1 | zweite Innenlage | 20 | 12,530 mm | 25,060 mm |
+| 2 | erste Innenlage | 28 | 16,030 mm | 32,060 mm |
+| 3 | Innendurchmesser des beschichteten Kerns | – | 17,780 mm | 35,560 mm |
+| 4 | Außendurchmesser des beschichteten Kerns | – | 29,600 mm | 59,200 mm |
+| 5 | erste Außenlage | 28 | 31,350 mm | 62,700 mm |
+| 6 | zweite Außenlage | 20 | 34,850 mm | 69,700 mm |
+
+![Exakt berechnete Leiterpositionen](Bilder/abbildung_14_leiterpositionen_massstaeblich.svg)
+
+*Abbildung 4-1: Maßstäbliche Draufsicht der 96 mathematisch berechneten Leiterquerschnitte. Die Mittelpunkte liegen exakt auf den vier berechneten Mittelpunktkreisen; jeder Leiter besitzt einen Außendurchmesser von 3,50 mm.*
+
+Die Datei `Bilder/abbildung_14_leiterpositionen_massstaeblich.svg` ist die verbindliche Referenzdarstellung für diesen Wicklungsaufbau.
 
 # 5 Mechanischer Aufbau
 
@@ -305,6 +346,7 @@ h_mm = 3*13.97;
 N_Wdg = 48;
 N_Litze = 630;
 d_Litze_mm = 0.10;
+d_Litze_aussen_mm = 3.50;
 A_mag = 3*144e-6;
 l_mag_mm = 143;
 mu_r_0 = 60;
@@ -333,5 +375,6 @@ Die endgültige Auslegung ist durch Messungen und den realen PLECS-Flussdichteve
 - Entwicklungsspezifikation „Entwicklungsspezifikation_PFC_Drossel_Rev4_4_final“, Revision 4.3.
 - Magnetics High Flux 60 µ, Kern C058110A2.
 - Projektinterne Formelsammlung zur Drosselauslegung.
+- `Bilder/abbildung_14_leiterpositionen_massstaeblich.svg`: verbindliche, maßstäbliche Referenzdarstellung der 96 Leiterquerschnitte bei 3,50 mm Leiteraußendurchmesser.
 - `Berechnungen/stromverlauf_50Hz_70kHz.py`: reproduzierbare Berechnung von Grundwelle, Tastgrad, $L_{diff}$, Dreiecksrippel und Gesamtstrom.
 - `Daten/stromverlauf_50Hz_70kHz_kennwerte.csv`: verwendete Stützstellen und numerische Ergebniskennwerte.
