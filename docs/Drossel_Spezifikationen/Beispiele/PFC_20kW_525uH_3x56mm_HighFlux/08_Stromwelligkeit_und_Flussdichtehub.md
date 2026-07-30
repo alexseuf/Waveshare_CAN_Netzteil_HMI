@@ -25,7 +25,7 @@ und
 
 $$d_{max}=0{,}5+\frac{326{,}6}{750}=0{,}9355.$$
 
-## 8.2 Stromwelligkeit
+## 8.2 Stromwelligkeit bei konstanter Anfangsinduktivität
 
 Während eines PWM-Zyklus steigt und fällt der Drosselstrom näherungsweise linear. Aus der Voltsekundenbilanz ergibt sich für die Spitze-Spitze-Stromwelligkeit
 
@@ -51,11 +51,50 @@ $$\Delta I_{pp,min}
 
 *Abbildung 6: Berechnete Spitze-Spitze-Stromwelligkeit über dem Netzwinkel bei konstanter Anfangsinduktivität von $525\,\mu\mathrm{H}$. Die Maxima liegen an den Nulldurchgängen der Phasenspannung, die Minima an deren Scheitelpunkten.*
 
-Die reale Stromwelligkeit ist bei hohen Strömen größer, sobald die differentielle Induktivität $L_{diff}(I)$ durch Vormagnetisierung abnimmt. Für die endgültige Bewertung muss deshalb in der Gleichung die gemessene oder simulierte differentielle Induktivität eingesetzt werden:
+## 8.3 Verbesserte Stromwelligkeit mit $L_{diff}$ als Funktion der Grundwelle
 
-$$\Delta I_{pp}(\varphi,I)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{L_{diff}(I)\,f_s}.$$
+Für die realistischere Berechnung wird der momentane Grundwellenstrom als Arbeitspunkt der differentiellen Induktivität verwendet:
 
-## 8.3 Flussdichtehub
+$$i_1(\varphi)=\hat I_1\sin(\varphi).$$
+
+Damit folgt
+
+$$L_{diff}(\varphi)=L_{diff}\!\left(\left|i_1(\varphi)\right|\right)$$
+
+und schließlich
+
+$$\Delta I_{pp}(\varphi)=
+\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}
+{L_{diff}\!\left(\left|\hat I_1\sin(\varphi)\right|\right)\,f_s}.$$
+
+Für das Diagramm wurden die in Kapitel 7 angegebenen Stützstellen der differentiellen Induktivität verwendet und zwischen den Stützstellen linear interpoliert:
+
+| Strom | $L_{diff}$ |
+|---:|---:|
+| 0,0 A | 279 µH |
+| 28,9 A | 364 µH |
+| 40,8 A | 280 µH |
+| 57,7 A | 202 µH |
+| 81,6 A | 135 µH |
+| 90,0 A | 119 µH |
+
+Dargestellt sind zwei Betriebspunkte:
+
+- 20 kW mit $\hat I_1=40{,}8\,\mathrm{A}$,
+- 40 kW mit $\hat I_1=81{,}6\,\mathrm{A}$.
+
+![Abbildung 7: Stromwelligkeit mit differentieller Induktivität](Bilder/abbildung_11_stromwelligkeit_ldiff_grundwelle.svg)
+
+*Abbildung 7: Verbesserte Berechnung von $\Delta I_{pp}$ über dem Netzwinkel. Die blaue und rote Kurve verwenden $L_{diff}$ als Funktion des momentanen Grundwellenstroms; die gestrichelte Kurve zeigt zum Vergleich die bisherige Rechnung mit konstanten $525\,\mu\mathrm{H}$.*
+
+Die Rechnung zeigt, dass die Annahme einer konstanten Anfangsinduktivität die Stromwelligkeit deutlich unterschätzt. Mit der derzeit verwendeten $L_{diff}(I)$-Kennlinie ergeben sich ungefähr folgende Bereiche:
+
+- 20 kW: $\Delta I_{pp}\approx2{,}3$ bis $9{,}6\,\mathrm{A}$,
+- 40 kW: $\Delta I_{pp}\approx4{,}8$ bis $9{,}6\,\mathrm{A}$.
+
+Der hohe Rechenwert am Nulldurchgang entsteht aus dem im empirischen B(H)-Fit enthaltenen niedrigen Wert von $L_{diff}(0)\approx279\,\mu\mathrm{H}$. Wie bereits in Kapitel 7 erläutert, besitzt der Fit im Bereich $H\rightarrow0$ einen Offset. Dieser Teil der Kurve muss daher später durch Messwerte oder ein validiertes Kleinsignalmodell ersetzt werden. Das Diagramm ist eine verbesserte arbeitspunktabhängige Abschätzung, aber noch kein Ersatz für die PLECS-Schaltsimulation.
+
+## 8.4 Flussdichtehub
 
 Aus dem Induktionsgesetz folgt unmittelbar
 
@@ -87,11 +126,11 @@ Damit ergibt sich über eine Netzperiode:
 - $\Delta B_{pp}=31{,}2$ bis $129{,}2\,\mathrm{mT}$,
 - $B_{pk}=\Delta B_{pp}/2=15{,}6$ bis $64{,}6\,\mathrm{mT}$.
 
-![Abbildung 7: Flussdichtehub über einer Netzperiode](Bilder/abbildung_01_flussdichtehub_netzwinkel.svg)
+![Abbildung 8: Flussdichtehub über einer Netzperiode](Bilder/abbildung_01_flussdichtehub_netzwinkel.svg)
 
-*Abbildung 7: Berechneter Flussdichtehub über dem Netzwinkel für den Aufbau mit 48 Windungen und $A_e=432\,\mathrm{mm^2}$.*
+*Abbildung 8: Berechneter Flussdichtehub über dem Netzwinkel für den Aufbau mit 48 Windungen und $A_e=432\,\mathrm{mm^2}$.*
 
-## 8.4 Zusammenhang zwischen Strom- und Flussdichtewelligkeit
+## 8.5 Zusammenhang zwischen Strom- und Flussdichtewelligkeit
 
 Bei Verwendung derselben differentiellen Induktivität besteht der Zusammenhang
 
