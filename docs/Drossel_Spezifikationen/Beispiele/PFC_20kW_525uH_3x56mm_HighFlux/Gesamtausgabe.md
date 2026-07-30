@@ -1,7 +1,7 @@
 ---
 title: "PFC-Drossel 525 µH – Gesamtausgabe"
-version: "Revision 4.4"
-last_updated: "2026-07-30 08:15 CEST"
+version: "Revision 4.5"
+last_updated: "2026-07-30 08:30 CEST"
 ---
 
 # PFC-Drossel 525 µH – Gesamtausgabe
@@ -130,28 +130,58 @@ $$\Delta B_{pp}=\frac{V_{DC}d(1-d)}{NA_ef_s}$$
 
 # 7 Magnetische Kennlinien
 
-Die differentielle Induktivität ist für die Stromwelligkeit um den Arbeitspunkt maßgebend. Die Sekanteninduktivität beschreibt die Flussverkettung bezogen auf den Strom.
+Die differentielle Induktivität ist für die Stromwelligkeit um den momentanen Arbeitspunkt maßgebend. Die Sekanteninduktivität beschreibt die Flussverkettung bezogen auf den Strom.
+
+## 7.1 B(H)-Kennlinie
 
 ![B(H)-Kennlinie](Bilder/abbildung_03_bh_kennlinie.svg)
 
 *Abbildung 3: B(H)-Kennlinie des verwendeten High-Flux-Modells.*
 
+Der empirische Herstellerfit besitzt bei $H\rightarrow0$ einen kleinen numerischen Offset. Dieser Offset wird nicht zur Berechnung von $L_{sec}=\Psi/I$ verwendet.
+
+## 7.2 Korrigierte Induktivitätskennlinien
+
+$$L_{diff}(I)=\frac{d\Psi}{dI}$$
+
+mit
+
+$$L_{diff}(0)=L_{sec}(0)=L_0=525\,\mu\mathrm H.$$
+
+Die Flussverkettung wird aus der differentiellen Induktivität berechnet:
+
+$$\Psi(I)=\int_0^I L_{diff}(i)\,di.$$
+
+Daraus folgt
+
+$$L_{sec}(I)=\frac{\Psi(I)}{I}=\frac{1}{I}\int_0^I L_{diff}(i)\,di.$$
+
+Damit gilt
+
+$$\lim_{I\rightarrow0}L_{sec}(I)=L_{diff}(0)=L_0.$$
+
 ![Differentielle und Sekanteninduktivität](Bilder/abbildung_04_induktivitaet.svg)
 
-*Abbildung 4: Differentielle und Sekanteninduktivität über dem Strom.*
+*Abbildung 4: Korrigierte differentielle und Sekanteninduktivität. Beide Kennlinien beginnen bei $L_0=525\,\mu\mathrm H$.*
 
-![Differentielle relative Permeabilität](Bilder/abbildung_05_permeabilitaet.svg)
+## 7.3 Differentielle und Sekantenpermeabilität
 
-*Abbildung 5: Differentielle relative Permeabilität über dem Strom.*
+$$\mu_{r,diff}(I)=\mu_{r0}\frac{L_{diff}(I)}{L_0}$$
 
-| Strom | Feldstärke | Flussdichte | $L_{diff}$ | $L_{sec}$ |
-|---:|---:|---:|---:|---:|
-| 0,0 A | 0,0 Oe | 0,005 T | ca. 279 µH | 525 µH |
-| 28,9 A | ca. 122 Oe | ca. 0,663 T | ca. 364 µH | ca. 471 µH |
-| 40,8 A | ca. 173 Oe | ca. 0,849 T | ca. 280 µH | ca. 427 µH |
-| 57,7 A | ca. 243 Oe | ca. 1,038 T | ca. 202 µH | ca. 373 µH |
-| 81,6 A | ca. 344 Oe | ca. 1,230 T | ca. 135 µH | ca. 312 µH |
-| 90,0 A | ca. 380 Oe | ca. 1,281 T | ca. 119 µH | ca. 294 µH |
+$$\mu_{r,sec}(I)=\mu_{r0}\frac{L_{sec}(I)}{L_0}$$
+
+![Differentielle und Sekantenpermeabilität](Bilder/abbildung_05_permeabilitaet.svg)
+
+*Abbildung 5: Korrigierte differentielle und Sekantenpermeabilität. Beide Kennlinien beginnen bei $\mu_{r0}=60$.*
+
+| Strom | Feldstärke | Flussdichte | $L_{diff}$ | $L_{sec}$ | $\mu_{r,diff}$ | $\mu_{r,sec}$ |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0,0 A | 0,0 Oe | 0 T | 525 µH | 525 µH | 60,0 | 60,0 |
+| 28,9 A | ca. 122 Oe | ca. 0,663 T | 364 µH | ca. 449 µH | 41,6 | ca. 51,3 |
+| 40,8 A | ca. 173 Oe | ca. 0,849 T | 280 µH | ca. 412 µH | 32,0 | ca. 47,0 |
+| 57,7 A | ca. 243 Oe | ca. 1,038 T | 202 µH | ca. 361 µH | 23,1 | ca. 41,2 |
+| 81,6 A | ca. 344 Oe | ca. 1,230 T | 135 µH | ca. 304 µH | 15,4 | ca. 34,7 |
+| 90,0 A | ca. 380 Oe | ca. 1,281 T | 119 µH | ca. 287 µH | 13,6 | ca. 32,8 |
 
 ---
 
@@ -252,25 +282,21 @@ Für die Berechnung wird $B=B_{pk}=\Delta B_{pp}/2$ verwendet.
 
 # 11.1 Ausnutzung Kernmaterial
 
-Die maximale Flussdichte setzt sich aus dem Grundwellenanteil und dem überlagerten 70-kHz-Flussdichtehub zusammen.
-
-Für die Grundwelle wird aus dem Effektivstrom zunächst der Scheitelwert gebildet:
+Für die Grundwelle wird aus dem Effektivstrom der Scheitelwert gebildet:
 
 $$\hat I_1=\sqrt{2}\,I_{1,\mathrm{rms}}.$$
 
-Die Grundwellen-Flussdichte wird aus der B(H)-Kennlinie aus Kapitel 7 interpoliert. Für den maximalen PWM-Anteil gilt
+Für den maximalen PWM-Anteil gilt
 
 $$\Delta B_{pp,\max}=129{,}175\,\mathrm{mT}$$
 
-und damit
+und
 
 $$\Delta B_{pk,\max}=\frac{\Delta B_{pp,\max}}{2}=64{,}588\,\mathrm{mT}.$$
 
 Die Gesamtkennlinie lautet
 
 $$B_{\max,\mathrm{gesamt}}(I_{1,\mathrm{rms}})=B_{\max,\mathrm{GW}}(I_{1,\mathrm{rms}})+64{,}588\,\mathrm{mT}.$$
-
-Damit ist die rote Kennlinie gegenüber der blauen Kennlinie exakt um 64,588 mT parallel nach oben verschoben.
 
 ![Ausnutzung des Kernmaterials](Bilder/abbildung_13_ausnutzung_kernmaterial_bmax.svg)
 
@@ -280,8 +306,6 @@ Damit ist die rote Kennlinie gegenüber der blauen Kennlinie exakt um 64,588 mT 
 |---|---:|---:|---:|---:|---:|
 | 20 kW Dauerbetrieb | 28,87 A | 40,83 A | 0,849 T | 0,914 T | 51,3 % |
 | 40 kW Spitzenbetrieb | 57,74 A | 81,66 A | 1,230 T | 1,295 T | 72,7 % |
-
-Der konstante Offset gilt für die konservative Hüllkurve mit $\Delta B_{pp,\max}$. Im realen Betrieb hängt der momentane PWM-Flussdichtehub vom Netzwinkel ab. Bei abgeschalteter PWM im Leerlauf verschwindet der hochfrequente Anteil.
 
 ---
 
@@ -333,7 +357,11 @@ f_sw = 70e3;
 
 # 16 Bewertung
 
-Der Aufbau ist elektrisch plausibel. Bei 40 kW Spitzenbetrieb ergibt sich einschließlich des maximalen 70-kHz-Anteils eine maximale Flussdichte von etwa 1,295 T. Dies entspricht etwa 72,7 % der Modell-Sättigungsflussdichte von 1,78 T. Die Auslegung ist weiterhin durch Messungen und den realen PLECS-Flussdichteverlauf zu verifizieren.
+Die korrigierten Kennlinien erfüllen nun die physikalisch erforderliche Randbedingung
+
+$$L_{diff}(0)=L_{sec}(0)=L_0=525\,\mu\mathrm H.$$
+
+Bei 40 kW Spitzenbetrieb ergibt sich einschließlich des maximalen 70-kHz-Anteils eine maximale Flussdichte von etwa 1,295 T. Dies entspricht etwa 72,7 % der Modell-Sättigungsflussdichte von 1,78 T. Die Auslegung ist durch Messungen und den realen PLECS-Flussdichteverlauf zu verifizieren.
 
 ---
 
