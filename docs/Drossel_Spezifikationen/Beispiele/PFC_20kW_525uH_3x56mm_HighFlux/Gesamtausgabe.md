@@ -1,7 +1,7 @@
 ---
 title: "PFC-Drossel 525 µH – Gesamtausgabe"
-version: "Revision 4.3"
-last_updated: "2026-07-30 07:20 CEST"
+version: "Revision 4.4"
+last_updated: "2026-07-30 08:15 CEST"
 ---
 
 # PFC-Drossel 525 µH – Gesamtausgabe
@@ -23,6 +23,7 @@ Diese Datei fasst alle Einzelkapitel des Beispielprojekts in einer fortlaufenden
 9. [Elektrische Wicklungsverluste](#9-elektrische-wicklungsverluste)
 10. [Kernverluste](#10-kernverluste)
 11. [Gesamtverluste](#11-gesamtverluste)
+11.1 [Ausnutzung Kernmaterial](#111-ausnutzung-kernmaterial)
 12. [Thermik](#12-thermik)
 13. [Fertigung](#13-fertigung)
 14. [Prüfung](#14-prüfung)
@@ -97,9 +98,29 @@ Die drei Kerne sind fluchtend zu stapeln, elektrisch isolierend zu verkleben und
 
 # 6 Berechnungsgrundlagen
 
-$$L_0\approx525\,\mu\mathrm{H}$$
+## 6.1 Anfangsinduktivität
+
+Aus
+
+$$L_0=\frac{N^2}{\mathcal R_m}$$
+
+und
+
+$$\mathcal R_m=\frac{l_e}{\mu_0\mu_{r0}A_e}$$
+
+folgt
+
+$$L_0=\frac{\mu_0\mu_{r0}N^2A_e}{l_e}.$$
+
+Mit $\mu_{r0}=60$, $N=48$, $A_e=432\,\mathrm{mm^2}$ und $l_e=143\,\mathrm{mm}$ ergibt sich
+
+$$L_0\approx525\,\mu\mathrm H.$$
+
+## 6.2 Feldstärke
 
 $$H[\mathrm{Oe}]=\frac{4\pi NI}{l_e[\mathrm{mm}]}$$
+
+## 6.3 Flussdichtehub
 
 $$d=0{,}5+\frac{v_{Phase}}{V_{DC}}$$
 
@@ -109,7 +130,7 @@ $$\Delta B_{pp}=\frac{V_{DC}d(1-d)}{NA_ef_s}$$
 
 # 7 Magnetische Kennlinien
 
-Die differentielle Induktivität ist für die Stromwelligkeit maßgebend. Der AL-basierte Anfangswert von etwa 525 µH wird separat betrachtet. Die reale $L(I)$-Kennlinie ist bis mindestens 90 A zu messen.
+Die differentielle Induktivität ist für die Stromwelligkeit um den Arbeitspunkt maßgebend. Die Sekanteninduktivität beschreibt die Flussverkettung bezogen auf den Strom.
 
 ![B(H)-Kennlinie](Bilder/abbildung_03_bh_kennlinie.svg)
 
@@ -123,24 +144,30 @@ Die differentielle Induktivität ist für die Stromwelligkeit maßgebend. Der AL
 
 *Abbildung 5: Differentielle relative Permeabilität über dem Strom.*
 
+| Strom | Feldstärke | Flussdichte | $L_{diff}$ | $L_{sec}$ |
+|---:|---:|---:|---:|---:|
+| 0,0 A | 0,0 Oe | 0,005 T | ca. 279 µH | 525 µH |
+| 28,9 A | ca. 122 Oe | ca. 0,663 T | ca. 364 µH | ca. 471 µH |
+| 40,8 A | ca. 173 Oe | ca. 0,849 T | ca. 280 µH | ca. 427 µH |
+| 57,7 A | ca. 243 Oe | ca. 1,038 T | ca. 202 µH | ca. 373 µH |
+| 81,6 A | ca. 344 Oe | ca. 1,230 T | ca. 135 µH | ca. 312 µH |
+| 90,0 A | ca. 380 Oe | ca. 1,281 T | ca. 119 µH | ca. 294 µH |
+
 ---
 
 # 8 Stromwelligkeit und Flussdichtehub
 
 ## 8.1 Tastgrad
 
-$$u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi),\qquad
-\hat U_{Phase}=326{,}6\,\mathrm{V}$$
+$$u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi),\qquad \hat U_{Phase}=326{,}6\,\mathrm V$$
 
 $$d(\varphi)=0{,}5+\frac{u_{Phase}(\varphi)}{U_{DC}}$$
-
-Bei $U_{DC}=750\,\mathrm{V}$ liegt der Tastgrad zwischen 0,0645 und 0,9355.
 
 ## 8.2 Vergleichsrechnung mit konstanter Anfangsinduktivität
 
 $$\Delta I_{pp}(\varphi)=\frac{U_{DC}d(\varphi)[1-d(\varphi)]}{L_0f_s}$$
 
-Mit $L_0=525\,\mu\mathrm{H}$ ergibt sich ein Bereich von 1,23 bis 5,10 A.
+Mit $L_0=525\,\mu\mathrm H$ ergibt sich ein Bereich von 1,23 bis 5,10 A.
 
 ![Stromwelligkeit bei konstantem L](Bilder/abbildung_10_stromwelligkeit_netzwinkel.svg)
 
@@ -150,14 +177,7 @@ Mit $L_0=525\,\mu\mathrm{H}$ ergibt sich ein Bereich von 1,23 bis 5,10 A.
 
 $$i_1(\varphi)=\hat I_1\sin(\varphi)$$
 
-$$\Delta I_{pp}(\varphi)=
-\frac{U_{DC}d(\varphi)[1-d(\varphi)]}
-{L_{diff}(|\hat I_1\sin\varphi|)f_s}$$
-
-Verwendete Betriebspunkte:
-
-- 20 kW mit $\hat I_1=40{,}8\,\mathrm{A}$,
-- 40 kW mit $\hat I_1=81{,}6\,\mathrm{A}$.
+$$\Delta I_{pp}(\varphi)=\frac{U_{DC}d(\varphi)[1-d(\varphi)]}{L_{diff}(|\hat I_1\sin\varphi|)f_s}$$
 
 ![Verbesserte Stromwelligkeit](Bilder/abbildung_11_stromwelligkeit_ldiff_grundwelle.svg)
 
@@ -168,21 +188,18 @@ Verwendete Betriebspunkte:
 | 20 kW | 2,31 A | 9,60 A |
 | 40 kW | 4,79 A | 9,60 A |
 
-## 8.4 Flussdichtehub aus den beiden verbesserten Kurven
+## 8.4 Flussdichtehub aus den verbesserten Kurven
 
 $$\Delta B_{pp}(\varphi)=\frac{L_{diff}(\varphi)\Delta I_{pp}(\varphi)}{NA_e}$$
 
-Durch Einsetzen der Stromwelligkeitsgleichung kürzt sich $L_{diff}$ heraus:
+Durch Einsetzen kürzt sich $L_{diff}$ heraus:
 
-$$\Delta B_{pp}(\varphi)=
-\frac{U_{DC}d(\varphi)[1-d(\varphi)]}{NA_ef_s}$$
-
-Daher ergeben beide verbesserten Stromwelligkeitskurven denselben Flussdichtehub.
+$$\Delta B_{pp}(\varphi)=\frac{U_{DC}d(\varphi)[1-d(\varphi)]}{NA_ef_s}$$
 
 | Betriebspunkt | $\Delta B_{pp,min}$ | $\Delta B_{pp,max}$ | $B_{pk,min}$ | $B_{pk,max}$ |
 |---|---:|---:|---:|---:|
-| 20 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
-| 40 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
+| 20 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,588 mT |
+| 40 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,588 mT |
 
 ![Flussdichtehub aus beiden Ldiff-Kurven](Bilder/abbildung_12_flussdichtehub_ldiff_grundwelle.svg)
 
@@ -205,9 +222,9 @@ Daher ergeben beide verbesserten Stromwelligkeitskurven denselben Flussdichtehub
 
 # 10 Kernverluste
 
-$$P_v[\mathrm{mW/cm^3}]=246{,}54\cdot B[\mathrm{T}]^{2{,}218}\cdot f[\mathrm{kHz}]^{1{,}311}$$
+$$P_v[\mathrm{mW/cm^3}]=246{,}54\cdot B[\mathrm T]^{2{,}218}\cdot f[\mathrm{kHz}]^{1{,}311}$$
 
-Für die Berechnung wird $B=B_{pk}=\Delta B_{pp}/2$ verwendet. Da die Flussdichtehubkurven für 20 kW und 40 kW deckungsgleich sind, sind auch die Kernverlustkurven im verwendeten Steinmetz-Modell identisch.
+Für die Berechnung wird $B=B_{pk}=\Delta B_{pp}/2$ verwendet.
 
 | Betriebspunkt | minimaler momentaner Wert | Mittelwert | maximaler momentaner Wert |
 |---|---:|---:|---:|
@@ -216,9 +233,7 @@ Für die Berechnung wird $B=B_{pk}=\Delta B_{pp}/2$ verwendet. Da die Flussdicht
 
 ![Kernverlust](Bilder/abbildung_07_kernverluste.svg)
 
-*Abbildung 10: Deckungsgleiche Kernverlustkurven für 20 kW und 40 kW mit einem Mittelwert von 4,000 W.*
-
-Das Modell berücksichtigt keine zusätzliche DC-Bias-Abhängigkeit der Steinmetz-Parameter. Eine Verifikation mit iGSE, Herstellerkennfeldern oder dem realen PLECS-Flussdichteverlauf ist erforderlich.
+*Abbildung 10: Deckungsgleiche Kernverlustkurven für 20 kW und 40 kW.*
 
 ---
 
@@ -235,13 +250,48 @@ Das Modell berücksichtigt keine zusätzliche DC-Bias-Abhängigkeit der Steinmet
 
 ---
 
+# 11.1 Ausnutzung Kernmaterial
+
+Die maximale Flussdichte setzt sich aus dem Grundwellenanteil und dem überlagerten 70-kHz-Flussdichtehub zusammen.
+
+Für die Grundwelle wird aus dem Effektivstrom zunächst der Scheitelwert gebildet:
+
+$$\hat I_1=\sqrt{2}\,I_{1,\mathrm{rms}}.$$
+
+Die Grundwellen-Flussdichte wird aus der B(H)-Kennlinie aus Kapitel 7 interpoliert. Für den maximalen PWM-Anteil gilt
+
+$$\Delta B_{pp,\max}=129{,}175\,\mathrm{mT}$$
+
+und damit
+
+$$\Delta B_{pk,\max}=\frac{\Delta B_{pp,\max}}{2}=64{,}588\,\mathrm{mT}.$$
+
+Die Gesamtkennlinie lautet
+
+$$B_{\max,\mathrm{gesamt}}(I_{1,\mathrm{rms}})=B_{\max,\mathrm{GW}}(I_{1,\mathrm{rms}})+64{,}588\,\mathrm{mT}.$$
+
+Damit ist die rote Kennlinie gegenüber der blauen Kennlinie exakt um 64,588 mT parallel nach oben verschoben.
+
+![Ausnutzung des Kernmaterials](Bilder/abbildung_13_ausnutzung_kernmaterial_bmax.svg)
+
+*Abbildung 12: Maximale Flussdichte über dem Grundwellen-Effektivstrom. Blau: Grundwelle. Rot: Grundwelle zuzüglich $\Delta B_{pp,\max}/2$.*
+
+| Betriebspunkt | $I_{1,\mathrm{rms}}$ | $\hat I_1$ | $B_{\max,\mathrm{GW}}$ | $B_{\max,\mathrm{gesamt}}$ | Ausnutzung von $B_{sat}$ |
+|---|---:|---:|---:|---:|---:|
+| 20 kW Dauerbetrieb | 28,87 A | 40,83 A | 0,849 T | 0,914 T | 51,3 % |
+| 40 kW Spitzenbetrieb | 57,74 A | 81,66 A | 1,230 T | 1,295 T | 72,7 % |
+
+Der konstante Offset gilt für die konservative Hüllkurve mit $\Delta B_{pp,\max}$. Im realen Betrieb hängt der momentane PWM-Flussdichtehub vom Netzwinkel ab. Bei abgeschalteter PWM im Leerlauf verschwindet der hochfrequente Anteil.
+
+---
+
 # 12 Thermik
 
 Für 20 kW Dauerbetrieb wird ein maximaler thermischer Widerstand von etwa 3,11 K/W angegeben. Mit 800 J/K angenommener Wärmekapazität beträgt der adiabatische Temperaturanstieg während 0,5 s Spitzenlast etwa 0,069 K.
 
 ![Adiabatische Temperaturerhöhung](Bilder/abbildung_09_temperaturanstieg.svg)
 
-*Abbildung 12: Adiabatische Temperaturerhöhung während der 0,5-s-Spitzenlast.*
+*Abbildung 13: Adiabatische Temperaturerhöhung während der 0,5-s-Spitzenlast.*
 
 ---
 
@@ -283,7 +333,7 @@ f_sw = 70e3;
 
 # 16 Bewertung
 
-Der Aufbau ist elektrisch plausibel, muss jedoch hinsichtlich $L(I)$, AC-Wicklungsverlusten, Lagenisolation, thermischer Anbindung und mechanischer Dauerfestigkeit am Muster verifiziert werden. Die Neuberechnung bestätigt, dass die unterschiedlichen $L_{diff}$-basierten Stromwelligkeitskurven denselben PWM-bedingten Flussdichtehub und im verwendeten Steinmetz-Modell dieselben Kernverluste ergeben.
+Der Aufbau ist elektrisch plausibel. Bei 40 kW Spitzenbetrieb ergibt sich einschließlich des maximalen 70-kHz-Anteils eine maximale Flussdichte von etwa 1,295 T. Dies entspricht etwa 72,7 % der Modell-Sättigungsflussdichte von 1,78 T. Die Auslegung ist weiterhin durch Messungen und den realen PLECS-Flussdichteverlauf zu verifizieren.
 
 ---
 
