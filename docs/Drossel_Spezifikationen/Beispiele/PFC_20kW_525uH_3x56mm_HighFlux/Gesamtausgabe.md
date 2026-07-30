@@ -1,7 +1,7 @@
 ---
 title: "PFC-Drossel 525 µH – Gesamtausgabe"
 version: "Revision 4.3"
-last_updated: "2026-07-29 19:38 CEST"
+last_updated: "2026-07-30 06:47 CEST"
 ---
 
 # PFC-Drossel 525 µH – Gesamtausgabe
@@ -127,14 +127,70 @@ Die differentielle Induktivität ist für die Stromwelligkeit maßgebend. Der AL
 
 # 8 Stromwelligkeit und Flussdichtehub
 
-Berechneter Bereich:
+## 8.1 Phasenspannung und Tastgrad
 
-- $\Delta B_{pp}=31{,}2$ bis $129{,}2\,\mathrm{mT}$
-- $B_{pk}=15{,}6$ bis $64{,}6\,\mathrm{mT}$
+Für das vereinfachte phasenbezogene Zweilevel-PWM-Modell gilt
+
+$$u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi)$$
+
+mit
+
+$$\hat U_{Phase}=\frac{\sqrt{2}\,U_{LL,rms}}{\sqrt{3}}=326{,}6\,\mathrm{V}.$$
+
+Der Tastgrad ist
+
+$$d(\varphi)=0{,}5+\frac{u_{Phase}(\varphi)}{U_{DC}}$$
+
+und liegt bei $U_{DC}=750\,\mathrm{V}$ zwischen $0{,}0645$ und $0{,}9355$.
+
+## 8.2 Stromwelligkeit
+
+Aus der Voltsekundenbilanz folgt
+
+$$\Delta I_{pp}(\varphi)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{L\,f_s}.$$
+
+Mit $L=525\,\mu\mathrm{H}$ und $f_s=70\,\mathrm{kHz}$ ergibt sich bei $d=0{,}5$:
+
+$$\Delta I_{pp,max}=\frac{750\cdot0{,}25}{525\cdot10^{-6}\cdot70\cdot10^3}=5{,}10\,\mathrm{A}.$$
+
+Am Scheitelpunkt der Phasenspannung mit $d=0{,}0645$ beziehungsweise $0{,}9355$ ergibt sich:
+
+$$\Delta I_{pp,min}=1{,}23\,\mathrm{A}.$$
+
+![Stromwelligkeit](Bilder/abbildung_10_stromwelligkeit_netzwinkel.svg)
+
+*Abbildung 6: Berechnete Spitze-Spitze-Stromwelligkeit über dem Netzwinkel bei konstanter Anfangsinduktivität von $525\,\mu\mathrm{H}$.*
+
+Bei hohen Strömen ist die reale Stromwelligkeit wegen der abnehmenden differentiellen Induktivität größer. Für die endgültige Bewertung ist daher $L_{diff}(I)$ aus Messung oder PLECS-Simulation einzusetzen.
+
+## 8.3 Flussdichtehub
+
+Der Flussdichtehub ergibt sich direkt aus den PWM-Voltsekunden:
+
+$$\Delta B_{pp}(\varphi)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{N\,A_e\,f_s}.$$
+
+Mit $N=48$, $A_e=432\,\mathrm{mm^2}$ und $f_s=70\,\mathrm{kHz}$ ergibt sich bei $d=0{,}5$:
+
+$$\Delta B_{pp,max}=\frac{750\cdot0{,}25}{48\cdot432\cdot10^{-6}\cdot70\cdot10^3}=129{,}2\,\mathrm{mT}.$$
+
+Am Scheitelpunkt der Phasenspannung gilt:
+
+$$\Delta B_{pp,min}=31{,}2\,\mathrm{mT}.$$
+
+Damit ergibt sich über eine Netzperiode:
+
+- $\Delta B_{pp}=31{,}2$ bis $129{,}2\,\mathrm{mT}$,
+- $B_{pk}=15{,}6$ bis $64{,}6\,\mathrm{mT}$.
 
 ![Flussdichtehub](Bilder/abbildung_01_flussdichtehub_netzwinkel.svg)
 
-*Abbildung 6: Berechneter Flussdichtehub über dem Netzwinkel.*
+*Abbildung 7: Berechneter Flussdichtehub über dem Netzwinkel.*
+
+Zwischen beiden Größen besteht
+
+$$\Delta B_{pp}=\frac{L_{diff}(I)\,\Delta I_{pp}}{N\,A_e}.$$
+
+Der Flussdichtehub wird durch Voltsekunden, Windungszahl und Kernquerschnitt bestimmt. Die Stromwelligkeit hängt zusätzlich von der differentiellen Induktivität ab.
 
 ---
 
@@ -147,7 +203,7 @@ Berechneter Bereich:
 
 ![DC-Kupferverluste](Bilder/abbildung_06_kupferverluste.svg)
 
-*Abbildung 7: DC-Kupferverluste bei 25 °C und 120 °C.*
+*Abbildung 8: DC-Kupferverluste bei 25 °C und 120 °C.*
 
 ---
 
@@ -159,11 +215,11 @@ Der mittlere Kernverlust beträgt 4,0 W, der maximale momentane Rechenwert 9,2 W
 
 ![Kernverlust](Bilder/abbildung_02_kernverlust_netzwinkel.svg)
 
-*Abbildung 8: Momentaner Kernverlust über dem Netzwinkel mit Mittelwert 4,0 W.*
+*Abbildung 9: Momentaner Kernverlust über dem Netzwinkel mit Mittelwert 4,0 W.*
 
 ![Kernverlust über Flussdichtehub](Bilder/abbildung_07_kernverluste.svg)
 
-*Abbildung 9: Kernverlust über dem Flussdichtehub bei 70 kHz.*
+*Abbildung 10: Kernverlust über dem Flussdichtehub bei 70 kHz.*
 
 ---
 
@@ -176,7 +232,7 @@ Der mittlere Kernverlust beträgt 4,0 W, der maximale momentane Rechenwert 9,2 W
 
 ![Gesamtverluste](Bilder/abbildung_08_gesamtverluste.svg)
 
-*Abbildung 10: Gesamtverluste über dem Effektivstrom.*
+*Abbildung 11: Gesamtverluste über dem Effektivstrom.*
 
 ---
 
@@ -186,7 +242,7 @@ Für 20 kW Dauerbetrieb wird ein maximaler thermischer Widerstand von etwa 3,11 
 
 ![Adiabatische Temperaturerhöhung](Bilder/abbildung_09_temperaturanstieg.svg)
 
-*Abbildung 11: Adiabatische Temperaturerhöhung während der 0,5-s-Spitzenlast.*
+*Abbildung 12: Adiabatische Temperaturerhöhung während der 0,5-s-Spitzenlast.*
 
 ---
 
