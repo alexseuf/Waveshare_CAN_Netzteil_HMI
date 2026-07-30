@@ -26,3 +26,4 @@ Diese Dokumentation enthält die Kapitel zur Wicklungsberechnung und magnetische
 - [C6 Kernverluste](Band_C/C6.md)
 - [C7 Thermische Auslegung](Band_C/C7.md)
 - [C8 Vollständige Auslegungsbeispiele](Band_C/C8.md)
+- [C9 Reproduzierbare Diagrammerzeugung und Python-Skripte](Band_C/C9.md)
