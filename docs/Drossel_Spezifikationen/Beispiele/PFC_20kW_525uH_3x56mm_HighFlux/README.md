@@ -11,7 +11,7 @@ status: "Entwurfs- und Berechnungsstand"
 ## Lesen
 
 - [Gesamtausgabe](Gesamtausgabe.md)  
-  **Zuletzt aktualisiert:** 29.07.2026, 19:38 Uhr CEST
+  **Zuletzt aktualisiert:** 30.07.2026, 06:47 Uhr CEST
 
 ## Projektübersicht
 
