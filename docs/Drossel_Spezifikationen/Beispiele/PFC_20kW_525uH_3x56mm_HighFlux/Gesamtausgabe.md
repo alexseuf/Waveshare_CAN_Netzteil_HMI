@@ -1,7 +1,7 @@
 ---
 title: "PFC-Drossel 525 µH – Gesamtausgabe"
 version: "Revision 4.3"
-last_updated: "2026-07-30 06:47 CEST"
+last_updated: "2026-07-30 07:20 CEST"
 ---
 
 # PFC-Drossel 525 µH – Gesamtausgabe
@@ -127,70 +127,66 @@ Die differentielle Induktivität ist für die Stromwelligkeit maßgebend. Der AL
 
 # 8 Stromwelligkeit und Flussdichtehub
 
-## 8.1 Phasenspannung und Tastgrad
+## 8.1 Tastgrad
 
-Für das vereinfachte phasenbezogene Zweilevel-PWM-Modell gilt
-
-$$u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi)$$
-
-mit
-
-$$\hat U_{Phase}=\frac{\sqrt{2}\,U_{LL,rms}}{\sqrt{3}}=326{,}6\,\mathrm{V}.$$
-
-Der Tastgrad ist
+$$u_{Phase}(\varphi)=\hat U_{Phase}\sin(\varphi),\qquad
+\hat U_{Phase}=326{,}6\,\mathrm{V}$$
 
 $$d(\varphi)=0{,}5+\frac{u_{Phase}(\varphi)}{U_{DC}}$$
 
-und liegt bei $U_{DC}=750\,\mathrm{V}$ zwischen $0{,}0645$ und $0{,}9355$.
+Bei $U_{DC}=750\,\mathrm{V}$ liegt der Tastgrad zwischen 0,0645 und 0,9355.
 
-## 8.2 Stromwelligkeit
+## 8.2 Vergleichsrechnung mit konstanter Anfangsinduktivität
 
-Aus der Voltsekundenbilanz folgt
+$$\Delta I_{pp}(\varphi)=\frac{U_{DC}d(\varphi)[1-d(\varphi)]}{L_0f_s}$$
 
-$$\Delta I_{pp}(\varphi)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{L\,f_s}.$$
+Mit $L_0=525\,\mu\mathrm{H}$ ergibt sich ein Bereich von 1,23 bis 5,10 A.
 
-Mit $L=525\,\mu\mathrm{H}$ und $f_s=70\,\mathrm{kHz}$ ergibt sich bei $d=0{,}5$:
+![Stromwelligkeit bei konstantem L](Bilder/abbildung_10_stromwelligkeit_netzwinkel.svg)
 
-$$\Delta I_{pp,max}=\frac{750\cdot0{,}25}{525\cdot10^{-6}\cdot70\cdot10^3}=5{,}10\,\mathrm{A}.$$
+*Abbildung 6: Stromwelligkeit bei konstanter Anfangsinduktivität.*
 
-Am Scheitelpunkt der Phasenspannung mit $d=0{,}0645$ beziehungsweise $0{,}9355$ ergibt sich:
+## 8.3 Verbesserte Stromwelligkeit mit $L_{diff}$ als Funktion der Grundwelle
 
-$$\Delta I_{pp,min}=1{,}23\,\mathrm{A}.$$
+$$i_1(\varphi)=\hat I_1\sin(\varphi)$$
 
-![Stromwelligkeit](Bilder/abbildung_10_stromwelligkeit_netzwinkel.svg)
+$$\Delta I_{pp}(\varphi)=
+\frac{U_{DC}d(\varphi)[1-d(\varphi)]}
+{L_{diff}(|\hat I_1\sin\varphi|)f_s}$$
 
-*Abbildung 6: Berechnete Spitze-Spitze-Stromwelligkeit über dem Netzwinkel bei konstanter Anfangsinduktivität von $525\,\mu\mathrm{H}$.*
+Verwendete Betriebspunkte:
 
-Bei hohen Strömen ist die reale Stromwelligkeit wegen der abnehmenden differentiellen Induktivität größer. Für die endgültige Bewertung ist daher $L_{diff}(I)$ aus Messung oder PLECS-Simulation einzusetzen.
+- 20 kW mit $\hat I_1=40{,}8\,\mathrm{A}$,
+- 40 kW mit $\hat I_1=81{,}6\,\mathrm{A}$.
 
-## 8.3 Flussdichtehub
+![Verbesserte Stromwelligkeit](Bilder/abbildung_11_stromwelligkeit_ldiff_grundwelle.svg)
 
-Der Flussdichtehub ergibt sich direkt aus den PWM-Voltsekunden:
+*Abbildung 7: Arbeitspunktabhängige Stromwelligkeit mit $L_{diff}$ als Funktion des momentanen Grundwellenstroms.*
 
-$$\Delta B_{pp}(\varphi)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{N\,A_e\,f_s}.$$
+| Betriebspunkt | minimale $\Delta I_{pp}$ | maximale $\Delta I_{pp}$ |
+|---|---:|---:|
+| 20 kW | 2,31 A | 9,60 A |
+| 40 kW | 4,79 A | 9,60 A |
 
-Mit $N=48$, $A_e=432\,\mathrm{mm^2}$ und $f_s=70\,\mathrm{kHz}$ ergibt sich bei $d=0{,}5$:
+## 8.4 Flussdichtehub aus den beiden verbesserten Kurven
 
-$$\Delta B_{pp,max}=\frac{750\cdot0{,}25}{48\cdot432\cdot10^{-6}\cdot70\cdot10^3}=129{,}2\,\mathrm{mT}.$$
+$$\Delta B_{pp}(\varphi)=\frac{L_{diff}(\varphi)\Delta I_{pp}(\varphi)}{NA_e}$$
 
-Am Scheitelpunkt der Phasenspannung gilt:
+Durch Einsetzen der Stromwelligkeitsgleichung kürzt sich $L_{diff}$ heraus:
 
-$$\Delta B_{pp,min}=31{,}2\,\mathrm{mT}.$$
+$$\Delta B_{pp}(\varphi)=
+\frac{U_{DC}d(\varphi)[1-d(\varphi)]}{NA_ef_s}$$
 
-Damit ergibt sich über eine Netzperiode:
+Daher ergeben beide verbesserten Stromwelligkeitskurven denselben Flussdichtehub.
 
-- $\Delta B_{pp}=31{,}2$ bis $129{,}2\,\mathrm{mT}$,
-- $B_{pk}=15{,}6$ bis $64{,}6\,\mathrm{mT}$.
+| Betriebspunkt | $\Delta B_{pp,min}$ | $\Delta B_{pp,max}$ | $B_{pk,min}$ | $B_{pk,max}$ |
+|---|---:|---:|---:|---:|
+| 20 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
+| 40 kW | 31,193 mT | 129,175 mT | 15,597 mT | 64,587 mT |
 
-![Flussdichtehub](Bilder/abbildung_01_flussdichtehub_netzwinkel.svg)
+![Flussdichtehub aus beiden Ldiff-Kurven](Bilder/abbildung_12_flussdichtehub_ldiff_grundwelle.svg)
 
-*Abbildung 7: Berechneter Flussdichtehub über dem Netzwinkel.*
-
-Zwischen beiden Größen besteht
-
-$$\Delta B_{pp}=\frac{L_{diff}(I)\,\Delta I_{pp}}{N\,A_e}.$$
-
-Der Flussdichtehub wird durch Voltsekunden, Windungszahl und Kernquerschnitt bestimmt. Die Stromwelligkeit hängt zusätzlich von der differentiellen Induktivität ab.
+*Abbildung 8: Die aus den verbesserten Stromwelligkeitskurven zurückgerechneten Flussdichtehübe für 20 kW und 40 kW sind deckungsgleich.*
 
 ---
 
@@ -203,7 +199,7 @@ Der Flussdichtehub wird durch Voltsekunden, Windungszahl und Kernquerschnitt bes
 
 ![DC-Kupferverluste](Bilder/abbildung_06_kupferverluste.svg)
 
-*Abbildung 8: DC-Kupferverluste bei 25 °C und 120 °C.*
+*Abbildung 9: DC-Kupferverluste bei 25 °C und 120 °C.*
 
 ---
 
@@ -211,24 +207,27 @@ Der Flussdichtehub wird durch Voltsekunden, Windungszahl und Kernquerschnitt bes
 
 $$P_v[\mathrm{mW/cm^3}]=246{,}54\cdot B[\mathrm{T}]^{2{,}218}\cdot f[\mathrm{kHz}]^{1{,}311}$$
 
-Der mittlere Kernverlust beträgt 4,0 W, der maximale momentane Rechenwert 9,2 W.
+Für die Berechnung wird $B=B_{pk}=\Delta B_{pp}/2$ verwendet. Da die Flussdichtehubkurven für 20 kW und 40 kW deckungsgleich sind, sind auch die Kernverlustkurven im verwendeten Steinmetz-Modell identisch.
 
-![Kernverlust](Bilder/abbildung_02_kernverlust_netzwinkel.svg)
+| Betriebspunkt | minimaler momentaner Wert | Mittelwert | maximaler momentaner Wert |
+|---|---:|---:|---:|
+| 20 kW | 0,392 W | 4,000 W | 9,174 W |
+| 40 kW | 0,392 W | 4,000 W | 9,174 W |
 
-*Abbildung 9: Momentaner Kernverlust über dem Netzwinkel mit Mittelwert 4,0 W.*
+![Kernverlust](Bilder/abbildung_07_kernverluste.svg)
 
-![Kernverlust über Flussdichtehub](Bilder/abbildung_07_kernverluste.svg)
+*Abbildung 10: Deckungsgleiche Kernverlustkurven für 20 kW und 40 kW mit einem Mittelwert von 4,000 W.*
 
-*Abbildung 10: Kernverlust über dem Flussdichtehub bei 70 kHz.*
+Das Modell berücksichtigt keine zusätzliche DC-Bias-Abhängigkeit der Steinmetz-Parameter. Eine Verifikation mit iGSE, Herstellerkennfeldern oder dem realen PLECS-Flussdichteverlauf ist erforderlich.
 
 ---
 
 # 11 Gesamtverluste
 
-| Betrieb | $P_{ges}$ bei 120 °C |
-|---|---:|
-| 20 kW | 30,6 W |
-| 40 kW | 110,4 W |
+| Betrieb | $P_{Cu}$ 25 °C | $P_{Cu}$ 120 °C | $P_{core}$ | $P_{ges}$ bei 120 °C |
+|---|---:|---:|---:|---:|
+| 20 kW | 19,3 W | 26,6 W | 4,000 W | 30,600 W |
+| 40 kW | 77,3 W | 106,4 W | 4,000 W | 110,400 W |
 
 ![Gesamtverluste](Bilder/abbildung_08_gesamtverluste.svg)
 
@@ -284,7 +283,7 @@ f_sw = 70e3;
 
 # 16 Bewertung
 
-Der Aufbau ist elektrisch plausibel, muss jedoch hinsichtlich $L(I)$, AC-Wicklungsverlusten, Lagenisolation, thermischer Anbindung und mechanischer Dauerfestigkeit am Muster verifiziert werden.
+Der Aufbau ist elektrisch plausibel, muss jedoch hinsichtlich $L(I)$, AC-Wicklungsverlusten, Lagenisolation, thermischer Anbindung und mechanischer Dauerfestigkeit am Muster verifiziert werden. Die Neuberechnung bestätigt, dass die unterschiedlichen $L_{diff}$-basierten Stromwelligkeitskurven denselben PWM-bedingten Flussdichtehub und im verwendeten Steinmetz-Modell dieselben Kernverluste ergeben.
 
 ---
 
