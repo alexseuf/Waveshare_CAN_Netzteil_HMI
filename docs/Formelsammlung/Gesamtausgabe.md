@@ -513,7 +513,7 @@ Bei Speicherdrosseln wird der überwiegende Teil dieser Energie im Luftspalt ges
 
 ### Ziel
 
-Dieses Kapitel beschreibt die Berechnung der Induktivität magnetischer Bauteile auf Basis von Geometrie, Permeabilität und AL-Wert. Zusätzlich werden lineare und nichtlineare Induktivitäten erläutert.
+Dieses Kapitel beschreibt die Berechnung der Induktivität magnetischer Bauteile auf Basis von Geometrie, Permeabilität und AL-Wert. Zusätzlich werden lineare und nichtlineare Induktivitäten sowie der Unterschied zwischen Sekanten- und Differentialinduktivität erläutert.
 
 ### Grundgleichungen
 
@@ -565,11 +565,125 @@ L=\frac{N^2}{\mathcal{R}}
 
 ### Differential- und Sekanteninduktivität
 
-Die Sekanteninduktivität beschreibt das Verhältnis $\Psi/I$ am Arbeitspunkt. Die Differentialinduktivität beschreibt die lokale Steigung $d\Psi/dI$ und ist insbesondere für Kleinsignalmodelle und Regelung relevant.
+Bei linearen magnetischen Bauteilen sind Sekanten- und Differentialinduktivität identisch. Bei vormagnetisierten oder sättigenden Kernen unterscheiden sich beide Größen teilweise deutlich.
+
+#### Sekanteninduktivität
+
+Die Sekanteninduktivität beschreibt das Verhältnis der gesamten Flussverkettung zum Strom am betrachteten Arbeitspunkt:
+
+```math
+L_{\mathrm{sec}}(I)=\frac{\Psi(I)}{I}=\frac{N\Phi(I)}{I}
+```
+
+Sie entspricht geometrisch der Steigung der Verbindungslinie zwischen dem Ursprung und dem Arbeitspunkt der $\Psi(I)$-Kennlinie.
+
+Typische Anwendungen sind:
+
+- Beschreibung des Großsignal-Arbeitspunkts,
+- Zuordnung von Strom und Flussverkettung,
+- näherungsweise Bestimmung der Grundwellen-Flussdichte,
+- Auslegung der Windungszahl,
+- Abschätzung der gespeicherten magnetischen Energie.
+
+#### Differentialinduktivität
+
+Die Differentialinduktivität ist die lokale Steigung der Flussverkettungskennlinie:
+
+```math
+L_{\mathrm{diff}}(I)=\frac{d\Psi}{dI}
+```
+
+Für eine kleine Stromänderung $\Delta i$ um den Arbeitspunkt $I_0$ gilt die Linearisierung
+
+```math
+\Psi(I_0+\Delta i)\approx\Psi(I_0)+\left.\frac{d\Psi}{dI}\right|_{I_0}\Delta i
+```
+
+und damit
+
+```math
+v_L=\frac{d\Psi}{dt}\approx L_{\mathrm{diff}}(I_0)\frac{d(\Delta i)}{dt}.
+```
+
+Die Differentialinduktivität ist daher maßgebend für:
+
+- PWM-Stromwelligkeit,
+- Kleinsignalverhalten,
+- AC-Ersatzmodelle,
+- Regelkreisauslegung,
+- Schaltfrequenzanalyse.
+
+### Warum für die PWM-Stromwelligkeit die Differentialinduktivität verwendet wird
+
+Die hochfrequente PWM-Stromwelligkeit ist eine kleine Stromänderung um einen bereits durch die Grundwelle vorgegebenen Arbeitspunkt. Der Strom bewegt sich innerhalb eines Schaltzyklus nicht vom Ursprung bis zum Arbeitspunkt, sondern nur in einem kleinen Bereich um diesen Arbeitspunkt.
+
+Deshalb ist nicht das Verhältnis $\Psi/I$, sondern die lokale Steigung $d\Psi/dI$ maßgebend.
+
+Aus
+
+```math
+v_L\approx L_{\mathrm{diff}}(I_0)\frac{di}{dt}
+```
+
+folgt für ein vereinfachtes Zweilevel-PWM-Modell:
+
+```math
+\Delta I_{pp}(\varphi)=\frac{U_{DC}\,d(\varphi)\,[1-d(\varphi)]}{L_{\mathrm{diff}}\!\left(I_0(\varphi)\right)\,f_s}.
+```
+
+Bei einer sinusförmigen Grundwelle kann der momentane Arbeitspunkt beispielsweise mit
+
+```math
+I_0(\varphi)=\left|\hat I_1\sin(\varphi)\right|
+```
+
+angesetzt werden.
+
+Die Verwendung der Sekanteninduktivität in dieser Gleichung würde bei einem sättigenden Kern die Stromwelligkeit in der Regel unterschätzen, weil häufig
+
+```math
+L_{\mathrm{diff}}(I)<L_{\mathrm{sec}}(I)
+```
+
+gilt.
+
+### Zahlenbeispiel
+
+Für einen betrachteten Arbeitspunkt von etwa $57{,}7\,\mathrm{A}$ seien gegeben:
+
+| Größe | Wert |
+|---|---:|
+| $L_{\mathrm{sec}}$ | 373 µH |
+| $L_{\mathrm{diff}}$ | 202 µH |
+
+Da die Stromwelligkeit umgekehrt proportional zur eingesetzten Induktivität ist, ergibt sich bei Verwendung der Sekanteninduktivität:
+
+```math
+\frac{\Delta I_{pp,\mathrm{sec}}}{\Delta I_{pp,\mathrm{diff}}}
+=\frac{L_{\mathrm{diff}}}{L_{\mathrm{sec}}}
+=\frac{202}{373}
+\approx0{,}54.
+```
+
+Die mit $L_{\mathrm{sec}}$ berechnete Stromwelligkeit beträgt damit nur etwa 54 % des mit der lokalen Differentialinduktivität ermittelten Wertes. Sie würde in diesem Beispiel um ungefähr 46 % unterschätzt.
+
+> **Merksatz:** Sekanteninduktivität für Großsignal-Arbeitspunkt, Flussverkettung und Energie; Differentialinduktivität für Kleinsignalverhalten, PWM-Stromwelligkeit und Regelung.
+
+### Grenze der Kleinsignalnäherung
+
+Die Verwendung von $L_{\mathrm{diff}}(I_0)$ setzt voraus, dass sich die Differentialinduktivität innerhalb des betrachteten Stromrippels nicht stark ändert. Bei großer Welligkeit oder sehr steiler Sättigungskennlinie ist die nichtlineare Flussverkettungskennlinie direkt zu verwenden:
+
+```math
+\Delta\Psi
+=\Psi\!\left(I_0+\frac{\Delta I_{pp}}{2}\right)
+-\Psi\!\left(I_0-\frac{\Delta I_{pp}}{2}\right).
+```
+
+Die resultierende Gleichung ist gegebenenfalls iterativ nach $\Delta I_{pp}$ zu lösen oder durch eine nichtlineare Schaltsimulation auszuwerten.
 
 ### Nichtlineare Kerne
 
-Bei High-Flux-, Kool-Mu- und anderen Pulvermaterialien sinkt die effektive Permeabilität mit zunehmender Vormagnetisierung. Dadurch nimmt die Induktivität stromabhängig ab. Für Simulationen werden häufig B(H)-Kennlinien oder $\mu_r(B)$-Modelle verwendet.
+Bei High-Flux-, Kool-Mu- und anderen Pulvermaterialien sinkt die effektive Permeabilität mit zunehmender Vormagnetisierung. Dadurch nimmt die Induktivität stromabhängig ab. Für Simulationen werden häufig B(H)-Kennlinien, $\Psi(I)$-Kennlinien oder $\mu_r(B)$-Modelle verwendet.
 
 ### Beispiel
 
@@ -585,6 +699,8 @@ Der tatsächliche AL-Wert ist dem Datenblatt zu entnehmen.
 
 - Für lineare Ferritkerne kann häufig mit konstantem AL-Wert gerechnet werden.
 - Bei Pulvermaterialien sollte die stromabhängige Induktivität berücksichtigt werden.
+- Für die PWM-Stromwelligkeit ist die Differentialinduktivität am momentanen Grundwellen-Arbeitspunkt einzusetzen.
+- Für Großsignalgrößen ist zwischen Sekanteninduktivität, Flussverkettung und tatsächlich gespeicherter Energie zu unterscheiden.
 - Herstellerkennlinien sind einer vereinfachten Näherung vorzuziehen.
 - Die Berechnung ist anschließend durch Messung oder FEM/PLECS zu verifizieren.
 
