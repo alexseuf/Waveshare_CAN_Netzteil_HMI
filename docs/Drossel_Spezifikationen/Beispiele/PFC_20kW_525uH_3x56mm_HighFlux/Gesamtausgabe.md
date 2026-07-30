@@ -1,7 +1,7 @@
 ---
 title: "PFC-Drossel 525 µH – Gesamtausgabe"
-version: "Revision 4.6"
-last_updated: "2026-07-30 09:30 CEST"
+version: "Revision 4.7"
+last_updated: "2026-07-30 10:05 CEST"
 ---
 
 # PFC-Drossel 525 µH – Gesamtausgabe
@@ -184,13 +184,15 @@ Die früher angegebenen $9{,}60\,\mathrm A$ basierten auf dem nicht korrigierten
 
 ## 8.3 Überlagerung von Grundwelle und Dreiecksrippel
 
-Der normierte symmetrische Dreiecksträger lautet
+Der normierte symmetrische Dreiecksträger besitzt den Wertebereich $-1\ldots+1$:
 
-$$\operatorname{tri}(t)=4\left|\left(f_s t\bmod1\right)-\frac12\right|-1.$$
+$$\mathrm{tri}(t)=4\left|\left(f_s t\bmod 1\right)-\frac{1}{2}\right|-1.$$
+
+Die GitHub-kompatible Schreibweise $\mathrm{tri}$ ersetzt das dort nicht zugelassene Makro `\operatorname`.
 
 Der vollständige Phasenstrom wird zeitdiskret berechnet:
 
-$$i(t)=i_1(t)+\frac{\Delta I_{pp}(t)}{2}\operatorname{tri}(t).$$
+$$i(t)=i_1(t)+\frac{\Delta I_{pp}(t)}{2}\,\mathrm{tri}(t).$$
 
 Die momentanen Grenzen sind
 
@@ -202,7 +204,7 @@ $$i_{unten}(t)=i_1(t)-\frac{\Delta I_{pp}(t)}{2}.$$
 
 ![Berechneter Stromverlauf](Bilder/abbildung_09_stromverlauf_50Hz_70kHz.svg)
 
-*Abbildung 8: Numerisch berechnete Überlagerung der 50-Hz-Grundwelle mit dem netzwinkel- und arbeitspunktabhängigen 70-kHz-Dreiecksrippel. Oben sind die berechneten Hüllkurven über eine Netzperiode dargestellt; unten ist der 70-kHz-Verlauf vergrößert.*
+*Abbildung 8: Numerisch berechnete Überlagerung der 50-Hz-Grundwelle mit dem netzwinkel- und arbeitspunktabhängigen 70-kHz-Dreiecksrippel. Das obere Diagramm zeigt die Grundwellen und Hüllkurven über eine vollständige Netzperiode. Das untere Diagramm zeigt den berechneten 70-kHz-Stromverlauf am positiven Grundwellen-Scheitel. Beide Diagramme besitzen vollständig beschriftete Achsen mit Zahlenwerten und Einheiten.*
 
 | Betriebspunkt | Grundwellen-Scheitel | maximaler Gesamtstrom | minimaler Gesamtstrom |
 |---|---:|---:|---:|
