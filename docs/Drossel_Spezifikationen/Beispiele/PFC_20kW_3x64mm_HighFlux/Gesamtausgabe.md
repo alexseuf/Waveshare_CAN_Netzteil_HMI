@@ -1,56 +1,34 @@
 ---
-title: "Drossel-Spezifikationen – Beispiele – Gesamtausgabe"
-version: "automatisch zusammengestellt"
-last_updated: "2026-07-29 18:57 CEST"
+title: "PFC-Drossel 20 kW – 3 × 64 mm High Flux – Gesamtausgabe"
+version: "3.0"
+last_updated: "2026-07-31 08:45 CEST"
 ---
 
-# Drossel-Spezifikationen – Beispiele – Gesamtausgabe
+# PFC-Drossel 20 kW – 3 × 64-mm-High-Flux-Ringkern
 
-Diese Datei enthält die derzeit vorhandenen Beispielprojekte in einer fortlaufenden Leseansicht. Sie wurde aus den Einzelkapiteln des Beispielprojekts neu zusammengestellt.
+**26 Windungen · 680 × 0,10-mm-HF-Litze · R_DC,25 = 27,71 mΩ · R_DC,120 = 38,06 mΩ**
 
-**Zuletzt aktualisiert:** 29.07.2026, 18:57 Uhr CEST
+Diese Datei wurde am 31.07.2026 aus den aktuellen Einzelkapiteln des Beispielprojekts neu zusammengestellt.
 
 ## Inhaltsverzeichnis
 
-### PFC-Drossel 20 kW – 3 × 64-mm-High-Flux-Ringkern
-
-- [1 Zweck und Geltungsbereich](#1-zweck-und-geltungsbereich)
-- [2 Systemanforderungen](#2-systemanforderungen)
-- [3 Magnetischer Aufbau](#3-magnetischer-aufbau)
-- [4 Wicklungsaufbau](#4-wicklungsaufbau)
-- [5 Mechanischer Aufbau und Befestigung](#5-mechanischer-aufbau-und-befestigung)
-- [6 Berechnungsgrundlagen](#6-berechnungsgrundlagen)
-- [7 Magnetische Kennlinien](#7-magnetische-kennlinien)
-- [8 Stromwelligkeit und Flussdichtehub](#8-stromwelligkeit-und-flussdichtehub)
-- [9 Elektrische Wicklungsverluste](#9-elektrische-wicklungsverluste)
-- [10 Kernverluste](#10-kernverluste)
-- [11 Gesamtverluste](#11-gesamtverluste)
-- [12 Thermische Anforderungen](#12-thermische-anforderungen)
-- [13 Fertigungsanforderungen](#13-fertigungsanforderungen)
-- [14 Prüf- und Abnahmekriterien](#14-prüf--und-abnahmekriterien)
-- [15 PLECS-/MATLAB-Parametersatz](#15-plecs-matlab-parametersatz)
-- [16 Bewertung und offene Verifikation](#16-bewertung-und-offene-verifikation)
-- [17 Quellenbasis](#17-quellenbasis)
-
----
-
-# PFC-Drossel 20 kW
-
-**3 × 64-mm-High-Flux-Ringkern · 26 Windungen · 680 × 0,10-mm-HF-Litze**
-
-Dieses Beispiel wurde aus der Entwicklungsspezifikation für eine dreiphasige 20-kW-Interleaved-PFC-Drossel in eine modulare GitHub-Markdown-Struktur übertragen.
-
-## Projektübersicht
-
-| Parameter | Wert |
-|---|---:|
-| Dokumentversion | 3.0 |
-| Status | Entwurfs- und Berechnungsstand |
-| Nennbetrieb | 20 kW, 3 × 400 V AC, 750 V DC |
-| Kurzzeitüberlast | 40 kW für 0,5 s |
-| Schaltfrequenz | 70 kHz |
-| Kernaufbau | 3 gestapelte High-Flux-Ringkerne |
-| Wicklung | 26 Windungen, 680 × 0,10 mm HF-Litze |
+1. [Zweck und Geltungsbereich](#1-zweck-und-geltungsbereich)
+2. [Systemanforderungen](#2-systemanforderungen)
+3. [Magnetischer Aufbau](#3-magnetischer-aufbau)
+4. [Wicklungsaufbau](#4-wicklungsaufbau)
+5. [Mechanischer Aufbau und Befestigung](#5-mechanischer-aufbau-und-befestigung)
+6. [Berechnungsgrundlagen](#6-berechnungsgrundlagen)
+7. [Magnetische Kennlinien](#7-magnetische-kennlinien)
+8. [Stromwelligkeit und Flussdichtehub](#8-stromwelligkeit-und-flussdichtehub)
+9. [Elektrische Wicklungsverluste](#9-elektrische-wicklungsverluste)
+10. [Kernverluste](#10-kernverluste)
+11. [Gesamtverluste](#11-gesamtverluste)
+12. [Thermische Anforderungen](#12-thermische-anforderungen)
+13. [Fertigungsanforderungen](#13-fertigungsanforderungen)
+14. [Prüf- und Abnahmekriterien](#14-prüf--und-abnahmekriterien)
+15. [PLECS-/MATLAB-Parametersatz](#15-plecs-matlab-parametersatz)
+16. [Bewertung und offene Verifikation](#16-bewertung-und-offene-verifikation)
+17. [Quellenbasis](#17-quellenbasis)
 
 ---
 
@@ -137,6 +115,8 @@ Die Drossel besteht aus drei geometrisch gleichen High-Flux-Ringkernen. Die Kern
 
 ## 3.2 Geometrische Größen
 
+Für die magnetische Berechnung werden folgende effektive Größen verwendet:
+
 $$
 A_e = 1080\,\mathrm{mm^2} = 1{,}080\cdot10^{-3}\,\mathrm{m^2}
 $$
@@ -178,9 +158,11 @@ Vor der Freigabe sind Kernbezeichnung, Beschichtungsabmessungen, effektive Magne
 
 Die 26 Windungen werden einlagig und gleichmäßig über den gesamten Umfang von 360° verteilt. Kreuzungen der Litze sind zu vermeiden.
 
-![Abbildung 2: Drauf- und Seitenansicht des Wicklungs- und Kernstapelaufbaus](Bilder/abbildung_02_wicklungsaufbau.svg)
+![Abbildung 2: Drauf- und Seitenansicht des einlagigen Wicklungs- und Kernstapelaufbaus](Bilder/abbildung_02_wicklungsaufbau.svg)
 
 *Abbildung 2: Drauf- und Seitenansicht des einlagigen Wicklungs- und Kernstapelaufbaus.*
+
+Die verfügbare mittlere Teilung beträgt:
 
 $$
 p = \frac{99{,}59\,\mathrm{mm}}{26} = 3{,}83\,\mathrm{mm/Windung}
@@ -189,6 +171,8 @@ $$
 Bei einem maximalen Außendurchmesser der fertigen Litze von 3,65 mm verbleibt am Innenumfang eine rechnerische Gesamtreserve von 4,69 mm.
 
 ## 4.2 Leiterdaten
+
+Die verwendete HF-Litze besteht aus 680 Einzeldrähten mit jeweils 0,10 mm Durchmesser. Der geometrische Kupferquerschnitt beträgt:
 
 $$
 A_{\mathrm{Cu}} = 680 \cdot \frac{\pi}{4} \cdot (0{,}10\,\mathrm{mm})^2
@@ -215,7 +199,7 @@ Die Einlagigkeit ist anhand des realen Litzenaußendurchmessers, der Kernbeschic
 
 Der Kernstapel wird liegend auf einer elektrisch isolierenden Grundplatte montiert. Vorgesehen sind eine vollflächige beziehungsweise segmentierte Verklebung des Kernstapels und vier zusätzliche, nicht stromführende mechanische Befestigungspunkte. Die Grundplatte muss mindestens UL94 V-0 erfüllen. Zwischen Kernbeschichtung und Litze ist bei Bedarf eine zusätzliche abriebfeste Isolierlage vorzusehen.
 
-![Abbildung 1: Vorgesehener mechanischer Aufbau](Bilder/abbildung_01_mechanischer_aufbau.svg)
+![Abbildung 1: Vorgesehener mechanischer Aufbau der Drossel](Bilder/abbildung_01_mechanischer_aufbau.svg)
 
 *Abbildung 1: Vorgesehener mechanischer Aufbau der Drossel auf einer isolierenden Grundplatte.*
 
@@ -238,12 +222,16 @@ Die elektrischen Leistungsanschlüsse sind separat zugzuentlasten und dürfen ni
 
 $$L_0 = \mu_0 \cdot \mu_{r,0} \cdot N^2 \cdot \frac{A_e}{l_e}$$
 
+Für den vorliegenden Aufbau:
+
 - $L_0 = 382{,}3\,\mu\text{H}$
 - $A_L = 565{,}5\,\text{nH}/N^2$
 
 ## 6.2 Feldstärke
 
 $$H[\text{Oe}] = \frac{4\pi \cdot N \cdot I[\text{A}]}{l_e[\text{mm}]}$$
+
+Für diesen Aufbau gilt näherungsweise:
 
 $$H \approx 2{,}2689 \cdot I$$
 
@@ -264,28 +252,44 @@ $$B(H)=\left[\frac{a+bH+cH^2}{1+dH+eH^2}\right]^x$$
 
 $$L_{\mathrm{diff}}(I)=N^2\frac{A_e}{l_e}\left[\frac{dB}{dH_{\mathrm{Oe}}}\cdot\frac{4\pi}{1000}\right]$$
 
+Die Umrechnung $4\pi/1000$ berücksichtigt $1\,\text{Oe}=1000/(4\pi)\,\text{A/m}$.
+
 ## 6.5 Sekanteninduktivität
 
 $$L_{\mathrm{sec}}(I)=N\,A_e\,\frac{B(H)-B(0)}{I}$$
+
+Das Abziehen des kleinen Fit-Offsets $B(0)$ verhindert eine unphysikalische Flussverkettung bei $I=0$.
 
 ---
 
 # 7 Magnetische Kennlinien
 
+Die magnetischen Arbeitspunkte sind:
+
 - 20 kW bei $I_{pk}=40{,}82\,\text{A}$
 - 40 kW für 0,5 s bei $I_{pk}=81{,}65\,\text{A}$
 
+Für Kupfer- und Gesamtverluste werden die zugehörigen Effektivströme 28,87 A und 57,74 A verwendet.
+
 ## 7.1 B(H)-Kennlinie
 
-![Abbildung 3: B(H)-Kennlinie](Bilder/abbildung_03_bh_kennlinie.svg)
+![Abbildung 3: B(H)-Kennlinie mit den magnetischen Arbeitspunkten](Bilder/abbildung_03_bh_kennlinie.svg)
 
-## 7.2 Differentielle und Sekanteninduktivität
+*Abbildung 3: B(H)-Kennlinie mit den magnetischen Arbeitspunkten bei 20 kW und 40 kW.*
+
+## 7.2 Induktivitätskennlinien
 
 ![Abbildung 4: Differentielle und Sekanteninduktivität](Bilder/abbildung_04_induktivitaet.svg)
+
+*Abbildung 4: Differentielle und Sekanteninduktivität mit den magnetischen Arbeitspunkten.*
 
 ## 7.3 Differentielle Permeabilität
 
 ![Abbildung 5: Differentielle relative Permeabilität](Bilder/abbildung_05_permeabilitaet.svg)
+
+*Abbildung 5: Differentielle relative Permeabilität mit den magnetischen Arbeitspunkten.*
+
+## Kennwerte aus der Herstellerfitfunktion
 
 | Strom | Feldstärke | Flussdichte | $L_{diff}$ | $L_{sec}$ |
 |---:|---:|---:|---:|---:|
@@ -306,7 +310,14 @@ Für die Worst-Case-Abschätzung eines idealen Boost-Zweigs wird der maximale Vo
 
 $$\Delta B_{pp,max}=\frac{V_{dc}}{4\,f\,N\,A_e}$$
 
-Mit $V_{dc}=750\,\text{V}$, $f=70\,\text{kHz}$, $N=26$ und $A_e=1080\,\text{mm}^2$ folgt:
+Mit
+
+- $V_{dc}=750\,\text{V}$
+- $f=70\,\text{kHz}$
+- $N=26$
+- $A_e=1080\,\text{mm}^2$
+
+folgt:
 
 $$\Delta B_{pp,max}=95{,}4\,\text{mT}$$
 
@@ -316,16 +327,60 @@ Diese Abschätzung ist topologie- und modulationsabhängig. Für die endgültige
 
 # 9 Elektrische Wicklungsverluste
 
-$$R(T)=R_{25}\left[1+0{,}00393\,(T-25\,^{\circ}\mathrm{C})\right]$$
+## 9.1 DC-Wicklungswiderstand
+
+Für die dokumentierte Wicklung aus 680 × 0,10-mm-HF-Litze wird der Gleichstromwiderstand bei 25 °C mit
+
+$$
+R_{DC,25}=27{,}71\,\mathrm{m\Omega}
+$$
+
+angesetzt. Die Temperaturabhängigkeit des Kupferwiderstands wird mit
+
+$$
+\alpha_{Cu}=0{,}00393\,\mathrm{K^{-1}}
+$$
+
+berechnet:
+
+$$
+R(T)=R_{25}\left[1+\alpha_{Cu}(T-25\,^{\circ}\mathrm C)\right].
+$$
+
+Für 120 °C ergibt sich:
+
+$$
+R_{DC,120}=27{,}71\,\mathrm{m\Omega}\cdot\left[1+0{,}00393\cdot(120-25)\right]
+=38{,}06\,\mathrm{m\Omega}.
+$$
+
+| Wicklungstemperatur | DC-Widerstand | Bezug |
+|---:|---:|---|
+| 25 °C | 27,71 mΩ | gesamte Wicklung einschließlich Anschlusszuschlag |
+| 120 °C | 38,06 mΩ | gesamte Wicklung einschließlich Anschlusszuschlag |
+
+## 9.2 DC-Kupferverluste
 
 $$P_{Cu}=I_{RMS}^2\,R(T)$$
-
-![Abbildung 6: DC-Kupferverluste](Bilder/abbildung_06_kupferverluste.svg)
 
 | Arbeitspunkt | Strom | $P_{Cu}$ bei 25 °C | $P_{Cu}$ bei 120 °C |
 |---|---:|---:|---:|
 | 20 kW Dauerbetrieb | 28,87 A RMS | 23,1 W | 31,7 W |
-| 40 kW / 0,5 s | 57,74 A RMS | 92,3 W | 126,7 W |
+| 40 kW / 0,5 s | 57,74 A RMS | 92,4 W | 126,8 W |
+
+| Parameter | Wert |
+|---|---:|
+| $R_{DC}$ bei 25 °C | 27,71 mΩ |
+| $R_{DC}$ bei 120 °C | 38,06 mΩ |
+| $P_{Cu}$ bei 20 kW / 25 °C | 23,1 W |
+| $P_{Cu}$ bei 20 kW / 120 °C | 31,7 W |
+| $P_{Cu}$ bei 40 kW / 25 °C | 92,4 W |
+| $P_{Cu}$ bei 40 kW / 120 °C | 126,8 W |
+| Energie bei 40 kW, 0,5 s / 120 °C | 63,4 J |
+
+![Abbildung 6: DC-Kupferverlustkennlinien](Bilder/abbildung_06_kupferverluste.svg)
+
+*Abbildung 6: DC-Kupferverlustkennlinien bei 25 °C und 120 °C einschließlich beider Arbeitspunkte.*
 
 HF-Zusatzverluste durch Skin- und Proximity-Effekt sind in diesen DC-Werten nicht enthalten.
 
@@ -339,6 +394,8 @@ $$P_v=a\,f^b\,(\Delta B)^c$$
 
 $$P_{core}=P_v\,V_e$$
 
+Für High Flux 60 µ werden folgende Koeffizienten verwendet:
+
 | Parameter | Wert |
 |---|---:|
 | Steinmetz $a$ | 246,54 |
@@ -348,6 +405,8 @@ $$P_{core}=P_v\,V_e$$
 | Worst-Case $\Delta B$ | 0,954 kG |
 | Kernvolumen $V_e$ | 155,5 cm³ |
 | Berechneter Worst-Case-Kernverlust | 98,9 W |
+
+Für die numerische Darstellung wird als Arbeitskonvention $f$ in MHz, $\Delta B$ in kG und $P_v$ in W/cm³ angesetzt.
 
 ## 10.1 Kernverlust über dem Flussdichtehub
 
@@ -359,7 +418,7 @@ $$P_{core}=P_v\,V_e$$
 
 Die folgenden beiden Diagramme wurden aus der Entwicklungsspezifikation Revision 4.3 übernommen. Sie zeigen den Verlauf des hochfrequenten Flussdichtehubs und des daraus berechneten momentanen Kernverlusts über einer Netzperiode.
 
-> **Hinweis zur Zuordnung:** Die Diagramme stammen aus der Variante mit 3 × Magnetics 0058111A2, 48 Windungen und $A_e=432\,\mathrm{mm^2}$. Sie dienen als ergänzende Darstellung der Berechnungsmethodik und sind nicht unmittelbar die Kennlinien des 3 × 64-mm-/26-Windungs-Beispiels.
+> **Hinweis zur Zuordnung:** Die Diagramme stammen aus der Variante mit 3 × Magnetics 0058111A2, 48 Windungen und $A_e=432\,\mathrm{mm^2}$. Sie dienen hier als ergänzende Darstellung der Berechnungsmethodik und sind nicht unmittelbar die Kennlinien des 3 × 64-mm-/26-Windungs-Beispiels.
 
 ### Flussdichtehub über einer Netzperiode
 
@@ -379,11 +438,16 @@ Die folgenden beiden Diagramme wurden aus der Entwicklungsspezifikation Revision
 
 # 11 Gesamtverluste
 
+Die dargestellten Gesamtverluste setzen sich aus dem DC-Kupferverlust und einem konstant angesetzten Worst-Case-Kernverlust bei $\Delta B_{pp,max}$ zusammen:
+
 $$P_{ges}=P_{Cu}+P_{core}$$
 
-![Abbildung 8: Gesamtverluste](Bilder/abbildung_08_gesamtverluste.svg)
+Nicht enthalten sind:
 
-Nicht enthalten sind Wicklungs-HF-Verluste, Anschlussverluste, Streuflussverluste und temperaturabhängige Änderungen der Kernverlustparameter.
+- Wicklungs-HF-Verluste,
+- Anschlussverluste,
+- Streuflussverluste,
+- temperaturabhängige Änderungen der Kernverlustparameter.
 
 | Parameter | Wert |
 |---|---:|
@@ -391,6 +455,10 @@ Nicht enthalten sind Wicklungs-HF-Verluste, Anschlussverluste, Streuflussverlust
 | Gesamtverlust 20 kW / 120 °C | 130,6 W |
 | Gesamtverlust 40 kW / 25 °C | 191,3 W |
 | Gesamtverlust 40 kW / 120 °C | 225,7 W |
+
+![Abbildung 8: Gesamtverlust über dem Effektivstrom](Bilder/abbildung_08_gesamtverluste.svg)
+
+*Abbildung 8: Gesamtverlust über dem Effektivstrom einschließlich der Arbeitspunkte bei 20 kW und 40 kW.*
 
 ---
 
@@ -407,6 +475,8 @@ Eine belastbare Temperaturberechnung erfordert den thermischen Widerstand des ko
 | Temperaturlimit Klebstoff | unterhalb Hersteller-Dauergrenze mit Reserve |
 | Kühlung | projektspezifisch; Luftstrom dokumentieren |
 
+Für die thermische Freigabe sind mindestens Kern- und Wicklungstemperatur getrennt zu erfassen. Luftgeschwindigkeit, Umgebungstemperatur und Einbaulage sind im Prüfprotokoll festzuhalten.
+
 ---
 
 # 13 Fertigungsanforderungen
@@ -418,6 +488,19 @@ Eine belastbare Temperaturberechnung erfordert den thermischen Widerstand des ko
 5. Litzenenden fachgerecht abisolieren, verzinnen beziehungsweise mit geeigneten Crimpanschlüssen versehen und mechanisch zugentlasten.
 6. Die Drossel auf einer isolierenden Grundplatte verkleben und mit vier zusätzlichen mechanischen Haltepunkten gegen Vibration sichern.
 7. Das Bauteil dauerhaft mit Typ, Losnummer, Windungszahl und Prüfstatus kennzeichnen.
+
+## Prozessrelevante Merkmale
+
+| Merkmal | Anforderung |
+|---|---|
+| Kernstapel | fluchtend, ohne Beschädigung der Beschichtung |
+| Wicklungsverteilung | gleichmäßig über 360° |
+| Lagenzahl | einlagig |
+| Windungszahl | 26 |
+| Kreuzungen | nicht zulässig |
+| Anschlussausführung | elektrisch geeignet und mechanisch zugentlastet |
+| Befestigung | Verklebung plus vier zusätzliche Haltepunkte |
+| Kennzeichnung | Typ, Losnummer, Windungszahl und Prüfstatus |
 
 ---
 
@@ -433,6 +516,8 @@ Eine belastbare Temperaturberechnung erfordert den thermischen Widerstand des ko
 | Isolationsprüfung | nach Isolationskonzept | kein Durchschlag oder Überschlag | Prüfprotokoll |
 | Temperaturtest | 20 kW stationär | Grenzwerte des Isolationssystems eingehalten | Temperaturkurve |
 | Kurzzeitüberlast | 40 kW, 0,5 s | keine bleibende Änderung oder Beschädigung | Vor-/Nachmessung |
+
+Die Messbedingungen, Messfrequenzen, verwendeten Geräte, Umgebungstemperaturen und Toleranzen sind im freigegebenen Prüfplan festzulegen.
 
 ---
 
@@ -451,6 +536,7 @@ mu_r_0 = 60;
 mu_r_sat = 1;
 B_sat = 1.78;
 
+% B(H)-Fit High Flux Toroids, 60 u
 a_BH = 3.8280E-02;
 b_BH = 1.8000E-02;
 c_BH = 7.0120E-04;
@@ -458,16 +544,27 @@ d_BH = 7.0630E-02;
 e_BH = 4.5020E-04;
 x_BH = 1.630;
 
+% Steinmetz High Flux 60 u
 a_StMetz = 246.54;
 b_StMetz = 2.218;
 c_StMetz = 1.311;
 ```
+
+## Verwendungshinweise
+
+- `A_mag` ist in m² einzusetzen.
+- `l_mag_mm` ist in der vorliegenden Parametrierung in mm angegeben.
+- Für die B(H)-Fitfunktion wird die Feldstärke in Oe verwendet.
+- Die Einheitensetzung der Steinmetzparameter muss vor Freigabe anhand der verwendeten Magnetics-Katalogquelle bestätigt werden.
+- Für die Kernverlustberechnung ist bevorzugt der reale Flussdichteverlauf aus der PLECS-Simulation zu verwenden.
 
 ---
 
 # 16 Bewertung und offene Verifikation
 
 Der Aufbau ist mechanisch deutlich plausibler als die zuvor betrachtete 80-Windungs-Variante. Die 26 Windungen können bei einem garantierten Litzenaußendurchmesser bis 3,65 mm einlagig ausgeführt werden.
+
+Die berechnete lineare Anfangsinduktivität beträgt rund 382 µH. Die Herstellerfitfunktion prognostiziert eine stromabhängige differentielle und Sekanteninduktivität, die vor Freigabe durch Messung verifiziert werden muss.
 
 ## Offene Verifikationspunkte
 
@@ -479,21 +576,22 @@ Der Aufbau ist mechanisch deutlich plausibler als die zuvor betrachtete 80-Windu
 - Reale Litzenaußenabmessung und Einlagigkeit der Wicklung
 - Dauerfestigkeit von Verklebung, Isolationslagen und mechanischen Haltepunkten
 
+Eine Bauteilfreigabe darf erst nach Abschluss der elektrischen, magnetischen, thermischen und mechanischen Verifikation erfolgen.
+
 ---
 
 # 17 Quellenbasis
 
 ## Projektspezifische Grundlage
 
-- Entwicklungsspezifikation **„Entwicklungsspezifikation_PFC_Drossel_3x64mm_26Wdg_mit_Arbeitspunkten“**, Dokumentversion 3.0.
-- Entwicklungsspezifikation **„Entwicklungsspezifikation_PFC_Drossel_Rev4_4_final“**, Revision 4.3, als Quelle für die ergänzenden Diagramme zum Flussdichtehub und Kernverlust über der Netzperiode.
+- Hochgeladene Entwicklungsspezifikation **„Entwicklungsspezifikation_PFC_Drossel_3x64mm_26Wdg_mit_Arbeitspunkten“**, Dokumentversion 3.0.
 
 ## Berechnungsgrundlage
 
-- Formelsammlung Drosselauslegung – Magnetics High Flux mit B(H)-Formeln.
+- Formelsammlung Drosselauslegung – Magnetics High Flux mit B(H)-Formeln. Enthalten sind die B(H)-Herstellerfitfunktion, die Koeffizienten für High-Flux-Ringkerne sowie die Formeln für differentielle und Sekanteninduktivität, Steinmetz-, Kupfer- und Gesamtverluste.
 
 ## Herstellerinformationen
 
-- Magnetics: öffentliche Designhinweise zu Powder-Core- und PFC-Auslegungen.
+- Magnetics: öffentliche Designhinweise zu Powder-Core- und PFC-Auslegungen, herangezogen zur Plausibilisierung der Vorgehensweise.
 
-> Die Bauteilfreigabe muss auf den projektspezifischen Herstellerdatenblättern, der dokumentierten Simulation und den Messungen am realen Muster basieren.
+> Die Bauteilfreigabe muss auf den projektspezifischen Herstellerdatenblättern, der dokumentierten Simulation und den Messungen am realen Muster basieren. Insbesondere die Einheitensetzung der Steinmetzparameter ist anhand der konkret verwendeten Katalogquelle zu bestätigen.
