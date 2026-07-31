@@ -10,6 +10,11 @@ status: "Entwurfs- und Berechnungsstand"
 
 Dieses Beispiel wurde aus der Entwicklungsspezifikation für eine dreiphasige 20-kW-Interleaved-PFC-Drossel in eine modulare GitHub-Markdown-Struktur übertragen.
 
+## Lesen
+
+- [Gesamtausgabe](Gesamtausgabe.md)  
+  **Zuletzt aktualisiert:** 31.07.2026, 08:31 Uhr CEST
+
 ## Projektübersicht
 
 | Parameter | Wert |
