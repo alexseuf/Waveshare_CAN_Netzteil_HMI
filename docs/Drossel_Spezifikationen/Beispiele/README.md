@@ -23,10 +23,23 @@ Dieser Ordner enthält vollständig ausgearbeitete Beispielprojekte auf Basis re
 **Wicklungswiderstand:** 23,20 mΩ bei 25 °C; 31,86 mΩ bei 120 °C  
 **Betrieb:** 20 kW Dauerleistung, 40 kW für 0,5 s
 
-- [Projektübersicht](PFC_20kW_525uH_3x56mm_HighFlux/README.md)
-- [Gesamtausgabe](PFC_20kW_525uH_3x56mm_HighFlux/Gesamtausgabe.md)
-- [Kapitel](PFC_20kW_525uH_3x56mm_HighFlux/README.md#kapitel)
-- [Bilder](PFC_20kW_525uH_3x56mm_HighFlux/Bilder)
+- [Projektübersicht](2_PFC_20kW_525uH_3x56mm_HighFlux_23mOhm/README.md)
+- [Gesamtausgabe](2_PFC_20kW_525uH_3x56mm_HighFlux_23mOhm/Gesamtausgabe.md)
+- [Kapitel](2_PFC_20kW_525uH_3x56mm_HighFlux_23mOhm/README.md#kapitel)
+- [Bilder](2_PFC_20kW_525uH_3x56mm_HighFlux_23mOhm/Bilder)
+
+### 3_ PFC-Drossel 584 µH – 3 × Magnetics 0058717A2 – Rechteckleiter
+
+**Kernaufbau:** 3 × 0058717A2, High Flux 26 µ  
+**Wicklung:** 80 Windungen, einlagiger Rechteckleiter 0,72 × 4,00 mm  
+**Zielinduktivität:** 584 µH  
+**Betrieb:** 20 kW Dauerleistung, 40 kW für 0,5 s  
+**Abbildungen:** mechanischer Aufbau, Wicklungsaufbau, B(H), L(I), µ(I), Stromwelligkeit, Flussdichtehub, Verluste und Temperaturabschätzung
+
+- [Projektübersicht](3_PFC_20kW_584uH_3x50mm_HighFlux_Rechteckleiter/README.md)
+- [Gesamtausgabe](3_PFC_20kW_584uH_3x50mm_HighFlux_Rechteckleiter/Gesamtausgabe.md)
+- [Kapitel](3_PFC_20kW_584uH_3x50mm_HighFlux_Rechteckleiter/README.md#kapitel)
+- [Bilder](3_PFC_20kW_584uH_3x50mm_HighFlux_Rechteckleiter/Bilder)
 
 ## Verzeichnisstruktur
 
@@ -34,11 +47,8 @@ Dieser Ordner enthält vollständig ausgearbeitete Beispielprojekte auf Basis re
 Beispiele/
 ├── README.md
 ├── PFC_20kW_3x64mm_HighFlux/
-│   ├── README.md
-│   ├── Gesamtausgabe.md
-│   ├── 01_...md bis 17_...md
-│   └── Bilder/
-└── PFC_20kW_525uH_3x56mm_HighFlux/
+├── 2_PFC_20kW_525uH_3x56mm_HighFlux_23mOhm/
+└── 3_PFC_20kW_584uH_3x50mm_HighFlux_Rechteckleiter/
     ├── README.md
     ├── Gesamtausgabe.md
     ├── 01_...md bis 17_...md
