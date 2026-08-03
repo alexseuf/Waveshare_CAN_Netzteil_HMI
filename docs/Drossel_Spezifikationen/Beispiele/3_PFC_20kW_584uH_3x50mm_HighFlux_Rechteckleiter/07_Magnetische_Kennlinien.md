@@ -6,12 +6,16 @@ Für den Ursprung wird der projektspezifische Anfangswert angesetzt:
 
 $$L_{diff}(0)=L_{sec}(0)=584\,\mu\mathrm{H}.$$
 
-Die Flussverkettung wird aus der differentiellen Induktivität aufgebaut:
+Die neu berechneten Kurven verwenden als glatte Entwurfsnäherung
 
-$$\Psi(I)=\int_0^I L_{diff}(i)\,di,$$
+$$B(H)=B_{sat}\tanh\left(\frac{\mu_0\mu_{r0}H}{B_{sat}}\right)$$
 
-und daraus folgt für $I>0$
+mit $\mu_{r0}=26$ und $B_{sat}=1{,}65\,\mathrm T$. Daraus werden differentielle und Sekantenwerte konsistent abgeleitet.
 
-$$L_{sec}(I)=\frac{\Psi(I)}{I}.$$
+![Abbildung 3: B(H)-Kennlinie](Bilder/abbildung_03_bh_kennlinie.svg)
 
-Die stromabhängige Kennlinie ist mit dem Herstellerfit für Magnetics High Flux 26 µ oder mit Messdaten des dreifachen Kernstapels zu erzeugen. Die vereinfachten Parameter $\mu_{r0}=26$, $\mu_{r,sat}=1$ und $B_{sat}=1{,}65\,\mathrm T$ dienen nur als PLECS-Modellparameter und ersetzen keine verifizierte B(H)-Kennlinie.
+![Abbildung 4: Differentielle und Sekanteninduktivität](Bilder/abbildung_04_induktivitaet.svg)
+
+![Abbildung 5: Differentielle und Sekantenpermeabilität](Bilder/abbildung_05_permeabilitaet.svg)
+
+Die Diagramme sind reproduzierbare Auslegungsnäherungen. Vor einer Fertigungsfreigabe sind sie durch Herstellerdaten oder eine gemessene $L(I)$- beziehungsweise B(H)-Kennlinie des dreifachen Kernstapels zu ersetzen oder zu bestätigen.
