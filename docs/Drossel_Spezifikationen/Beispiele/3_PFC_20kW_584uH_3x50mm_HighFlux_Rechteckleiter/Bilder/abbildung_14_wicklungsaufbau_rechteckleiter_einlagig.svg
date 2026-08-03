@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+<defs>
+  <marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 Z" fill="#111"/></marker>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+    .title{font-size:31px;font-weight:700}.h2{font-size:23px;font-weight:700}.label{font-size:21px}.small{font-size:18px}
+    .dim{stroke:#111;stroke-width:1.7;fill:none;marker-start:url(#arrow);marker-end:url(#arrow)}.ext{stroke:#111;stroke-width:1.2}
+    .core{fill:#777;stroke:#111;stroke-width:2}.cu{fill:#f5a623;stroke:#111;stroke-width:1.5}
+  </style>
+</defs>
+<rect width="1600" height="1000" fill="white"/>
+<text x="80" y="58" class="title">Abbildung 14: Wicklungsaufbau – Rechteckleiter einlagig (Draufsicht und Querschnitt)</text>
+<path class="core" fill-rule="evenodd" d="M430 135 A295 295 0 1 1 429.9 135 Z M430 270 A160 160 0 1 0 430.1 270 Z"/>
+<g class="cu">
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(0.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(4.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(9.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(13.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(18.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(22.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(27.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(31.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(36.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(40.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(45.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(49.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(54.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(58.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(63.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(67.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(72.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(76.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(81.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(85.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(90.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(94.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(99.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(103.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(108.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(112.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(117.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(121.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(126.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(130.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(135.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(139.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(144.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(148.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(153.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(157.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(162.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(166.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(171.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(175.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(180.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(184.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(189.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(193.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(198.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(202.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(207.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(211.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(216.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(220.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(225.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(229.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(234.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(238.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(243.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(247.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(252.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(256.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(261.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(265.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(270.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(274.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(279.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(283.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(288.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(292.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(297.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(301.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(306.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(310.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(315.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(319.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(324.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(328.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(333.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(337.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(342.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(346.500 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(351.000 430 430)"/>
+<rect x="425.5" y="225.0" width="9" height="72" rx="1" transform="rotate(355.500 430 430)"/>
+</g>
+<line x1="430" y1="135" x2="430" y2="258" stroke="white" stroke-width="6"/><line x1="685" y1="282" x2="575" y2="345" stroke="white" stroke-width="6"/><line x1="685" y1="578" x2="575" y2="515" stroke="white" stroke-width="6"/>
+<line x1="270" y1="430" x2="590" y2="430" class="dim"/><text x="430" y="415" text-anchor="middle" class="label">D<tspan baseline-shift="sub" font-size="15">i</tspan> = 31,75 mm</text>
+<line x1="135" y1="745" x2="725" y2="745" class="dim"/><line x1="135" y1="700" x2="135" y2="765" class="ext"/><line x1="725" y1="700" x2="725" y2="765" class="ext"/><rect x="332" y="724" width="196" height="30" fill="white"/><text x="430" y="747" text-anchor="middle" class="label">D<tspan baseline-shift="sub" font-size="15">a</tspan> = 50,80 mm</text>
+<line x1="640" y1="205" x2="735" y2="132" stroke="#111" stroke-width="1.7"/><text x="748" y="125" class="label">Magnetics 0058717A2</text><text x="795" y="153" class="label">3 × gestapelt</text>
+<line x1="225" y1="570" x2="105" y2="625" stroke="#111" stroke-width="1.7"/><text x="58" y="650" class="label">Rechteckleiter einlagig</text><text x="58" y="680" class="label">N = 80 Windungen</text>
+<text x="1120" y="120" text-anchor="middle" class="h2">Querschnitt (Wicklung axial)</text><text x="1120" y="150" text-anchor="middle" class="h2">einlagig</text>
+<rect x="1010" y="195" width="120" height="130" class="core"/><rect x="1010" y="335" width="120" height="130" class="core"/><rect x="1010" y="475" width="120" height="130" class="core"/><rect x="1140" y="210" width="34" height="380" class="cu"/><line x1="1157" y1="210" x2="1157" y2="590" stroke="#111" stroke-width="1"/>
+<g stroke="#111" stroke-width="1"><line x1="1140" y1="210" x2="1174" y2="210"/><line x1="1140" y1="229" x2="1174" y2="229"/><line x1="1140" y1="248" x2="1174" y2="248"/><line x1="1140" y1="267" x2="1174" y2="267"/><line x1="1140" y1="286" x2="1174" y2="286"/><line x1="1140" y1="305" x2="1174" y2="305"/><line x1="1140" y1="324" x2="1174" y2="324"/><line x1="1140" y1="343" x2="1174" y2="343"/><line x1="1140" y1="362" x2="1174" y2="362"/><line x1="1140" y1="381" x2="1174" y2="381"/><line x1="1140" y1="400" x2="1174" y2="400"/><line x1="1140" y1="419" x2="1174" y2="419"/><line x1="1140" y1="438" x2="1174" y2="438"/><line x1="1140" y1="457" x2="1174" y2="457"/><line x1="1140" y1="476" x2="1174" y2="476"/><line x1="1140" y1="495" x2="1174" y2="495"/><line x1="1140" y1="514" x2="1174" y2="514"/><line x1="1140" y1="533" x2="1174" y2="533"/><line x1="1140" y1="552" x2="1174" y2="552"/><line x1="1140" y1="571" x2="1174" y2="571"/><line x1="1140" y1="590" x2="1174" y2="590"/></g>
+<line x1="975" y1="400" x2="1205" y2="400" stroke="#555" stroke-dasharray="8 5"/>
+<line x1="1240" y1="210" x2="1240" y2="590" class="dim"/><line x1="1175" y1="210" x2="1260" y2="210" class="ext"/><line x1="1175" y1="590" x2="1260" y2="590" class="ext"/><text x="1268" y="390" class="label">h = 3 × 13,46 mm</text><text x="1268" y="420" class="label">= 40,38 mm</text>
+<line x1="1140" y1="645" x2="1174" y2="645" class="dim"/><line x1="1140" y1="605" x2="1140" y2="665" class="ext"/><line x1="1174" y1="605" x2="1174" y2="665" class="ext"/><text x="1157" y="685" text-anchor="middle" class="label">0,72 mm radial</text>
+<line x1="1090" y1="715" x2="1174" y2="715" class="dim"/><line x1="1090" y1="685" x2="1090" y2="735" class="ext"/><line x1="1174" y1="685" x2="1174" y2="735" class="ext"/><text x="1132" y="757" text-anchor="middle" class="label">4,00 mm axial</text>
+<rect x="255" y="855" width="42" height="25" class="cu"/><text x="315" y="875" class="label">Rechteckleiter 0,72 mm × 4,00 mm (einlagig)</text>
+<rect x="1070" y="800" width="390" height="150" rx="8" fill="white" stroke="#111" stroke-width="1.5"/><text x="1095" y="834" class="label">Leiterquerschnitt:</text><text x="1095" y="868" class="label">b = 4,00 mm (Breite, axial)</text><text x="1095" y="902" class="label">t = 0,72 mm (Dicke, radial)</text><text x="1095" y="936" class="label">A<tspan baseline-shift="sub" font-size="15">Cu</tspan> = 2,88 mm²</text>
+</svg>
