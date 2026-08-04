@@ -14,10 +14,10 @@ Die folgenden Kurven wurden über eine vollständige Netzperiode mit dem vereinf
 
 ![Abbildung 7: Stromwelligkeit](Bilder/abbildung_07_stromwelligkeit.svg)
 
-*Abbildung 7: Berechnete Stromwelligkeit über einer Netzperiode im vereinfachten PWM-Modell.*
+*Abbildung 7: Berechnete Stromwelligkeit über einer Netzperiode. Die beiden Kurven verwenden die differentiellen Induktivitäten der Arbeitspunkte 20 kW und 40 kW. Im vereinfachten Modell ergeben sich maximal etwa $5{,}9\,\mathrm A_{pp}$ bei 20 kW und $11{,}3\,\mathrm A_{pp}$ bei 40 kW.*
 
 ![Abbildung 8: Flussdichtehub](Bilder/abbildung_08_flussdichtehub.svg)
 
-*Abbildung 8: Berechneter hochfrequenter Flussdichtehub über einer Netzperiode.*
+*Abbildung 8: Berechneter hochfrequenter Flussdichtehub über einer Netzperiode. Bei gleichem PWM-Spannungszustand ist $\Delta B_{pp}$ unabhängig vom Laststrom; für beide Arbeitspunkte ergibt sich in dieser Näherung ein Maximum von rund $98\,\mathrm{mT}_{pp}$.*
 
-Die dargestellte maximale Stromwelligkeit liegt in dieser Näherung bei rund $5{,}05\,\mathrm A_{pp}$, der maximale Flussdichtehub bei rund $98\,\mathrm{mT}_{pp}$. SVM-Gleichtaktanteile, Totzeiten und diskrete Schaltzustände sind in dieser Darstellung noch nicht enthalten.
+SVM-Gleichtaktanteile, Totzeiten, diskrete Schaltzustände und die Rückwirkung der Stromwelligkeit auf die lokale differentielle Induktivität sind in dieser Darstellung noch nicht vollständig enthalten.
