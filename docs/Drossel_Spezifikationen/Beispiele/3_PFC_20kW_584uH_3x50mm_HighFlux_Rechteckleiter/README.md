@@ -11,7 +11,7 @@ status: "Entwurfs- und Berechnungsstand"
 ## Lesen
 
 - [Gesamtausgabe](Gesamtausgabe.md)  
-  **Zuletzt aktualisiert:** 03.08.2026
+  **Zuletzt aktualisiert:** 04.08.2026
 
 ## Projektübersicht
 
@@ -30,21 +30,6 @@ status: "Entwurfs- und Berechnungsstand"
 | Netzspannung | 400 V Leiter-Leiter |
 | Zwischenkreisspannung | 750 V |
 | Schaltfrequenz | 70 kHz |
-
-## Neu berechnete Abbildungen
-
-1. [Mechanischer Aufbau](Bilder/abbildung_01_mechanischer_aufbau.svg)
-2. [B(H)-Kennlinie](Bilder/abbildung_03_bh_kennlinie.svg)
-3. [Differentielle und Sekanteninduktivität](Bilder/abbildung_04_induktivitaet.svg)
-4. [Differentielle und Sekantenpermeabilität](Bilder/abbildung_05_permeabilitaet.svg)
-5. [DC-Kupferverluste](Bilder/abbildung_06_kupferverluste.svg)
-6. [Stromwelligkeit](Bilder/abbildung_07_stromwelligkeit.svg)
-7. [Flussdichtehub](Bilder/abbildung_08_flussdichtehub.svg)
-8. [Vorläufige Gesamtverluste](Bilder/abbildung_09_gesamtverluste.svg)
-9. [Temperaturabschätzung](Bilder/abbildung_10_temperaturabschaetzung.svg)
-10. [Einlagiger Rechteckleiter-Wicklungsaufbau](Bilder/abbildung_14_wicklungsaufbau_rechteckleiter_einlagig.svg)
-
-Die magnetischen Kennlinien basieren derzeit auf einer glatten Sättigungsnäherung mit $L(0)=584\,\mu\mathrm H$, $\mu_{r0}=26$ und $B_{sat}=1{,}65\,\mathrm T$. Widerstands-, Gesamtverlust- und Temperaturdiagramme sind als vorläufige Auslegungswerte gekennzeichnet und müssen durch Wickelmuster, Herstellerdaten und Messungen validiert werden.
 
 ## Kapitel
 
