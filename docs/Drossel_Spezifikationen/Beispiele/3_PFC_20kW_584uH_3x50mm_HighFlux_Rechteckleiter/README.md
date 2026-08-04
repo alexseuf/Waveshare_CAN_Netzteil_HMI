@@ -1,6 +1,6 @@
 ---
 title: "PFC-Drossel 584 µH – 3 × 50,8 mm High Flux"
-version: "Revision 1.1"
+version: "Revision 1.3"
 status: "Entwurfs- und Berechnungsstand"
 ---
 
@@ -10,8 +10,16 @@ status: "Entwurfs- und Berechnungsstand"
 
 ## Lesen
 
-- [Gesamtausgabe](Gesamtausgabe.md)  
+- [Aktualisierte Gesamtausgabe Revision 1.3](Gesamtausgabe_Rev1_3.md)  
   **Zuletzt aktualisiert:** 04.08.2026
+- [Vorherige vollständige Gesamtausgabe Revision 1.2](Gesamtausgabe.md)
+
+## Neu in Revision 1.3
+
+- schaltzustandsbasierte Minimum-Clamp-SVM-Berechnung,
+- variable differentielle Induktivität über dem momentanen Phasenstrom,
+- Vergleich von Leerlauf, 20 kW und 40 kW für Phase A,
+- archiviertes Python-Skript mit optionalem CSV-Import für Hersteller- oder Messdaten.
 
 ## Projektübersicht
 
@@ -50,3 +58,9 @@ status: "Entwurfs- und Berechnungsstand"
 15. [PLECS-/MATLAB-Parametersatz](15_PLECS_MATLAB.md)
 16. [Bewertung](16_Bewertung.md)
 17. [Quellen](17_Quellen.md)
+
+## Reproduzierbare DPWMmin-Berechnung
+
+- [Berechnungsgrundlage](../../../Formelsammlung/Band_C/C9_DPWMmin_Stromwelligkeit.md)
+- [Python-Skript](../../../Formelsammlung/Band_C/C9_Skripte/dpwmmin_variable_ldiff.py)
+- [CSV-Vorlage](../../../Formelsammlung/Band_C/C9_Skripte/ldiff_kennlinie_template.csv)
