@@ -14,6 +14,10 @@ Die folgenden Kurven wurden über eine vollständige Netzperiode mit dem vereinf
 
 ![Abbildung 7: Stromwelligkeit](Bilder/abbildung_07_stromwelligkeit.svg)
 
+*Abbildung 7: Berechnete Stromwelligkeit über einer Netzperiode im vereinfachten PWM-Modell.*
+
 ![Abbildung 8: Flussdichtehub](Bilder/abbildung_08_flussdichtehub.svg)
+
+*Abbildung 8: Berechneter hochfrequenter Flussdichtehub über einer Netzperiode.*
 
 Die dargestellte maximale Stromwelligkeit liegt in dieser Näherung bei rund $5{,}05\,\mathrm A_{pp}$, der maximale Flussdichtehub bei rund $98\,\mathrm{mT}_{pp}$. SVM-Gleichtaktanteile, Totzeiten und diskrete Schaltzustände sind in dieser Darstellung noch nicht enthalten.
