@@ -1,11 +1,13 @@
 # C9-Skripte – reproduzierbare Diagrammerzeugung
 
-Dieses Verzeichnis enthält den vollständigen, parametrierbaren Python-Referenzstand zur Neuerzeugung der Diagramme einer PFC-Drossel-Dokumentation.
+Dieses Verzeichnis enthält parametrierbare Python-Referenzimplementierungen zur Neuerzeugung der Diagramme einer PFC-Drossel-Dokumentation.
 
 ## Dateien
 
-- `parameter.py`: zentraler Parametersatz.
-- `generate_all_figures.py`: Berechnung und Erzeugung aller SVG-/PNG-Diagramme sowie der Kennwert-CSV.
+- `parameter.py`: zentraler Parametersatz für die allgemeine Diagrammerzeugung.
+- `generate_all_figures.py`: Erzeugung der allgemeinen mechanischen, magnetischen, elektrischen und thermischen Diagramme.
+- `dpwmmin_variable_ldiff.py`: schaltzustandsbasierte Berechnung der Stromwelligkeit von Phase A bei Minimum-Clamp-SVM.
+- `ldiff_kennlinie_template.csv`: Vorlage für eine gemessene oder digitalisierte differentielle Induktivitätskennlinie.
 
 ## Installation
 
@@ -13,7 +15,7 @@ Dieses Verzeichnis enthält den vollständigen, parametrierbaren Python-Referenz
 python -m pip install numpy matplotlib
 ```
 
-## Ausführung
+## Allgemeine Diagrammerzeugung
 
 ```bash
 python generate_all_figures.py
@@ -21,36 +23,49 @@ python generate_all_figures.py
 
 Die Ausgabe wird standardmäßig im Unterverzeichnis `generated` abgelegt.
 
-Ausgabe direkt in ein Drosselbeispiel:
+## DPWMmin-Stromwelligkeit
+
+Berechnung mit der analytischen Tanh-Entwurfskennlinie:
 
 ```bash
-python generate_all_figures.py \
-  --output ../../../../Drossel_Spezifikationen/Beispiele/PFC_20kW_525uH_3x56mm_HighFlux/Bilder
+python dpwmmin_variable_ldiff.py \
+  --output generated/dpwmmin_delta_ipp_phase_a.svg
 ```
 
-## Neue Drosselvariante
+Berechnung mit einer gemessenen oder digitalisierten Kennlinie:
 
-1. `parameter.py` kopieren oder ändern.
-2. Kerngeometrie, Windungszahl, Litze, Netzparameter und Lastfälle eintragen.
-3. Die Stützstellen für `current_support_a`, `ldiff_support_h`, `b_current_support_a` und `b_support_t` ersetzen.
-4. Steinmetz- und Thermikparameter kontrollieren.
-5. Skript ausführen.
-6. `berechnete_kennwerte.csv` auf Plausibilität prüfen.
+```bash
+python dpwmmin_variable_ldiff.py \
+  --ldiff-csv ldiff_kennlinie_template.csv \
+  --output generated/dpwmmin_delta_ipp_phase_a.svg
+```
+
+Die CSV muss die Spalte `current_a` und entweder `ldiff_h` oder `ldiff_uh` enthalten. Die Kennlinie wird über den Betrag des momentanen Phasenstroms interpoliert.
+
+## DPWMmin-Modell
+
+Das Skript:
+
+1. erzeugt die drei sinusförmigen Phasenreferenzen,
+2. addiert die DPWMmin-Nullsystemkomponente,
+3. klemmt den kleinsten Referenzwert auf den negativen Zwischenkreis,
+4. vergleicht die Tastverhältnisse mit einem symmetrischen Dreiecksträger,
+5. berechnet die auf den schwebenden Sternpunkt bezogenen Phasenspannungen,
+6. integriert die Ripple-Spannung innerhalb jeder PWM-Periode mit dem lokalen $L_{diff}$,
+7. bestimmt $\Delta I_{pp}$ für Leerlauf, 20 kW und 40 kW.
+
+Bei 50 Hz und 70 kHz werden 1400 PWM-Perioden pro Netzperiode ausgewertet. Jede PWM-Periode wird standardmäßig mit 240 Zeitschritten aufgelöst.
 
 ## Automatische Prüfungen
 
-Das Skript prüft vor der Berechnung:
+Die Skripte prüfen unter anderem:
 
 - positive Geometrie und Windungszahl,
-- gleiche Länge der Strom- und Induktivitätsstützstellen,
 - streng monotone Stromstützstellen,
 - positive differentielle Induktivitäten,
-- Übereinstimmung von `Ldiff(0)` und geometrisch berechnetem `L0` innerhalb einer Toleranz.
-
-## Erzeugte Dateien
-
-Das Skript erzeugt die mechanischen und magnetischen Darstellungen, Induktivitäts- und Permeabilitätskennlinien, Kupfer-, Kern- und Gesamtverluste, Thermik, Stromwelligkeit, zeitdiskreten 50-Hz-/70-kHz-Stromverlauf, Flussdichtehub und Materialausnutzung. Jede Abbildung wird als SVG und PNG gespeichert.
+- gültige CSV-Spalten,
+- Tastverhältnisse im Bereich 0 bis 1.
 
 ## Modellgrenzen
 
-Die Skripte sind eine reproduzierbare Referenzimplementierung für die dokumentierten vereinfachten Modelle. Sie ersetzen keine PLECS-Schaltsimulation, keine FEM-Feldberechnung und keine Messung am Muster. Insbesondere müssen B(I)- und Ldiff(I)-Stützstellen für jede neue Kern-/Wicklungskombination neu validiert werden.
+Die Skripte ersetzen keine abschließende PLECS-Schaltsimulation, FEM-Feldberechnung oder Messung. Totzeiten, Halbleiterspannungsabfälle, Reglerkorrekturen und die Änderung von $L_{diff}$ durch den Ripple innerhalb einer PWM-Periode sind im DPWMmin-Referenzmodell nicht enthalten.
