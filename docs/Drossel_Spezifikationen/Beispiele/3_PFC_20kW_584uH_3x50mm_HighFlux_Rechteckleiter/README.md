@@ -1,6 +1,6 @@
 ---
 title: "PFC-Drossel 584 µH – 3 × 50,8 mm High Flux"
-version: "Revision 1.0"
+version: "Revision 1.1"
 status: "Entwurfs- und Berechnungsstand"
 ---
 
@@ -11,7 +11,7 @@ status: "Entwurfs- und Berechnungsstand"
 ## Lesen
 
 - [Gesamtausgabe](Gesamtausgabe.md)  
-  **Zuletzt aktualisiert:** 03.08.2026
+  **Zuletzt aktualisiert:** 04.08.2026
 
 ## Projektübersicht
 
