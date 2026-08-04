@@ -1,6 +1,6 @@
 # Formelsammlung
 
-Diese Dokumentation enthält die Kapitel zur Wicklungsberechnung und magnetischen Auslegung.
+Diese Dokumentation enthält die Kapitel zur Wicklungsberechnung, magnetischen Auslegung und reproduzierbaren Berechnung von Drosselkennlinien.
 
 ## Lesen
 
@@ -27,3 +27,9 @@ Diese Dokumentation enthält die Kapitel zur Wicklungsberechnung und magnetische
 - [C7 Thermische Auslegung](Band_C/C7.md)
 - [C8 Vollständige Auslegungsbeispiele](Band_C/C8.md)
 - [C9 Reproduzierbare Diagrammerzeugung und Python-Skripte](Band_C/C9.md)
+- [C9.D DPWMmin-Stromwelligkeit mit variabler differentieller Induktivität](Band_C/C9_DPWMmin_Stromwelligkeit.md)
+
+## Archivierte Referenzskripte
+
+- [`dpwmmin_variable_ldiff.py`](Band_C/C9_Skripte/dpwmmin_variable_ldiff.py): schaltzustandsbasierte Minimum-Clamp-SVM-Berechnung für Leerlauf, 20 kW und 40 kW.
+- [`ldiff_kennlinie_template.csv`](Band_C/C9_Skripte/ldiff_kennlinie_template.csv): Vorlage für gemessene oder digitalisierte $L_{diff}(I)$-Kennlinien.
