@@ -14,8 +14,14 @@ mit $\mu_{r0}=26$ und $B_{sat}=1{,}65\,\mathrm T$. Daraus werden differentielle 
 
 ![Abbildung 3: B(H)-Kennlinie](Bilder/abbildung_03_bh_kennlinie.svg)
 
+*Abbildung 3: Berechnete B(H)-Entwurfskennlinie für High Flux 26 µ mit markierten Arbeitspunkten.*
+
 ![Abbildung 4: Differentielle und Sekanteninduktivität](Bilder/abbildung_04_induktivitaet.svg)
 
+*Abbildung 4: Differentielle und Sekanteninduktivität über dem Strom, ausgehend von 584 µH bei 0 A.*
+
 ![Abbildung 5: Differentielle und Sekantenpermeabilität](Bilder/abbildung_05_permeabilitaet.svg)
+
+*Abbildung 5: Differentielle und Sekantenpermeabilität der verwendeten Entwurfsnäherung.*
 
 Die Diagramme sind reproduzierbare Auslegungsnäherungen. Vor einer Fertigungsfreigabe sind sie durch Herstellerdaten oder eine gemessene $L(I)$- beziehungsweise B(H)-Kennlinie des dreifachen Kernstapels zu ersetzen oder zu bestätigen.
