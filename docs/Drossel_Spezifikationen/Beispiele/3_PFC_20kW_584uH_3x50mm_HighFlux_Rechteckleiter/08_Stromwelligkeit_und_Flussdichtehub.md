@@ -40,7 +40,7 @@ $$B(H)=B_{sat}\tanh\left(\frac{\mu_0\mu_{r0}H}{B_{sat}}\right)$$
 
 verwendet. Daraus folgt für die differentielle Induktivität
 
-$$L_{diff}(I)=L_0\operatorname{sech}^2\left(\frac{\mu_0\mu_{r0}NI}{l_eB_{sat}}\right).$$
+$$L_{diff}(I)=\frac{L_0}{\cosh^2\!\left(\frac{\mu_0\mu_{r0}NI}{l_eB_{sat}}\right)}.$$
 
 Eingesetzte Werte:
 
