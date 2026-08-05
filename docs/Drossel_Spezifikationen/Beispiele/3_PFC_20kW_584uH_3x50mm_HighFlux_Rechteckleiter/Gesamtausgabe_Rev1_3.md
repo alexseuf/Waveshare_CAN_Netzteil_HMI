@@ -1,7 +1,7 @@
 ---
 title: "PFC-Drossel 584 µH – Gesamtausgabe"
 version: "Revision 1.3"
-last_updated: "2026-08-04"
+last_updated: "2026-08-05"
 ---
 
 # PFC-Drossel 584 µH – 3 × Magnetics 0058717A2
@@ -76,7 +76,7 @@ $$B(H)=B_{sat}\tanh\left(\frac{\mu_0\mu_{r0}H}{B_{sat}}\right)$$
 
 und daraus
 
-$$L_{diff}(I)=L_0\operatorname{sech}^2\left(\frac{\mu_0\mu_{r0}NI}{l_eB_{sat}}\right).$$
+$$L_{diff}(I)=\frac{L_0}{\cosh^2\!\left(\frac{\mu_0\mu_{r0}NI}{l_eB_{sat}}\right)}.$$
 
 Das Referenzskript kann diese Gleichung durch eine CSV-Kennlinie aus Herstellerdaten oder Messwerten ersetzen.
 
